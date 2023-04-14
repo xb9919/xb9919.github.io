@@ -169,7 +169,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-04-14 13:41:45 / 修改时间：14:32:50" itemprop="dateCreated datePublished" datetime="2023-04-14T13:41:45+08:00">2023-04-14</time>
+      <time title="创建时间：2023-04-14 13:41:45 / 修改时间：15:32:54" itemprop="dateCreated datePublished" datetime="2023-04-14T13:41:45+08:00">2023-04-14</time>
     </span>
 
   
@@ -182,160 +182,16 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="batchnormalization">BatchNormalization</h2>
-<h3 id="y-hat-x---frachat-x_meansqrthat-x_var-varepsilon-gamma-beta"><span class="math display">\[ y = (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta \]</span></h3>
-<p>引入缩放和平移变量<span class="math display">\[\gamma 和\beta\]</span>可学习，原因是：为了让神经网络自己去学着使用和修改这个扩展参数 gamma, 和 平移参数 β, 这样神经网络就能自己慢慢琢磨出前面的 normalization 操作到底有没有起到优化的作用, 如果没有起到作用, 我就使用 gamma 和 belt 来抵消一些。</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010698086/article/details/78046671">bn可以底消cnn里的bias</a></p>
-<p>当Batch Normalization设为训练模式时（通过训练样本学习均值和方差），拒绝任何batch-size为1的情况。至于原因，简单地说就是BN归一化是依靠当前mini-batch的均值和方差进行归一化的，如果batch-size太小，显然所谓的均值和方差并不能代表不同sample之间的差距，各个mini-batch归一化结果的差异会非常大，归一化就没有意义了。另外，当batch-size设为1时，BN的结果近似于IN。</p>
-<h2 id="svm">SVM</h2>
-<h3 id="一般推导">一般推导</h3>
-<p>将<span class="math inline">\(D = {D_0,D_1}\)</span>用直线<span class="math inline">\(y = wx+b\)</span>分开，目的是找到最佳超平面，即最大间隔把两类样本分开的超平面。</p>
-<figure>
-<img src="svm.png" alt="svm" /><figcaption aria-hidden="true">svm</figcaption>
-</figure>
-<p><strong>支持向量：</strong>样本中距离超平面最近的一些点。</p>
-<p>二维点到直线距离：<span class="math inline">\(\frac{Ax+By+C}{\sqrt{A^2+B^2}}\)</span> ，n维度是：<span class="math inline">\(\frac{w^Tx+b}{||w||}\)</span> ,所以有：</p>
-<figure>
-<img src="eq1.jpg" alt="eq1" /><figcaption aria-hidden="true">eq1</figcaption>
-</figure>
-<p>即</p>
-<figure>
-<img src="eq2.png#pic_center" alt="eq2" /><figcaption aria-hidden="true">eq2</figcaption>
-</figure>
-<p>即<span class="math inline">\(\frac{y(w^Tx+b)}{||w||d}&gt;=1\)</span></p>
-<p>所以最大化超平面间隔是:</p>
-<p><span class="math inline">\(max\{2\times \frac{|w^Tx+b|}{||w||}\}====&gt;max\{2\times \frac{y(w^Tx+b)}{||w||}\}====&gt;max\{2\times \frac{1}{||w||}\}\)</span></p>
-<p>后面的转换是假设<span class="math inline">\(||w||d=1\)</span>，<strong>为什么可行？</strong></p>
-<p>是因为超平面是<span class="math inline">\(w^Tx+b=0\)</span>，支持向量代表的直线是<span class="math inline">\(w^Tx+b=c\)</span>可以变成<span class="math inline">\(w_1^Tx+b_1=1\)</span>，超平面是<span class="math inline">\(w_1^Tx+b_1=0\)</span>，只是换了个下标而已，优化目标一样的。</p>
-<p>所以最后问题转换为：</p>
-<p><span class="math inline">\(min f(w) = 0.5\cdot||w||^2\)</span> <span class="math inline">\(s.t. y_i(w^Txi+b)\geq 1==&gt;g_i(w)=1-y_i(w^Txi+b)\leq0\)</span></p>
-<p>引入松弛变量<span class="math inline">\(a_i^2\)</span> 则<span class="math inline">\(h_i(w,a_i)=g_i(w)+a_i^2=0\)</span></p>
-<p>此时得到拉格朗日函数：</p>
-<p>$L(w,,a)=f(w)+_{i=1}<sup>n<em>ih_i(w)=f(w)+</em>{i=1}</sup>n_i(g_i(w)+a_i^2)) $ <span class="math inline">\(\lambda_i\geq0\)</span></p>
-<p>得:</p>
-<figure>
-<img src="eq3.png" alt="eq3" /><figcaption aria-hidden="true">eq3</figcaption>
-</figure>
-<p>讨论<span class="math inline">\(\lambda_i a_i=0可得\)</span> ：</p>
-<figure>
-<img src="eq4.png" alt="eq4" /><figcaption aria-hidden="true">eq4</figcaption>
-</figure>
-<p>以上便是不等式约束优化优化问题的 <strong>KKT(Karush-Kuhn-Tucker) 条件</strong>， <span class="math inline">\(\lambda_i\)</span> 称为 KKT 乘子。</p>
-<p>而支持向量<span class="math inline">\(g_i(w)=0\)</span> 所以<span class="math inline">\(\lambda_i\geq0\)</span>即可。</p>
-<p>所以<span class="math inline">\(min L(w,\lambda,a)\)</span>可转成<span class="math inline">\(minL(w,\lambda,a) = f(w)\ + \sum_{i=1}^n\lambda_ig_i(w)+\sum_{i=1}^n\lambda_ia_i^2\)</span></p>
-<p>而<span class="math inline">\(\sum_{i=1}^n\lambda_ia_i^2\geq0\)</span></p>
-<h4 id="这里的推导比较好看懂">这里的推导比较好看懂</h4>
-<p>所以问题最终转为<span class="math inline">\(minL(w,\lambda) = f(w)\ + \sum_{i=1}^n\lambda_ig_i(w)\)</span></p>
-<p>$L(w,,a)=1/2||w||^2+_{i=1}^n_i(g_i(w)+a_i^2) $</p>
-<figure>
-<img src="eq5.png" alt="eq5" /><figcaption aria-hidden="true">eq5</figcaption>
-</figure>
-<figure>
-<img src="eq6.png" alt="eq6" /><figcaption aria-hidden="true">eq6</figcaption>
-</figure>
-<p>此时只需要考虑支持向量就可以了，减少计算量</p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.clickhttps://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.click">视频推导</a></p>
-<h3 id="软间隔">软间隔</h3>
-<p>求解上面的对偶问题的一个著名算法是 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Sequential_minimal_optimization">SMO (Sequential Minimal Optimization)</a>，这里不展开叙述。</p>
-<p>同时上面是基于数据可以分隔的假设进行的，若不可分隔，那可以设置一个惩罚项：<span class="math inline">\(\xi_i = max\{1-y_i(w\cdot x_i+b),0\}\)</span></p>
-<p>则原来的优化问题则转换成了<span class="math inline">\(min f(w) = 0.5\cdot||w||^2+C\sum_{i=1}^m\xi_i\)</span> <span class="math inline">\(s.t. y_i(w^Txi+b)\geq 1\)</span></p>
-<p><span class="math inline">\(\xi\)</span>是<strong>折页损失（hinge loss）</strong></p>
-<h3 id="核方法">核方法：</h3>
-<p>样本是非线性可分的时候，可以采用核技巧（kernel trick），将样本映射至高维空间，变成高维空间中线性可分的即可。考虑一个映射函数<span class="math inline">\(\phi(x)\)</span>，将 <em>d</em> 维特征映射至 <em>m</em> 维：</p>
-<p>核技巧的思想是用核函数 <em>K</em> 避免在高维 <em>m</em> 空间中计算映射函数的内积，这样能够极大简化运算。</p>
-<p><em>K</em> 能够满足成为核函数的充分必要条件是 <em>K</em> 是半正定（positive semidefinite）</p>
-<p>常用核函数：多项式核函数、高斯核函数、线性核函数。</p>
-<figure>
-<img src="kernel.png" alt="kernal" /><figcaption aria-hidden="true">kernal</figcaption>
-</figure>
-<h3 id="优缺点">优缺点</h3>
-<h4 id="优点">优点</h4>
-<p>1、可解释</p>
-<p>2、能找出对任务至关重要的关键样本（即：支持向量）；</p>
-<p>3、可以处理非线性的问题</p>
-<p>4、最终决策函数只由少数的支持向量所确定，计算的复杂性取决于支持向量的数目，而不是样本空间的维数</p>
-<h4 id="缺点">缺点</h4>
-<p>1、训练时间长。当采用 SMO 算法时，由于每次都需要挑选一对参数，因此时间复杂度为<span class="math inline">\(O(n^2)\)</span></p>
-<p>2、使用核函数时，空间复杂度也是<span class="math inline">\(O(n^2)\)</span></p>
-<p>3、sv数量大时预测计算复杂度高</p>
-<p>因此支持向量机目前只适合小批量样本的任务，无法适应百万甚至上亿样本的任务。</p>
-<h3 id="代码实现">代码实现</h3>
-<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sklearn.svm.SVC(C=1.0, kernel=&#x27;rbf&#x27;, degree=3, gamma=&#x27;auto&#x27;, coef0=0.0, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape=None,random_state=None)</span><br></pre></td></tr></table></figure>
-<p><code>degree:kernel是poly的时候的指数</code> <code>C：惩罚项的权重</code> <code>gamma:核函数的参数，默认是1/n_features</code></p>
-<p><code>coef0:核函数的常数项。对于‘poly’和 ‘sigmoid’有用。</code></p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm</span><br><span class="line">X = [[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">1</span>, <span class="number">1</span>]]</span><br><span class="line">y = [<span class="number">0</span>, <span class="number">1</span>]</span><br><span class="line">clf = svm.SVC()</span><br><span class="line">clf.fit(X, y)</span><br><span class="line"><span class="comment"># Create SVM classification object</span></span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm, datasets</span><br><span class="line"><span class="comment"># 引用 iris 数据集</span></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">X = iris.data[:, :<span class="number">2</span>] <span class="comment"># 选取前两列作为X参数</span></span><br><span class="line">y = iris.target <span class="comment"># 采集标签作为y参数</span></span><br><span class="line">C = <span class="number">1.0</span> <span class="comment"># SVM regularization parameter</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将所得参数进行模型训练</span></span><br><span class="line">svc = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">1</span>, gamma=<span class="string">&#x27;auto&#x27;</span>).fit(X, y)</span><br><span class="line"><span class="comment"># 建图</span></span><br><span class="line">x_min, x_max = X[:, <span class="number">0</span>].<span class="built_in">min</span>() - <span class="number">1</span>, X[:, <span class="number">0</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line">y_min, y_max = X[:, <span class="number">1</span>].<span class="built_in">min</span>() - <span class="number">1</span>, X[:, <span class="number">1</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line">h = (x_max / x_min)/<span class="number">100</span></span><br><span class="line">xx, yy = np.meshgrid(np.arange(x_min, x_max, h),</span><br><span class="line"> np.arange(y_min, y_max, h))<span class="comment"># X, Y = np.meshgrid(x, y) 代表的是将x中每一个数据和y中每一个数据组合生成很多点,然后将这些点的x坐标放入到X中,y坐标放入Y中,并且相应位置是对应的</span></span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>) <span class="comment"># 将显示界面分割成1*1 图形标号为1的网格</span></span><br><span class="line">Z = svc.predict(np.c_[xx.ravel(), yy.ravel()]) <span class="comment"># np.c按行连接两个矩阵,但变量为两个数组，按列连接 ravel：将数组拉成一维</span></span><br><span class="line">Z = Z.reshape(xx.shape)<span class="comment"># 重新构造行列</span></span><br><span class="line">plt.contourf(xx, yy, Z, cmap=plt.cm.Paired, alpha=<span class="number">0.8</span>)<span class="comment"># 绘制等高线</span></span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y, cmap=plt.cm.Paired) <span class="comment"># 生成一个scatter散点图。</span></span><br><span class="line">plt.xlabel(<span class="string">&#x27;Sepal length&#x27;</span>) <span class="comment"># x轴标签</span></span><br><span class="line">plt.ylabel(<span class="string">&#x27;Sepal width&#x27;</span>) <span class="comment"># y轴标签</span></span><br><span class="line">plt.xlim(xx.<span class="built_in">min</span>(), xx.<span class="built_in">max</span>()) <span class="comment"># 设置x轴的数值显示范围</span></span><br><span class="line">plt.title(<span class="string">&#x27;SVC with linear kernel&#x27;</span>) <span class="comment"># 设置显示图像的名称</span></span><br><span class="line">plt.savefig(<span class="string">&#x27;./test1.png&#x27;</span>) <span class="comment">#存储图像</span></span><br><span class="line">plt.show() <span class="comment"># 显示</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>参考：</p>
-<p><a target="_blank" rel="noopener" href="https://blog.imfing.com/2020/06/svm-explained/">支持向量机 (SVM) 的解析与推导</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/77750026">【机器学习】支持向量机 <em>SVM</em>（非常详细）</a></p>
-<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35755150">推导 | SVM详解（1）SVM基本型</a></p>
-<p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.clickhttps://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.click">视频推导</a></p>
-<h2 id="插值算法">插值算法</h2>
-<p>插值算法是一种用于从给定数据点中估计未知数据点值的技术。以下是一些常用的插值算法：</p>
-<ol type="1">
-<li>线性插值：在两个已知数据点之间使用一条直线来估计未知数据点的值。这是最简单的插值方法之一，但可能不足以捕捉数据中的复杂性。</li>
-<li>多项式插值：在给定数据点的基础上构建一个多项式函数来估计未知数据点的值。这可以通过拉格朗日插值或牛顿插值来完成。</li>
-<li>样条插值：将数据点分段，每一段用一个多项式函数来估计未知数据点的值。这种方法可以更好地适应数据的变化，并且可以控制估计的平滑度。</li>
-<li>Kriging插值：基于数据点的空间相关性来估计未知数据点的值。这种方法通常用于地质和环境领域的数据插值。</li>
-<li>径向基函数插值：使用一组基函数来估计未知数据点的值。基函数可以是高斯函数、多项式函数或其他函数。</li>
-<li>快速插值：基于数据点的空间距离来估计未知数据点的值。这种方法可以快速计算，并且在处理大量数据时非常有用。</li>
-<li>逆距离加权插值：根据已知数据点的距离对未知数据点进行加权平均。距离越近的数据点的权重越大，距离越远的数据点的权重越小。</li>
-<li>自然邻域插值：根据已知数据点周围的最近邻数据点来估计未知数据点的值。这种方法可以更好地处理数据点密度不均匀的情况。</li>
-</ol>
-<p>我常见的是线性(linear Interpolation)、多项式(poly/cubic是三次)、最近邻插值(nearest)</p>
-<h2 id="topk准确率">topk准确率</h2>
-<p>以imagenet为例，计算imagenet上的top1准确率的代码为：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataloader</span><br><span class="line">transform = transforms.Compose([transforms.Resize(<span class="number">256</span>), transforms.CenterCrop(<span class="number">224</span>)</span><br><span class="line">                               , transforms.ToTensor(), transforms.Normalize(mean = [<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std =[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br><span class="line"></span><br><span class="line">testset = torchvision.datasets.ImageNet(root=<span class="string">&#x27;&#x27;</span>, split=<span class="string">&#x27;val&#x27;</span>, transform = transform)</span><br><span class="line">test_loader = Dataloader(testset, bath_size=<span class="number">32</span>, shuffle = false, num_workers=<span class="number">1</span>)</span><br><span class="line">model = ResNet50()</span><br><span class="line">state_dict = torch.load(<span class="string">&quot;./resnet50.pth&quot;</span>)</span><br><span class="line">model.load_state_dic(state_dict)</span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line">total=correct=<span class="number">0</span></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    <span class="keyword">for</span> images, labels <span class="keyword">in</span> test_loader:</span><br><span class="line">        outputs = model(images)</span><br><span class="line">        _, predicts = torch.<span class="built_in">max</span>(outputs.data, <span class="number">1</span>)</span><br><span class="line">        total +=labels.size(<span class="number">0</span>)</span><br><span class="line">        correct += (labels==predicts).<span class="built_in">sum</span>().item()</span><br><span class="line">        </span><br><span class="line">top1 = correct/total</span><br></pre></td></tr></table></figure>
-<p>topk:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> Dataloader</span><br><span class="line"></span><br><span class="line">transform = transforms.Compose([transforms.Resize(<span class="number">256</span>), transforms.CenterCrop(<span class="number">224</span>), transforms.ToTensor(),</span><br><span class="line">                               transforms.Normalize(mean = [], std = [])])</span><br><span class="line">dataset = torch.utils.ImageNet(<span class="string">&quot;path&quot;</span>, split=<span class="string">&#x27;val&#x27;</span>, transform=transform)</span><br><span class="line">test_loader = Dataloader(dataset, batch_size=<span class="number">32</span>, num_worksers=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">state_dict = torch.load(<span class="string">&quot;./model.pth&quot;</span>)</span><br><span class="line">model = resnet.load_state_dict(state_dict)</span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line">topk = [<span class="number">1</span>, <span class="number">5</span>]</span><br><span class="line"><span class="keyword">for</span> inputs, labels <span class="keyword">in</span> test_loader:</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    </span><br><span class="line">    maxk = <span class="built_in">max</span>(topk)</span><br><span class="line">    _, predicts = outputs.topk(maxk, <span class="number">1</span>, <span class="literal">True</span>, <span class="literal">True</span>)	<span class="comment"># 在维度1上获取top maxk 返回最大值以及排序,结果是维度为[bs, topk]所以要先转置成[topk, batchsize]</span></span><br><span class="line">    predicts = predicts.t() <span class="comment">#转置</span></span><br><span class="line">    correct = predicts.eq(labels.view(<span class="number">1</span>, -<span class="number">1</span>)).expand_as(predicts)</span><br><span class="line">    <span class="comment"># labels.view(1, -1)把labels从(bs,1)转成(1, bs)这是为了让labels的形状在转置后与predicts的形状匹配</span></span><br><span class="line">    res = []</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> topk:</span><br><span class="line">    	<span class="comment">#correct_k = correct[:k].view(-1).float().sum(0, keepdim = True) 这里有问题，因为pytorch 转置、permute后内存是不连续的，不能直接view 要先.contiguous</span></span><br><span class="line">        correct[:k].contiguous().view(-<span class="number">1</span>).<span class="built_in">float</span>().<span class="built_in">sum</span>(<span class="number">0</span>, keepdim = <span class="literal">True</span>)</span><br><span class="line">        res.append(correct_k.mul_(<span class="number">100.0</span> / batch_size))<span class="comment">#一个batch的topk</span></span><br><span class="line">    <span class="keyword">return</span> res    </span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> Dataloader</span><br><span class="line"></span><br><span class="line">transform = transforms.Compose([transforms.Resize(<span class="number">256</span>), transforms.CenterCrop(<span class="number">224</span>), transforms.ToTensor(),</span><br><span class="line">                               transforms.Normalize(mean = [], std = [])])</span><br><span class="line">dataset = torch.utils.ImageNet(<span class="string">&quot;path&quot;</span>, split=<span class="string">&#x27;val&#x27;</span>, transform=transform)</span><br><span class="line">test_loader = Dataloader(dataset, batch_size=<span class="number">32</span>, num_worksers=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">state_dict = torch.load(<span class="string">&quot;./model.pth&quot;</span>)</span><br><span class="line">model = resnet.load_state_dict(state_dict)</span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line">topk = [<span class="number">1</span>, <span class="number">5</span>]</span><br><span class="line"><span class="keyword">for</span> inputs, labels <span class="keyword">in</span> test_loader:</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    _, pred = outputs.topk(<span class="built_in">max</span>(topk), <span class="number">1</span>, <span class="literal">True</span>, <span class="literal">True</span>)</span><br><span class="line">    pred = pred.t()<span class="comment">#[topk, bs]</span></span><br><span class="line">    corrects = pred.eq(labels.view(<span class="number">1</span>,-<span class="number">1</span>)).expand_as(pred)</span><br><span class="line">    </span><br><span class="line">    res = []<span class="comment">#一个batch的topk</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> topk:</span><br><span class="line">        correct_k = correct[:k].contiguous().view(-<span class="number">1</span>).<span class="built_in">float</span>().<span class="built_in">sum</span>(<span class="number">0</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        res.append(correct_k.mul_(<span class="number">100</span>/batch_size))</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
-<h2 id="优化器">优化器</h2>
-<p><strong>BGD</strong>: 最小化损失函数的过程中，<strong>需要</strong>不断反复的更新weights使得误差函数减小，<strong>每一次的参数更新都用到了所有的训练数据</strong></p>
-<p><strong>SGD:</strong> 随机梯度下降，通过每个样本来迭代更新一次，<strong>SGD伴随的一个问题是噪音较BGD要多，使得SGD并不是每次迭代都向着整体最优化方向。</strong>一个epoch过程只有一次迭代和一个更新数据。</p>
-<p>就是求导，然后a = a-t*f(a)，其中t是学习率，fa是对a的偏导数，缺点：下降慢。容易震荡。</p>
-<p><strong>SGDM</strong>： 加入了惯性，就是梯度下降的时候，如果梯度比较大，就多下降一点，引入了一阶动量。</p>
-<p><span class="math display">\[v_t = \alpha_1 \cdot v_{t-1}+\eta_t\nabla(W_t, X, Y) \]</span>其中<span class="math inline">\(v_t\)</span>是加速度，<span class="math inline">\(\alpha\)</span>是动力大小，一般是0.9</p>
-<p>然后参数更新就是<span class="math inline">\(W_t = W_{t-1}-v_t\)</span></p>
-<p>其中$(W_t, X, Y) $是SGD算的梯度，t时刻下降的方向不仅由梯度决定，也有此前累积的下降方向决定，</p>
-<p><strong>SGD with Nesterov Acceleration （NAG）</strong> ：对于 SGDM 在时刻 t 的主要下降方向是由累积动量决定的，自己的梯度方向说了也不算，那与其看当前梯度方向，不如先看看如果跟着累积动量走了一步， NAG 不计算当前位置的梯度方向，而是计算如果按累计动量走了的话，梯度下降的方向，然后用下一个点的梯度方向，与累计动量结合，即gt算的不是当前点的梯度，而是<span class="math inline">\((w_t - \alpha\cdot\nabla(W_t-\alpha v_{t-1}))\)</span> 位置的梯度</p>
-<p><strong>AdaGrad</strong>：独立地适应所有模型参数的学习率，缩放每个参数反比于其所有梯度历史平均值总和的平方根。具有代价函数最大梯度的参数相应地有个快速下降的学习率，而具有小梯度的参数在学习率上有相对较小的下降。</p>
-<p>SGD及其变种以同样的学习率更新每个参数，但深度神经网络往往包含大量的参数，这些参数并不是总会用得到;对于经常更新的参数，我们已经积累了大量关于它的知识，不希望被单个样本影响太大，希望学习速率慢一些；对于偶尔更新的参数，我们了解的信息太少，希望能从每个偶然出现的样本身上多学一些，即学习速率大一些。</p>
-<p>用二阶动量保存迄今为止所有梯度值的平方和</p>
-<p><span class="math inline">\(g_{t,i} = \nabla J(\theta_{t,i})\)</span></p>
-<p><span class="math inline">\(s_{t,i} = \sum_{k=1}^{t} g_{k,i}^2\)</span></p>
-<p><span class="math inline">\(\theta_{t+1,i} = \theta_{t,i} - \dfrac{\eta}{\sqrt{s_{t,i}}+\epsilon} g_{t,i}\)</span></p>
-<p>其中，<span class="math inline">\(g_{t,i}\)</span> 是第 <span class="math inline">\(i\)</span> 个参数在时间步 <span class="math inline">\(t\)</span> 的梯度，<span class="math inline">\(s_{t,i}\)</span> 是前 <span class="math inline">\(t\)</span> 个时间步中第 <span class="math inline">\(i\)</span> 个参数梯度平方和的累加值，<span class="math inline">\(\theta_{t,i}\)</span> 是第 <span class="math inline">\(i\)</span> 个参数在时间步 <span class="math inline">\(t\)</span> 的取值，<span class="math inline">\(\eta\)</span> 是学习率，<span class="math inline">\(\epsilon\)</span> 是为了数值稳定性而添加的小常数。公式中的除法是逐元素操作，表示对于每个参数，都会根据其历史梯度信息动态地调整学习率。</p>
-<ul>
-<li>从表达式可以看出，对出现比较多的类别数据，Adagrad给予越来越小的学习率，而对于比较少的类别数据，会给予较大的学习率。因此Adagrad适用于数据稀疏或者分布不平衡的数据集。</li>
-<li>Adagrad 的主要优势在于不需要人为的调节学习率，它可以自动调节；缺点在于，随着迭代次数增多，学习率会越来越小，最终会趋近于0。</li>
-</ul>
-<p>这种方式可以使得梯度较小的参数获得更大的学习率，而梯度较大的参数获得较小的学习率，从而使得每个参数都能够得到适当的调整。</p>
-<p><strong>RMSProp</strong>:</p>
-<p>Adagrad存在两个问题：首先，随着训练的进行，学习率会趋向于零，导致训练过程停滞不前；其次，学习率对于所有参数都是相同的，无法进行自适应调整。</p>
-<p>由于AdaGrad单调递减的学习率变化过于激进，我们考虑一个改变二阶动量计算方法的策略：<strong>RMSProp主要思想：使用指数加权移动平均的方法计算累积梯度</strong>，以丢弃遥远的梯度历史信息（让距离当前越远的梯度的缩减学习率的权重越小）。</p>
-<p><span class="math inline">\(v_t = \beta v_{t-1}+(1-\beta)g_t^2\)</span></p>
-<p><span class="math inline">\(w_{t+1} = w_t-\frac{\eta}{\sqrt{v_t +\epsilon}}g_t\)</span></p>
-<p>其中，<span class="math inline">\(w_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的模型参数，<span class="math inline">\(g_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的梯度，<span class="math inline">\(\eta\)</span>表示学习率，<span class="math inline">\(\epsilon\)</span>是一个很小的常数，用来避免分母为零的情况。<span class="math inline">\(v_t\)</span>是针对每个参数维护的历史梯度平方的指数加权移动平均，<span class="math inline">\(\beta\)</span>是一个控制历史梯度平方对当前梯度平方的相对贡献的超参数，通常取值为0.9。</p>
-<p><strong>AdaDelta</strong>:</p>
-<p>Adadelta算法的核心思想是针对每个参数维护两个指数加权移动平均：一个是平均梯度平方的指数加权移动平均，一个是平均参数更新量平方的指数加权移动平均。具体来说，Adadelta算法的更新规则如下：</p>
-<figure>
-<img src="adadelta1.png" alt="1" /><figcaption aria-hidden="true">1</figcaption>
-</figure>
-<p>其中，<span class="math inline">\(x_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的模型参数，<span class="math inline">\(g_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的梯度，<span class="math inline">\(\epsilon\)</span>是一个很小的常数，用来避免分母为零的情况。<span class="math inline">\(E[g^2]_t\)</span>表示在<span class="math inline">\(t\)</span>时刻历史梯度平方的指数加权移动平均，<span class="math inline">\(\gamma\)</span>是衰减系数，用来控制历史梯度平方的相对贡献。<span class="math inline">\(\Delta x_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的参数更新量，通过除以<span class="math inline">\(\sqrt{E[g^2]*t+\epsilon}\)</span>将学习率自适应地调整到每个参数的尺度，再乘以<span class="math inline">\(\sqrt{\Delta x_{t-1}+\epsilon}\)</span>得到参数更新量。</p>
-<p>参数<span class="math inline">\(\rho\)</span>，用来控制历史平方梯度的相对贡献。具体来说，在计算<span class="math inline">\(\Delta x_t\)</span>时，需要乘以一个调整因子<span class="math inline">\(\sqrt{\Delta x_{t-1}+\epsilon}\)</span>，这个调整因子的作用是让历史梯度平方的影响随着时间的推移而逐渐减小，同时也起到了防止更新量过小的作用。</p>
-<p>Adadelta算法相对于RMSProp算法的改进在于，它不需要手动设置初始学习率，而是通过适当的调整参数更新量的尺度来自</p>
-<p><strong>Adam</strong>:</p>
-<p>用了一阶和二阶动量</p>
-<p><span class="math inline">\(m_t = \beta_1\cdot m_{t-1} + (1-\beta_1)\cdot g_t\)</span></p>
-<p><span class="math inline">\(v_t = \beta_2\cdot v_{t-1}+(1-\beta_2)g_t^2\)</span></p>
-<p><span class="math inline">\(w_t = w_{t-1}-lr\cdot \frac{m_t}{\sqrt{v_t}+\epsilon}\)</span></p>
-<p>Adam可能<strong>不收敛</strong></p>
-<p>SGD没有用到二阶动量，因此学习率是恒定的（实际使用过程中会采用学习率衰减策略，因此学习率递减）AdaGrad的二阶动量不断累积，单调递增，因此学习率是单调递减的。因此，这两类算法会使得学习率不断递减，最终收敛到0，模型也得以收敛。但AdaDelta和Adam则不然，他们关注窗口可能会使得学习率时大时小，而不是单调的</p>
-<p>可能<strong>错过全局最优解</strong></p>
-<p>参考文献:</p>
-<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40170902/article/details/80092628">机器学习：各种优化器Optimizer的总结与比较</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzU0NjgzMDIxMQ==&amp;mid=2247602050&amp;idx=5&amp;sn=7b9c643c0728570c13c4536f566a83d6&amp;chksm=fb54ad6ecc232478c7302dfa91fe3d007598886d5277d482c92fdba57c239e7134bd9d7175c6&amp;scene=27">Adam的优化能力那么强，为什么还对SGD念念不忘</a></p>
-
+          <h2 id="前言">前言</h2>
+<p>记录了下一些cv的基础知识
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/14/cv%E5%9F%BA%E7%A1%80/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
@@ -391,7 +247,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-04-14 13:22:55 / 修改时间：13:23:40" itemprop="dateCreated datePublished" datetime="2023-04-14T13:22:55+08:00">2023-04-14</time>
+      <time title="创建时间：2023-04-14 13:22:55 / 修改时间：15:33:12" itemprop="dateCreated datePublished" datetime="2023-04-14T13:22:55+08:00">2023-04-14</time>
     </span>
 
   
@@ -407,185 +263,14 @@
           <h1 id="preface">Preface</h1>
 <p>投的时候已经是有点晚了，春节的时候有点浪，刚好碰上了 CVPR 被拒，直接摆烂了当时，没怎么刷题，准备面经，回来已经2月了，陆陆续续刷了一个月题，学了点部署的东西，一直怕准备不充分没敢投，到3月尾的时候发现再不投很多地方就没hc了，就开始先猛冲小厂了。</p>
 <p>没想到小厂也没给面试，投了很多，第一个面的是润博互联，还不是我投的，是boss主动找我的。。看了下简介大概是搞gan和diffusion的？这和我也不相关呀，纯当涨经验了</p>
-<h1 id="润博互联-3.28">润博互联 3.28</h1>
-<p>一面电话面35min，面试官人还是不错的，是个小leader面的，但是感觉太久有点久没接触ai前沿。</p>
-<p>先简单自我介绍了一下自己（引出了自己的课题、论文、做过的项目），</p>
-<p><strong>1、伪造攻击都是平面攻击么</strong></p>
-<p>我们的攻击不都是，有3d面具等，也有</p>
-<p><strong>2、深度攻击怎么欺骗虹外等的</strong></p>
-<p>目的不同</p>
-<p><strong>3、对安卓了解的怎么样</strong></p>
-<p>本科实习开发过安卓app，实习部署人脸项目的时候有考虑过在安卓端进行部署</p>
-<p><strong>4、华为项目是部署到手机端么</strong></p>
-<p>是自研的NPU类似于服务器这样的，不是一般手机厂的npu（原来手机很多npu）</p>
-<p><strong>5、华为Mindspore怎么样</strong></p>
-<p>我做的时候还是比较坑的，很多op不支持，国内对标的是paddle，但是发展的很快</p>
-<p><strong>6、讲讲你论文的东西</strong></p>
-<p><strong>7、这个模型性能怎么样，适合部署到移动端么</strong></p>
-<p>做研究的时候没考虑这个，感觉部署实际并不会特别困难，因为没用到特别的op算子，现在部署对pytorch的支持还是非常友好的</p>
-<p><strong>8、对AIGC有了解么，论文开题了么</strong></p>
-<p>其实是挺感兴趣的，奈何自己已经定方向了（可能是想找人来做research，所以不想要开题的）</p>
-<p>然后就是反问环节了</p>
-<p><strong>1、你们这边一般是做什么业务的</strong></p>
-<p>主要是做旅游区的类似自动拍照的东西，小公司只能想落地这块了，没太听明白做的啥，可能是拍照然后ar？他们感觉旅游区前景不错，但是这块ai的嵌入不够，然后感觉很多模型其实看起来很炫，实际用的时候效果都不好，十张可能只有1 2张有用的</p>
-<p><strong>2、你们这边找aigc是做research的还是落地的，算力资源怎么样</strong></p>
-<p>主要是想找research然后落地的，其实他们要的感觉是两个人，一个是做其他部署的，一个是aigc的，但是感觉是内部没讨论好aigc到底做不做，还在考虑中，毕竟小公司，但是没考虑好就先来面了就。。。算力属实不行（那还想做research），如果能落地，可以租云服务器，不然只有几台工作站，可能还不如学校。</p>
-<p>总结：小公司确实面的必要性不大了，问的问题和凉经的都不太一样，他们招人主要是看你能不能来的感觉，然后是感觉双方不太契合吧，估计凉</p>
-<p>今天也看到华子的消息，刚好是Mindspore部门的一个人，聊了一下，感觉比较看重4个点：</p>
-<p>1、python/c++ 2、项目的独到见解 3、面试开始一两道算法题 4、编译的一些东西</p>
-<h2 id="开始焦虑">3.29开始焦虑</h2>
-<h1 id="深信服">4.7 深信服</h1>
-<p>本来不太想面的，因为公司是做网安的，感觉不太匹配，但是现在没面试，就当涨经验了，总共大概花了差不多30分钟吧，感觉还是比较水的，没做算法题</p>
-<p>上来先简单自我介绍一下，这里主要讲了一下自己的论文，研究方向（我也是人脸安全好像也相关？可惜人不做cv啊），论文情况，还是要做一个ppt，两次的感觉都是没ppt论文讲不清楚，然后是由于是面试的岗是搞nlp的、序列相关的岗位，所以主要问了我简历上面的一个nlp相关的项目</p>
-<p>1、简单介绍一下你的项目</p>
-<p>我们项目是建立一个针对特定领域的生成式的聊天机器人，主要是爬取了虎扑的多轮对话的作为语料库，微调gpt2以及bert来建模的balabala</p>
-<p>2、项目有几个人 ，你在这里负责什么</p>
-<p>项目是老师带着我们3个人一起做的，我主要是在里面负责1、数据的爬取，2、模型的设计</p>
-<p>3、讲讲数据的格式</p>
-<p>我们数据主要是经过分词嘛，输入要求是一个tokens，然后就是句尾句首会有一个标识符标记，然后为了引入上下文的内容，我们主要是把多轮对话作为输入，以一个谈话的过程作为输入。</p>
-<p>4、你说的这些主要是讲的数据的格式问题，有没有一些数据的清理的问题，比如怎么去掉噪声之类的</p>
-<p>我们没有做这方面的处理，TODO（可以了解一下）</p>
-<p>5、接下来聊一下机器学习、深度学习的东西吧，讲一讲过拟合，比如怎么样解决过拟合的问题、过拟合是什么</p>
-<p>过拟合就是模型对数据的过度学习，相当于网络把数据给记住了，过拟合解决的话就可以像是加一些正则、BN、dropout、也可能是网络迭代次数过多了，可以early stop，或者是选一些特殊的优化器，一开始的BGD是通过计算batch的梯度进行的，所以后面有SGD他是计算随机样本的梯度（突然想万一是噪声咋办？）</p>
-<p>6、你讲的这些有些笼统，太泛了，有没详细一点就是说参数量和数据的问题</p>
-<p>哦，其实说白了就是模型复杂度过高了，数据量太小了</p>
-<p>7、正则化有什么用</p>
-<p>先说了下L1正则L2正则是啥，然后我理解的就是相当于给模型一些限制，让模型的学习变得困难一点</p>
-<p>8、其实就是限制模型的参数大小来解决这个问题</p>
-<p>9.数据增强的一些手段</p>
-<p>我回答的都是些图像里的，像随机翻转、cutout、颜色增强这些</p>
-<p>9、然后我们来聊聊python吧，看你是比较会python是吧</p>
-<p>我其实python cpp都可以</p>
-<p>10、讲讲python里面的容器</p>
-<p>列表、元组、字典、集合、string</p>
-<p>11、集合和字典有什么区别</p>
-<p>集合是哈希、无序的、集合里面的元素是唯一的，字典的key也是哈希的，所以他们不能通过索引来获取，键也是唯一的，value没有做限制</p>
-<p>12、字典的值没有限制么？可以是变量么</p>
-<p>ps这个我还真不太记得，当时回答的是可以吧实际上后来试了一下</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br><span class="line">map1 = &#123;<span class="string">&quot;a&quot;</span>:a&#125;</span><br><span class="line"><span class="built_in">print</span>(map1[<span class="string">&quot;a&quot;</span>])</span><br><span class="line">a = <span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(map1[<span class="string">&quot;a&quot;</span>])</span><br></pre></td></tr></table></figure>
-<p>输出都是1，说明建立的时候是可以是变量，但是value创建了就不变了，对a修改不会对dict修改</p>
-<p>13、怎么才能对set进行索引</p>
-<p>想了一会儿，把他转成list也可以吧</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="built_in">set</span>()</span><br><span class="line">b.add(<span class="number">1</span>)</span><br><span class="line">b.add(<span class="number">2</span>)</span><br><span class="line">b = <span class="built_in">list</span>(b)<span class="comment">#不加的话就会报错，因为set是不能索引的</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    <span class="built_in">print</span>(b[i])</span><br></pre></td></tr></table></figure>
-<p>14、我这没啥问题了，假如能过的话什么时候能来，大概能多久</p>
-<p>一周内能到岗</p>
-<p>反问环节</p>
-<p>1、你们不是做安全的么，找算法的大概是做啥的，</p>
-<p>2、业务一般是啥样的，</p>
-<p>3、主要做的是机器学习相关么</p>
-<p>总体感觉就是用dl、ml的方法来识别检测恶意的攻击，主要还是nlp、时间序列相关的吧，部门好像是文件系统管理部啥的？</p>
-<p>总结就是：TODO，准备ppt、看一下python的常用容器、数据结构相关之前光顾着cpp了，dl基础接着看</p>
-<h1 id="shein">4.12 SHEIN</h1>
-<p>这家公司我还挺想去的害，面试官挺好的，但是为啥我只面半小时。。没做算法题，感觉要凉，被爆杀了</p>
-<p>问题：</p>
-<p>1、自我介绍一下</p>
-<p>2、当时手写了pooling算子是用什么语言写的，是他自己本身就有的，你来复现的么？</p>
-<p>我是用c++来实现底层的，然后他有个符号函数，最后是在框架上面注册了这个算子，直接用</p>
-<p>3、怎么实现多轮对话的</p>
-<p>我研究生主要是做图像这块的，对nlp就不太熟悉了，只能说个大概，主要是通过在虎扑上面爬取的多轮对话数据作为输入（介绍了一下输入的格式问题），对gpt2和bert进行微调来实现一个感知上下文的操作</p>
-<p>3、对Mobilenet有了解么，他对比别的轻量化模型有什么优势么</p>
-<p>TODO，没特别了解，当时做的时候主要focus在部署这块，对网络的结构了解的不是特别的深入，Mobilenet在网络结构上面有更小的体积和更小的计算量，（怎么做到的？为什么？）</p>
-<p>4、分类和回归的区别</p>
-<p>主要表现在输出数据的不同：分类输出的是离散的，回归输出的是连续的</p>
-<p>目的不同：分类的目的是分类，回归的目的是预测某个值</p>
-<p>算法不同：分类算法的目的是将数据集中的数据分成不同的类别，所以其算法主要是决策树、支持向量机、朴素贝叶斯等机器学习算法；回归算法的目的是最优化模型的参数，所以其算法主要是梯度下降、随机梯度下降、牛顿法等优化算法。</p>
-<p>5、L1和L2正则的区别</p>
-<p>主要是集中在他们的表达式就不同，都是拿来解决过拟合的，L1正则的惩罚项是L1范数，L2正则是L2范数，L1可以让参数稀疏，就是很多参数会趋于0，L2就只能限制他参数的大小，但是可以做到平滑</p>
-<p>6、能介绍一下你活体检测的任务么？除了基于频域的还有什么方法来检测呢？</p>
-<p>主要是一个分类的任务，就是把假图从真图里面分离出来，</p>
-<p>a、有一些方法是针对欺诈痕迹的物理性质来检测，就是像摩尔纹啊这些通过网络去拟合，</p>
-<p>b、还有的是通过图像复原的手段来检测，我将假图复原成真图了，就相当于我的模型已经能学习到这个欺诈模式了（类似于反向输入的话，就能生成负样本了），然后我输入一张图片，看他网络出来的欺诈痕迹的多少来判断是真是假，</p>
-<p>c、还有就是学习一个正样本的特征空间（one class）然后看把负样本映射到特征空间看他们的距离，</p>
-<p>e、当中会用到一些域适应 域泛化的手段，就是我们的训练数据可能和不同的域关联很大、然后就通过一些手段去去除掉域的信息，学习到域无关的一些欺诈信息，</p>
-<p>7、开题了么，课题是什么</p>
-<p>其实还没有开题，但是应该就是这个了，我们主要做不止是针对物理攻击，也针对深度攻击，就是像现在style gan、stable diffusion这些模型生成出来的图片 我们都认为他是假的，目的是将他们检测出来</p>
-<p>8、这些要怎么检测啊</p>
-<p>有的工作是认为图像是有指纹的，我们给图像添加一些指纹可以让他不可被修改（就是经过gan 或者diffusion之后会变得很怪），或者是针对他们物理性质上的区别做一些设计，比如其实gan网络生成的模型在高频上面的细节信息会比真实图像要少之类的</p>
-<p>9、你们学校是在南山的南部还是北部啊</p>
-<p>。。我们是靠蛇口这边，在南部吧？</p>
-<p>10、对空洞卷积有了解么？他的好处和坏处是什么</p>
-<p>空洞卷积就是引入了一个叫扩张率的东西，定义了卷积核的间距，比如一个3<em>3的卷积他的感受野可能能达到5 </em> 5就是在相同参数量的时候增加他的感受野，</p>
-<p>（在VGG的设计中，作者发现了卷积叠加过程中的一个巧妙规律，即7<em>7的卷积层正则等效于3个3</em>3卷积层的叠加，在减少参数的同时，这样的结构更容易学到一个可生成的、表现力良好的特征空间，这也是为什么我们现在看到的网络结构几乎都是3<em>3,5</em>5的卷积层的原因。伴随产生了对于deep cnn中上采样和下采样的一系列问题，一方面是pooling导致的内部数据结构和空间层级化的信息丢失，另一方面，小物体（在一定条件下）经过下采样之后数据会丢失，导致信息无法重建。这个问题在语义分割中尤其显著，而空洞卷积的设计很好的避免了这些问题。）</p>
-<p>11、对我们有什么了解么</p>
-<p>了解的不是很多，你们应该是做跨境电商的吧，这几年势头冲的挺猛好像</p>
-<p>12、你是对工程感兴趣 还是对研究型感兴趣</p>
-<p>我对工程、模型部署这块比较感兴趣</p>
-<p>13、那你是对云端部署有了解么</p>
-<p>我做的都是端侧的部署 没了解过云端的</p>
-<p>14、你实习华为的那两个是怎么回事呀</p>
-<p>哦那个不是实习、是实验室和华为公司的合作，相当于他给我们个任务，我们在使用的时候看看会有什么问题，就给他们提提pr，像我中间就写了个算子啥的，部署那个也是一样</p>
-<p>反问环节：</p>
-<p>1、你们一般是研究多还是业务多</p>
-<p>我们一般做业务多点</p>
-<p>2、那你们是做哪方面的业务多点</p>
-<p>主要是搜图、这块</p>
-<p>3、我看你们jd上有生成的，是什么换衣之类的是么</p>
-<p>是，我们有打算找一个生成的，不过我看你简历上好像没写什么生成的（好像误会我想搞生成了？以后少问这些不相干的问题吧容易被误解感觉。。）</p>
-<p>总结：感受到知识面的匮乏，主要在面试官问的其实都是简历上的东西了，还是有不会的，肯定是不合格的，得抓紧补一补，这个公司其实挺想去的，自己搞砸了吧，不知道结果怎么样，反正得抓紧学习了，TODO：轻量化模型了解、云端部署了解、python基础了解、cv dl基础了解、nlp那个要抓紧补上</p>
-<h1 id="蚂蚁">4.12 蚂蚁</h1>
-<p>简单电话聊了一下，晚上9.直接打电话来了，这个面试官感觉是对我的方向比较了解的，问的问题还值得参考的</p>
-<p>1、自我介绍一下</p>
-<p>研究方向、两篇论文、做过了啥项目</p>
-<p>2、选一个项目详细介绍一下</p>
-<p>选了IJCNN的项目，从motivation（为什么做活体，做活体）讲到选用频域的原因（混叠效应）然后是网络结构（基于resnet）、设计的attention、然后是loss、结果（域内跨域都sota），中间被打断了一下</p>
-<p>3、你这个欺诈痕迹是什么</p>
-<p>就是一些物理特性、像摩尔纹、图片反光、之类的</p>
-<p>4、高精度视频那里有什么欺诈痕迹么</p>
-<p>也会有摩尔纹、高光、反射</p>
-<p>5、有摩尔纹就不叫高精度的视频了吧</p>
-<p>我不知道您说的高精度具体多高哦，就我们用到的最高精度的视频是在OULU数据集里的，大概分辨率是1080p的，但是实际上我们经过图像分解之后他显示在高频里面的摩尔纹也是一样会比较明显的，然后还有一些反射、高亮的区域</p>
-<p>6、在3d面具这块有什么欺诈痕迹呢</p>
-<p>会有一些皮肤纹理上的区别、还有衔接处的不连贯的现象，不过我们的方法主要使用的数据集还是在2d上面的，对3d上没有做测试</p>
-<p>7、听起来你这个工作像是a+b的一个工作，创新点在哪呢？</p>
-<p>我们是第一个基于小波做的，小波比起其他的频域分解更适合这个任务（不会有响铃效应、不需要图像重构，傅里叶变换是到相位和振幅上面，需要频率截断再重构）然后我们设计了跨频域attention的模块去让不同频域的欺诈信息去引导对方学习以及最后的模块</p>
-<p>8、你是对研究感兴趣还是工程感兴趣</p>
-<p>absolutely 部署量化剪枝</p>
-<p>9、你对这块掌握的怎么样呢</p>
-<p>我就是本科那个实习用c++在windows端侧上面进行部署facenet嘛，然后是研究生阶段做的那个华为项目，主要写了些前处理 后处理的东西、完成了这个流程、别的经历的话就没啥了，就靠自己自学</p>
-<p>10、你对现在的这些大模型、预训练有了解么 有什么看法</p>
-<p>了解有限、但是感觉未来是多模态、aigc的时代了，大模型有点降维打击了，算力的变化使得现在大模型能成功，还有nlp的很多范式使用到cv来同样是证明非常有效的，像transformer引出了diffusion，感觉以后就是文本、图像的时代了</p>
-<p>11、想来杭州还是北京</p>
-<p>比较倾向于杭州吧，其实我无所谓，如果你给个广东那我肯定选广东，不然就都差不多对我来说</p>
-<p>12、给你offer你会来不</p>
-<p>absolutely</p>
-<p>13、最近有开题么，准备做什么方向</p>
-<p>想做一个检测stable diffusion stylegan这些生成模型生成出来的图片的检测器</p>
-<p>14、有什么想法么，方便说说不</p>
-<p>目前还在调研学习中，还没有特别的想法</p>
-<p>反问：</p>
-<p>1、你们部门是做什么的</p>
-<p>主要是做一些安全方面的工作，像是图像鉴黄、鉴别恶意攻击、恶意伪造</p>
-<p>2、做工程多点还是落地多点</p>
-<p>主要工程为主，你想做research，有想法也可以做</p>
-<p>3、base哪里</p>
-<p>杭州北京</p>
-<p>总结：</p>
-<p>蚂蚁感觉面试官水平会比之前的高一点，主要感觉还是对我方向比较熟悉？问的比较细，没有算法题、没问基础都问了30分钟感觉这种应该是正常的面试流程长度才对。。TODO：要对部署了解的更多、去挖几个部署项目来，对大模型、与训练不能落下，lh、jl说的有道理，做部署后面也是有可能是对大模型的部署，不可能不了解这个东西的，而且今天也问到了这个相关。</p>
-<h1 id="arcface">4.13 Arcface</h1>
-<p>ps：nmd win10半夜又重启了，这块没保存到，就只记录一下重点吧</p>
-<p>出现的问题：摄像头本地能开，但是在腾讯会议里看不见，还好后面面试官说没关系，但是应该映像会不太好（后面发现可以腾讯会议选择）</p>
-<p>1、自我介绍</p>
-<p>本科、研究生、论文、项目</p>
-<p>2、介绍一下Mobilenet</p>
-<p>主要是深度可分离卷积（PW DW）卷积，计算量减少了（原来的8-9倍（和卷积核大小有关）），还有，前者控制卷积核的数量（通过pw卷积），后者控制了尺寸，激活函数用的是Relu6(应该是因为怕relu激活大比较大的浮点数，在精度只支持float16的机器里面会造成精度损失)</p>
-<p>3、华为部署这边你主要做了什么工作</p>
-<p>前处理后处理转ONNX（下次可以说细点，说前处理做了什么，后处理做了什么）</p>
-<p>4、机器人那个项目做了什么工作，爬了多少数据、有清洗么、</p>
-<p>爬数据、模型微调，爬了虎扑和贴吧的数据（大概十几个g）</p>
-<p>5、实习那个做了啥</p>
-<p>部署到windows上面，完成人脸识别认证的过程</p>
-<p>6、ms精度性能是怎么提升的</p>
-<p>加了loss，重写了算子</p>
-<p>7、 手撕conv，手撕adaptive avg pooling</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">conv_naive</span>(<span class="params">x, out_c, ksize, padding=<span class="number">0</span>, stride=<span class="number">1</span></span>):</span><br><span class="line">    <span class="comment"># x = [b, h, w, in_c]</span></span><br><span class="line">    b, in_c, h, w = x.shape</span><br><span class="line">    kernel = np.random.rand(ksize, ksize, in_c, out_c)</span><br><span class="line">    <span class="keyword">if</span> padding &gt; <span class="number">0</span>:</span><br><span class="line">        pad_x = np.zeros((b, in_c, h+<span class="number">2</span>*padding, w+<span class="number">2</span>*padding))</span><br><span class="line">        pad_x[:,:,padding:-padding,padding:-padding] = x</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        pad_x = x</span><br><span class="line"></span><br><span class="line">    out_h = (h+<span class="number">2</span>*padding-ksize)//stride+<span class="number">1</span></span><br><span class="line">    out_w = (w+<span class="number">2</span>*padding-ksize)//stride+<span class="number">1</span></span><br><span class="line">    out = np.zeros((b, out_c, out_h, out_w))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(out_h):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(out_w):</span><br><span class="line">            roi_x = pad_x[:,:,i*stride:i*stride+ksize,j*stride:j*stride+ksize]</span><br><span class="line">            <span class="comment"># roi_x = [b, in_c, ksize, ksize, in_c] -&gt; [b, in_c, ksize, ksize, out_c]</span></span><br><span class="line">            <span class="comment"># kernel = [ksize, ksize, in_c, out_c]</span></span><br><span class="line">            <span class="comment"># conv = [b, ksize, ksize, in_c, out_c] -&gt; [b, 1, 1, out_c]</span></span><br><span class="line">            conv = np.tile(np.expand_dims(roi_x, -<span class="number">1</span>), (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,out_c))* np.transpose(kernel, axes=(<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>))</span><br><span class="line">            out[:,:,i,j] = np.squeeze(np.<span class="built_in">sum</span>(conv, axis=(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>), keepdims=<span class="literal">True</span>), axis=(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>))</span><br><span class="line">    <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    x = np.random.rand(<span class="number">1</span>,<span class="number">3</span>,<span class="number">10</span>,<span class="number">10</span>)</span><br><span class="line">    out = conv_naive(x, <span class="number">15</span>, ksize=<span class="number">3</span>, padding=<span class="number">1</span>, stride=<span class="number">2</span>)</span><br><span class="line">    <span class="built_in">print</span>(out.shape)</span><br></pre></td></tr></table></figure>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">adaptive_avgpooling</span>(<span class="params">x, xsize, ysize</span>):</span><br><span class="line">    </span><br><span class="line">    B, C, H, W = x.shape</span><br><span class="line">    out = np.zeros((B, C, xsize, ysize))</span><br><span class="line">    lenx =  H-xsize</span><br><span class="line">    leny =  W-xsize</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(xsize):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(ysize):</span><br><span class="line">            out[:,:, i,j] = np.<span class="built_in">sum</span>(x[:,:,i:i+lenx, j:j+leny])/(lenx*leny)</span><br><span class="line">            <span class="keyword">return</span> out</span><br><span class="line">x = np.ones([<span class="number">2</span>, <span class="number">1</span>, <span class="number">5</span>,<span class="number">5</span>])</span><br><span class="line">out =adaptive_avgpooling(x, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(out.shape)</span><br></pre></td></tr></table></figure>
-<p>8、做facenet的时候怎么做人脸检测的。</p>
-<p>开始是用opencv自带的haar检测器，发现效果不行，后面就顺便部署了mtcnn作为人脸检测</p>
-<p>9、懂nms么</p>
-<p>nms（非极值抑制），就是把检测出来的人脸框按置信度排序，把最大的和剩下的所有进行匹配，然后把IOU大于阈值的框去掉，然后再去算剩下的当中阈值最大的那个</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">py_nms</span>(<span class="params">dets, thresh</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Pure Python NMS baseline.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment">#x1、y1、x2、y2、以及score赋值     </span></span><br><span class="line">    x1 = dets[:, <span class="number">0</span>]</span><br><span class="line">    y1 = dets[:, <span class="number">1</span>]</span><br><span class="line">    x2 = dets[:, <span class="number">2</span>]</span><br><span class="line">    y2 = dets[:, <span class="number">3</span>]</span><br><span class="line">    scores = dets[:, <span class="number">4</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment">#每一个候选框的面积     </span></span><br><span class="line">    areas = (x2 - x1 + <span class="number">1</span>) * (y2 - y1 + <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#order是按照score降序排序的     </span></span><br><span class="line">    order = scores.argsort()[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    keep = []</span><br><span class="line">    <span class="keyword">while</span> order.size &gt; <span class="number">0</span>:</span><br><span class="line">        i = order[<span class="number">0</span>]</span><br><span class="line">        keep.append(i)</span><br><span class="line">        <span class="comment">#计算当前概率最大矩形框与其他矩形框的相交框的坐标，会用到numpy的broadcast机制，得到的是向量         </span></span><br><span class="line">        xx1 = np.maximum(x1[i], x1[order[<span class="number">1</span>:]]) <span class="comment"># array([ 50., 210., 430.])</span></span><br><span class="line">        yy1 = np.maximum(y1[i], y1[order[<span class="number">1</span>:]])</span><br><span class="line">        xx2 = np.minimum(x2[i], x2[order[<span class="number">1</span>:]])</span><br><span class="line">        yy2 = np.minimum(y2[i], y2[order[<span class="number">1</span>:]])</span><br><span class="line"></span><br><span class="line">        <span class="comment">#计算相交框的面积,注意矩形框不相交时w或h算出来会是负数，用0代替         </span></span><br><span class="line">        w = np.maximum(<span class="number">0.0</span>, xx2 - xx1 + <span class="number">1</span>)</span><br><span class="line">        h = np.maximum(<span class="number">0.0</span>, yy2 - yy1 + <span class="number">1</span>)</span><br><span class="line">        inter = w * h</span><br><span class="line">        <span class="comment">#计算重叠度IOU：重叠面积/（面积1+面积2-重叠面积）         </span></span><br><span class="line">        ovr = inter / (areas[i] + areas[order[<span class="number">1</span>:]] - inter)</span><br><span class="line"></span><br><span class="line">        <span class="comment">#找到重叠度不高于阈值的矩形框索引         </span></span><br><span class="line">        inds = np.where(ovr &lt;= thresh)[<span class="number">0</span>]</span><br><span class="line">        <span class="comment">#将order序列更新，由于前面得到的矩形框索引要比矩形框在原order序列中的索引小1，所以要把这个1加回来         </span></span><br><span class="line">        order = order[inds + <span class="number">1</span>]</span><br><span class="line">    <span class="keyword">return</span> keep</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    dets = np.array([[<span class="number">30</span>, <span class="number">20</span>, <span class="number">230</span>, <span class="number">200</span>, <span class="number">1</span>], </span><br><span class="line">                     [<span class="number">50</span>, <span class="number">50</span>, <span class="number">260</span>, <span class="number">220</span>, <span class="number">0.9</span>],</span><br><span class="line">                     [<span class="number">210</span>, <span class="number">30</span>, <span class="number">420</span>, <span class="number">50</span>, <span class="number">0.8</span>],</span><br><span class="line">                     [<span class="number">430</span>, <span class="number">280</span>, <span class="number">460</span>, <span class="number">360</span>, <span class="number">0.7</span>]])</span><br><span class="line">    <span class="comment">#dets = dets[::-1]</span></span><br><span class="line">    thresh = <span class="number">0.35</span></span><br><span class="line">    keep_dets = py_nms(dets, thresh)</span><br><span class="line">    <span class="built_in">print</span>(keep_dets)</span><br><span class="line">    <span class="built_in">print</span>(dets[keep_dets])</span><br></pre></td></tr></table></figure>
-<p>总结：面试确实助人成长，上次的mobilenet这次果然也问了，todo：怎么进行数据清理的、检测的东西、算法题再熟练多点</p>
-
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/04/14/%E9%9D%A2%E7%BB%8F/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
