@@ -169,7 +169,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-04-14 13:25:04 / 修改时间：13:25:34" itemprop="dateCreated datePublished" datetime="2023-04-14T13:25:04+08:00">2023-04-14</time>
+      <time title="创建时间：2023-04-14 13:25:04 / 修改时间：13:36:02" itemprop="dateCreated datePublished" datetime="2023-04-14T13:25:04+08:00">2023-04-14</time>
     </span>
 
   
@@ -182,7 +182,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="BatchNormalization"><a href="#BatchNormalization" class="headerlink" title="BatchNormalization"></a>BatchNormalization</h2><h3 id="y-x3D-hat-x-frac-hat-x-mean-sqrt-hat-x-var-varepsilon-gamma-beta"><a href="#y-x3D-hat-x-frac-hat-x-mean-sqrt-hat-x-var-varepsilon-gamma-beta" class="headerlink" title="$$y &#x3D; (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta$$"></a>$$y &#x3D; (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta$$</h3><p>引入缩放和平移变量$$\gamma 和\beta$$可学习，原因是：为了让神经网络自己去学着使用和修改这个扩展参数 gamma, 和 平移参数 β, 这样神经网络就能自己慢慢琢磨出前面的 normalization 操作到底有没有起到优化的作用, 如果没有起到作用, 我就使用 gamma 和 belt 来抵消一些。</p>
+          <h2 id="BatchNormalization"><a href="#BatchNormalization" class="headerlink" title="BatchNormalization"></a>BatchNormalization</h2><h3 id="y-x3D-hat-x-frac-hat-x-mean-sqrt-hat-x-var-varepsilon-gamma-beta"><a href="#y-x3D-hat-x-frac-hat-x-mean-sqrt-hat-x-var-varepsilon-gamma-beta" class="headerlink" title="$$ y &#x3D; (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta $$"></a>$$ y &#x3D; (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta $$</h3><p>引入缩放和平移变量$$\gamma 和\beta$$可学习，原因是：为了让神经网络自己去学着使用和修改这个扩展参数 gamma, 和 平移参数 β, 这样神经网络就能自己慢慢琢磨出前面的 normalization 操作到底有没有起到优化的作用, 如果没有起到作用, 我就使用 gamma 和 belt 来抵消一些。</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010698086/article/details/78046671">bn可以底消cnn里的bias</a></p>
 <p>当Batch Normalization设为训练模式时（通过训练样本学习均值和方差），拒绝任何batch-size为1的情况。至于原因，简单地说就是BN归一化是依靠当前mini-batch的均值和方差进行归一化的，如果batch-size太小，显然所谓的均值和方差并不能代表不同sample之间的差距，各个mini-batch归一化结果的差异会非常大，归一化就没有意义了。另外，当batch-size设为1时，BN的结果近似于IN。</p>
 <h2 id="SVM"><a href="#SVM" class="headerlink" title="SVM"></a>SVM</h2><h3 id="一般推导"><a href="#一般推导" class="headerlink" title="一般推导"></a>一般推导</h3><p>将$D &#x3D; {D_0,D_1}$用直线$y &#x3D; wx+b$分开，目的是找到最佳超平面，即最大间隔把两类样本分开的超平面。</p>
