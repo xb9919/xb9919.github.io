@@ -404,9 +404,11 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h1 id="Preface"><a href="#Preface" class="headerlink" title="Preface"></a>Preface</h1><p>投的时候已经是有点晚了，春节的时候有点浪，刚好碰上了 CVPR 被拒，直接摆烂了当时，没怎么刷题，准备面经，回来已经2月了，陆陆续续刷了一个月题，学了点部署的东西，一直怕准备不充分没敢投，到3月尾的时候发现再不投很多地方就没hc了，就开始先猛冲小厂了。</p>
+          <h1 id="preface">Preface</h1>
+<p>投的时候已经是有点晚了，春节的时候有点浪，刚好碰上了 CVPR 被拒，直接摆烂了当时，没怎么刷题，准备面经，回来已经2月了，陆陆续续刷了一个月题，学了点部署的东西，一直怕准备不充分没敢投，到3月尾的时候发现再不投很多地方就没hc了，就开始先猛冲小厂了。</p>
 <p>没想到小厂也没给面试，投了很多，第一个面的是润博互联，还不是我投的，是boss主动找我的。。看了下简介大概是搞gan和diffusion的？这和我也不相关呀，纯当涨经验了</p>
-<h1 id="润博互联-3-28"><a href="#润博互联-3-28" class="headerlink" title="润博互联 3.28"></a>润博互联 3.28</h1><p>一面电话面35min，面试官人还是不错的，是个小leader面的，但是感觉太久有点久没接触ai前沿。</p>
+<h1 id="润博互联-3.28">润博互联 3.28</h1>
+<p>一面电话面35min，面试官人还是不错的，是个小leader面的，但是感觉太久有点久没接触ai前沿。</p>
 <p>先简单自我介绍了一下自己（引出了自己的课题、论文、做过的项目），</p>
 <p><strong>1、伪造攻击都是平面攻击么</strong></p>
 <p>我们的攻击不都是，有3d面具等，也有</p>
@@ -430,8 +432,10 @@
 <p>主要是想找research然后落地的，其实他们要的感觉是两个人，一个是做其他部署的，一个是aigc的，但是感觉是内部没讨论好aigc到底做不做，还在考虑中，毕竟小公司，但是没考虑好就先来面了就。。。算力属实不行（那还想做research），如果能落地，可以租云服务器，不然只有几台工作站，可能还不如学校。</p>
 <p>总结：小公司确实面的必要性不大了，问的问题和凉经的都不太一样，他们招人主要是看你能不能来的感觉，然后是感觉双方不太契合吧，估计凉</p>
 <p>今天也看到华子的消息，刚好是Mindspore部门的一个人，聊了一下，感觉比较看重4个点：</p>
-<p>1、python&#x2F;c++ 2、项目的独到见解 3、面试开始一两道算法题 4、编译的一些东西</p>
-<h2 id="3-29开始焦虑"><a href="#3-29开始焦虑" class="headerlink" title="3.29开始焦虑"></a>3.29开始焦虑</h2><h1 id="4-7-深信服"><a href="#4-7-深信服" class="headerlink" title="4.7 深信服"></a>4.7 深信服</h1><p>本来不太想面的，因为公司是做网安的，感觉不太匹配，但是现在没面试，就当涨经验了，总共大概花了差不多30分钟吧，感觉还是比较水的，没做算法题</p>
+<p>1、python/c++ 2、项目的独到见解 3、面试开始一两道算法题 4、编译的一些东西</p>
+<h2 id="开始焦虑">3.29开始焦虑</h2>
+<h1 id="深信服">4.7 深信服</h1>
+<p>本来不太想面的，因为公司是做网安的，感觉不太匹配，但是现在没面试，就当涨经验了，总共大概花了差不多30分钟吧，感觉还是比较水的，没做算法题</p>
 <p>上来先简单自我介绍一下，这里主要讲了一下自己的论文，研究方向（我也是人脸安全好像也相关？可惜人不做cv啊），论文情况，还是要做一个ppt，两次的感觉都是没ppt论文讲不清楚，然后是由于是面试的岗是搞nlp的、序列相关的岗位，所以主要问了我简历上面的一个nlp相关的项目</p>
 <p>1、简单介绍一下你的项目</p>
 <p>我们项目是建立一个针对特定领域的生成式的聊天机器人，主要是爬取了虎扑的多轮对话的作为语料库，微调gpt2以及bert来建模的balabala</p>
@@ -459,12 +463,10 @@
 <p>12、字典的值没有限制么？可以是变量么</p>
 <p>ps这个我还真不太记得，当时回答的是可以吧实际上后来试了一下</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">a = <span class="number">1</span></span><br><span class="line">map1 = &#123;<span class="string">&quot;a&quot;</span>:a&#125;</span><br><span class="line"><span class="built_in">print</span>(map1[<span class="string">&quot;a&quot;</span>])</span><br><span class="line">a = <span class="number">2</span></span><br><span class="line"><span class="built_in">print</span>(map1[<span class="string">&quot;a&quot;</span>])</span><br></pre></td></tr></table></figure>
-
 <p>输出都是1，说明建立的时候是可以是变量，但是value创建了就不变了，对a修改不会对dict修改</p>
 <p>13、怎么才能对set进行索引</p>
 <p>想了一会儿，把他转成list也可以吧</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">b = <span class="built_in">set</span>()</span><br><span class="line">b.add(<span class="number">1</span>)</span><br><span class="line">b.add(<span class="number">2</span>)</span><br><span class="line">b = <span class="built_in">list</span>(b)<span class="comment">#不加的话就会报错，因为set是不能索引的</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">2</span>):</span><br><span class="line">    <span class="built_in">print</span>(b[i])</span><br></pre></td></tr></table></figure>
-
 <p>14、我这没啥问题了，假如能过的话什么时候能来，大概能多久</p>
 <p>一周内能到岗</p>
 <p>反问环节</p>
@@ -473,7 +475,8 @@
 <p>3、主要做的是机器学习相关么</p>
 <p>总体感觉就是用dl、ml的方法来识别检测恶意的攻击，主要还是nlp、时间序列相关的吧，部门好像是文件系统管理部啥的？</p>
 <p>总结就是：TODO，准备ppt、看一下python的常用容器、数据结构相关之前光顾着cpp了，dl基础接着看</p>
-<h1 id="4-12-SHEIN"><a href="#4-12-SHEIN" class="headerlink" title="4.12 SHEIN"></a>4.12 SHEIN</h1><p>这家公司我还挺想去的害，面试官挺好的，但是为啥我只面半小时。。没做算法题，感觉要凉，被爆杀了</p>
+<h1 id="shein">4.12 SHEIN</h1>
+<p>这家公司我还挺想去的害，面试官挺好的，但是为啥我只面半小时。。没做算法题，感觉要凉，被爆杀了</p>
 <p>问题：</p>
 <p>1、自我介绍一下</p>
 <p>2、当时手写了pooling算子是用什么语言写的，是他自己本身就有的，你来复现的么？</p>
@@ -501,7 +504,7 @@
 <p>9、你们学校是在南山的南部还是北部啊</p>
 <p>。。我们是靠蛇口这边，在南部吧？</p>
 <p>10、对空洞卷积有了解么？他的好处和坏处是什么</p>
-<p>空洞卷积就是引入了一个叫扩张率的东西，定义了卷积核的间距，比如一个3*3的卷积他的感受野可能能达到5 * 5就是在相同参数量的时候增加他的感受野，</p>
+<p>空洞卷积就是引入了一个叫扩张率的东西，定义了卷积核的间距，比如一个3<em>3的卷积他的感受野可能能达到5 </em> 5就是在相同参数量的时候增加他的感受野，</p>
 <p>（在VGG的设计中，作者发现了卷积叠加过程中的一个巧妙规律，即7<em>7的卷积层正则等效于3个3</em>3卷积层的叠加，在减少参数的同时，这样的结构更容易学到一个可生成的、表现力良好的特征空间，这也是为什么我们现在看到的网络结构几乎都是3<em>3,5</em>5的卷积层的原因。伴随产生了对于deep cnn中上采样和下采样的一系列问题，一方面是pooling导致的内部数据结构和空间层级化的信息丢失，另一方面，小物体（在一定条件下）经过下采样之后数据会丢失，导致信息无法重建。这个问题在语义分割中尤其显著，而空洞卷积的设计很好的避免了这些问题。）</p>
 <p>11、对我们有什么了解么</p>
 <p>了解的不是很多，你们应该是做跨境电商的吧，这几年势头冲的挺猛好像</p>
@@ -519,7 +522,8 @@
 <p>3、我看你们jd上有生成的，是什么换衣之类的是么</p>
 <p>是，我们有打算找一个生成的，不过我看你简历上好像没写什么生成的（好像误会我想搞生成了？以后少问这些不相干的问题吧容易被误解感觉。。）</p>
 <p>总结：感受到知识面的匮乏，主要在面试官问的其实都是简历上的东西了，还是有不会的，肯定是不合格的，得抓紧补一补，这个公司其实挺想去的，自己搞砸了吧，不知道结果怎么样，反正得抓紧学习了，TODO：轻量化模型了解、云端部署了解、python基础了解、cv dl基础了解、nlp那个要抓紧补上</p>
-<h1 id="4-12-蚂蚁"><a href="#4-12-蚂蚁" class="headerlink" title="4.12 蚂蚁"></a>4.12 蚂蚁</h1><p>简单电话聊了一下，晚上9.直接打电话来了，这个面试官感觉是对我的方向比较了解的，问的问题还值得参考的</p>
+<h1 id="蚂蚁">4.12 蚂蚁</h1>
+<p>简单电话聊了一下，晚上9.直接打电话来了，这个面试官感觉是对我的方向比较了解的，问的问题还值得参考的</p>
 <p>1、自我介绍一下</p>
 <p>研究方向、两篇论文、做过了啥项目</p>
 <p>2、选一个项目详细介绍一下</p>
@@ -545,7 +549,7 @@
 <p>12、给你offer你会来不</p>
 <p>absolutely</p>
 <p>13、最近有开题么，准备做什么方向</p>
-<p>想做一个检测stable diffusion\ stylegan这些生成模型生成出来的图片的检测器</p>
+<p>想做一个检测stable diffusion stylegan这些生成模型生成出来的图片的检测器</p>
 <p>14、有什么想法么，方便说说不</p>
 <p>目前还在调研学习中，还没有特别的想法</p>
 <p>反问：</p>
@@ -557,12 +561,13 @@
 <p>杭州北京</p>
 <p>总结：</p>
 <p>蚂蚁感觉面试官水平会比之前的高一点，主要感觉还是对我方向比较熟悉？问的比较细，没有算法题、没问基础都问了30分钟感觉这种应该是正常的面试流程长度才对。。TODO：要对部署了解的更多、去挖几个部署项目来，对大模型、与训练不能落下，lh、jl说的有道理，做部署后面也是有可能是对大模型的部署，不可能不了解这个东西的，而且今天也问到了这个相关。</p>
-<h1 id="4-13-Arcface"><a href="#4-13-Arcface" class="headerlink" title="4.13 Arcface"></a>4.13 Arcface</h1><p>ps：nmd win10半夜又重启了，这块没保存到，就只记录一下重点吧</p>
+<h1 id="arcface">4.13 Arcface</h1>
+<p>ps：nmd win10半夜又重启了，这块没保存到，就只记录一下重点吧</p>
 <p>出现的问题：摄像头本地能开，但是在腾讯会议里看不见，还好后面面试官说没关系，但是应该映像会不太好（后面发现可以腾讯会议选择）</p>
 <p>1、自我介绍</p>
 <p>本科、研究生、论文、项目</p>
 <p>2、介绍一下Mobilenet</p>
-<p>主要是深度可分离卷积（PW DW）卷积，计算量减少了（原来的8-9倍（和卷积核大小有关）），还有\alpha和\beta参数，前者控制卷积核的数量（通过pw卷积），后者控制了尺寸，激活函数用的是Relu6(应该是因为怕relu激活大比较大的浮点数，在精度只支持float16的机器里面会造成精度损失)</p>
+<p>主要是深度可分离卷积（PW DW）卷积，计算量减少了（原来的8-9倍（和卷积核大小有关）），还有，前者控制卷积核的数量（通过pw卷积），后者控制了尺寸，激活函数用的是Relu6(应该是因为怕relu激活大比较大的浮点数，在精度只支持float16的机器里面会造成精度损失)</p>
 <p>3、华为部署这边你主要做了什么工作</p>
 <p>前处理后处理转ONNX（下次可以说细点，说前处理做了什么，后处理做了什么）</p>
 <p>4、机器人那个项目做了什么工作，爬了多少数据、有清洗么、</p>
@@ -573,15 +578,12 @@
 <p>加了loss，重写了算子</p>
 <p>7、 手撕conv，手撕adaptive avg pooling</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">conv_naive</span>(<span class="params">x, out_c, ksize, padding=<span class="number">0</span>, stride=<span class="number">1</span></span>):</span><br><span class="line">    <span class="comment"># x = [b, h, w, in_c]</span></span><br><span class="line">    b, in_c, h, w = x.shape</span><br><span class="line">    kernel = np.random.rand(ksize, ksize, in_c, out_c)</span><br><span class="line">    <span class="keyword">if</span> padding &gt; <span class="number">0</span>:</span><br><span class="line">        pad_x = np.zeros((b, in_c, h+<span class="number">2</span>*padding, w+<span class="number">2</span>*padding))</span><br><span class="line">        pad_x[:,:,padding:-padding,padding:-padding] = x</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        pad_x = x</span><br><span class="line"></span><br><span class="line">    out_h = (h+<span class="number">2</span>*padding-ksize)//stride+<span class="number">1</span></span><br><span class="line">    out_w = (w+<span class="number">2</span>*padding-ksize)//stride+<span class="number">1</span></span><br><span class="line">    out = np.zeros((b, out_c, out_h, out_w))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(out_h):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(out_w):</span><br><span class="line">            roi_x = pad_x[:,:,i*stride:i*stride+ksize,j*stride:j*stride+ksize]</span><br><span class="line">            <span class="comment"># roi_x = [b, in_c, ksize, ksize, in_c] -&gt; [b, in_c, ksize, ksize, out_c]</span></span><br><span class="line">            <span class="comment"># kernel = [ksize, ksize, in_c, out_c]</span></span><br><span class="line">            <span class="comment"># conv = [b, ksize, ksize, in_c, out_c] -&gt; [b, 1, 1, out_c]</span></span><br><span class="line">            conv = np.tile(np.expand_dims(roi_x, -<span class="number">1</span>), (<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,out_c))* np.transpose(kernel, axes=(<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>,<span class="number">3</span>))</span><br><span class="line">            out[:,:,i,j] = np.squeeze(np.<span class="built_in">sum</span>(conv, axis=(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>), keepdims=<span class="literal">True</span>), axis=(<span class="number">1</span>,<span class="number">2</span>,<span class="number">3</span>))</span><br><span class="line">    <span class="keyword">return</span> out</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    x = np.random.rand(<span class="number">1</span>,<span class="number">3</span>,<span class="number">10</span>,<span class="number">10</span>)</span><br><span class="line">    out = conv_naive(x, <span class="number">15</span>, ksize=<span class="number">3</span>, padding=<span class="number">1</span>, stride=<span class="number">2</span>)</span><br><span class="line">    <span class="built_in">print</span>(out.shape)</span><br></pre></td></tr></table></figure>
-
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">adaptive_avgpooling</span>(<span class="params">x, xsize, ysize</span>):</span><br><span class="line">    </span><br><span class="line">    B, C, H, W = x.shape</span><br><span class="line">    out = np.zeros((B, C, xsize, ysize))</span><br><span class="line">    lenx =  H-xsize</span><br><span class="line">    leny =  W-xsize</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(xsize):</span><br><span class="line">        <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(ysize):</span><br><span class="line">            out[:,:, i,j] = np.<span class="built_in">sum</span>(x[:,:,i:i+lenx, j:j+leny])/(lenx*leny)</span><br><span class="line">            <span class="keyword">return</span> out</span><br><span class="line">x = np.ones([<span class="number">2</span>, <span class="number">1</span>, <span class="number">5</span>,<span class="number">5</span>])</span><br><span class="line">out =adaptive_avgpooling(x, <span class="number">2</span>, <span class="number">1</span>)</span><br><span class="line"><span class="built_in">print</span>(out.shape)</span><br></pre></td></tr></table></figure>
-
 <p>8、做facenet的时候怎么做人脸检测的。</p>
 <p>开始是用opencv自带的haar检测器，发现效果不行，后面就顺便部署了mtcnn作为人脸检测</p>
 <p>9、懂nms么</p>
 <p>nms（非极值抑制），就是把检测出来的人脸框按置信度排序，把最大的和剩下的所有进行匹配，然后把IOU大于阈值的框去掉，然后再去算剩下的当中阈值最大的那个</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">py_nms</span>(<span class="params">dets, thresh</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;Pure Python NMS baseline.&quot;&quot;&quot;</span></span><br><span class="line">    <span class="comment">#x1、y1、x2、y2、以及score赋值     </span></span><br><span class="line">    x1 = dets[:, <span class="number">0</span>]</span><br><span class="line">    y1 = dets[:, <span class="number">1</span>]</span><br><span class="line">    x2 = dets[:, <span class="number">2</span>]</span><br><span class="line">    y2 = dets[:, <span class="number">3</span>]</span><br><span class="line">    scores = dets[:, <span class="number">4</span>]</span><br><span class="line"></span><br><span class="line">    <span class="comment">#每一个候选框的面积     </span></span><br><span class="line">    areas = (x2 - x1 + <span class="number">1</span>) * (y2 - y1 + <span class="number">1</span>)</span><br><span class="line">    <span class="comment">#order是按照score降序排序的     </span></span><br><span class="line">    order = scores.argsort()[::-<span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    keep = []</span><br><span class="line">    <span class="keyword">while</span> order.size &gt; <span class="number">0</span>:</span><br><span class="line">        i = order[<span class="number">0</span>]</span><br><span class="line">        keep.append(i)</span><br><span class="line">        <span class="comment">#计算当前概率最大矩形框与其他矩形框的相交框的坐标，会用到numpy的broadcast机制，得到的是向量         </span></span><br><span class="line">        xx1 = np.maximum(x1[i], x1[order[<span class="number">1</span>:]]) <span class="comment"># array([ 50., 210., 430.])</span></span><br><span class="line">        yy1 = np.maximum(y1[i], y1[order[<span class="number">1</span>:]])</span><br><span class="line">        xx2 = np.minimum(x2[i], x2[order[<span class="number">1</span>:]])</span><br><span class="line">        yy2 = np.minimum(y2[i], y2[order[<span class="number">1</span>:]])</span><br><span class="line"></span><br><span class="line">        <span class="comment">#计算相交框的面积,注意矩形框不相交时w或h算出来会是负数，用0代替         </span></span><br><span class="line">        w = np.maximum(<span class="number">0.0</span>, xx2 - xx1 + <span class="number">1</span>)</span><br><span class="line">        h = np.maximum(<span class="number">0.0</span>, yy2 - yy1 + <span class="number">1</span>)</span><br><span class="line">        inter = w * h</span><br><span class="line">        <span class="comment">#计算重叠度IOU：重叠面积/（面积1+面积2-重叠面积）         </span></span><br><span class="line">        ovr = inter / (areas[i] + areas[order[<span class="number">1</span>:]] - inter)</span><br><span class="line"></span><br><span class="line">        <span class="comment">#找到重叠度不高于阈值的矩形框索引         </span></span><br><span class="line">        inds = np.where(ovr &lt;= thresh)[<span class="number">0</span>]</span><br><span class="line">        <span class="comment">#将order序列更新，由于前面得到的矩形框索引要比矩形框在原order序列中的索引小1，所以要把这个1加回来         </span></span><br><span class="line">        order = order[inds + <span class="number">1</span>]</span><br><span class="line">    <span class="keyword">return</span> keep</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&quot;__main__&quot;</span>:</span><br><span class="line">    dets = np.array([[<span class="number">30</span>, <span class="number">20</span>, <span class="number">230</span>, <span class="number">200</span>, <span class="number">1</span>], </span><br><span class="line">                     [<span class="number">50</span>, <span class="number">50</span>, <span class="number">260</span>, <span class="number">220</span>, <span class="number">0.9</span>],</span><br><span class="line">                     [<span class="number">210</span>, <span class="number">30</span>, <span class="number">420</span>, <span class="number">50</span>, <span class="number">0.8</span>],</span><br><span class="line">                     [<span class="number">430</span>, <span class="number">280</span>, <span class="number">460</span>, <span class="number">360</span>, <span class="number">0.7</span>]])</span><br><span class="line">    <span class="comment">#dets = dets[::-1]</span></span><br><span class="line">    thresh = <span class="number">0.35</span></span><br><span class="line">    keep_dets = py_nms(dets, thresh)</span><br><span class="line">    <span class="built_in">print</span>(keep_dets)</span><br><span class="line">    <span class="built_in">print</span>(dets[keep_dets])</span><br></pre></td></tr></table></figure>
-
 <p>总结：面试确实助人成长，上次的mobilenet这次果然也问了，todo：怎么进行数据清理的、检测的东西、算法题再熟练多点</p>
 
       
@@ -652,7 +654,7 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <p>Welcome to XBlog! </p>
+          <p>Welcome to XBlog!</p>
 <p>本站记录一下暑期-秋招-春招的整个过程以及准备的一些东西</p>
 
       
