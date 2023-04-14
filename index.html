@@ -169,7 +169,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-04-14 13:41:45 / 修改时间：13:57:14" itemprop="dateCreated datePublished" datetime="2023-04-14T13:41:45+08:00">2023-04-14</time>
+      <time title="创建时间：2023-04-14 13:41:45 / 修改时间：14:21:56" itemprop="dateCreated datePublished" datetime="2023-04-14T13:41:45+08:00">2023-04-14</time>
     </span>
 
   
@@ -182,74 +182,97 @@
     
     
     <div class="post-body" itemprop="articleBody">
-          <h2 id="BatchNormalization"><a href="#BatchNormalization" class="headerlink" title="BatchNormalization"></a>BatchNormalization</h2><h3 id="y-x3D-hat-x-frac-hat-x-mean-sqrt-hat-x-var-varepsilon-gamma-beta"><a href="#y-x3D-hat-x-frac-hat-x-mean-sqrt-hat-x-var-varepsilon-gamma-beta" class="headerlink" title="$$ y &#x3D; (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta $$"></a>$$ y &#x3D; (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta $$</h3><p>引入缩放和平移变量$$\gamma 和\beta$$可学习，原因是：为了让神经网络自己去学着使用和修改这个扩展参数 gamma, 和 平移参数 β, 这样神经网络就能自己慢慢琢磨出前面的 normalization 操作到底有没有起到优化的作用, 如果没有起到作用, 我就使用 gamma 和 belt 来抵消一些。</p>
+          <h2 id="batchnormalization">BatchNormalization</h2>
+<h3 id="y-hat-x---frachat-x_meansqrthat-x_var-varepsilon-gamma-beta"><span class="math display">\[ y = (\hat x - \frac{\hat x_{mean}}{\sqrt{(\hat x_{var}}  + \varepsilon)}) * \gamma + \beta \]</span></h3>
+<p>引入缩放和平移变量<span class="math display">\[\gamma 和\beta\]</span>可学习，原因是：为了让神经网络自己去学着使用和修改这个扩展参数 gamma, 和 平移参数 β, 这样神经网络就能自己慢慢琢磨出前面的 normalization 操作到底有没有起到优化的作用, 如果没有起到作用, 我就使用 gamma 和 belt 来抵消一些。</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010698086/article/details/78046671">bn可以底消cnn里的bias</a></p>
 <p>当Batch Normalization设为训练模式时（通过训练样本学习均值和方差），拒绝任何batch-size为1的情况。至于原因，简单地说就是BN归一化是依靠当前mini-batch的均值和方差进行归一化的，如果batch-size太小，显然所谓的均值和方差并不能代表不同sample之间的差距，各个mini-batch归一化结果的差异会非常大，归一化就没有意义了。另外，当batch-size设为1时，BN的结果近似于IN。</p>
-<h2 id="SVM"><a href="#SVM" class="headerlink" title="SVM"></a>SVM</h2><h3 id="一般推导"><a href="#一般推导" class="headerlink" title="一般推导"></a>一般推导</h3><p>将$D &#x3D; {D_0,D_1}$用直线$y &#x3D; wx+b$分开，目的是找到最佳超平面，即最大间隔把两类样本分开的超平面。</p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/svm.png" alt="svm"></p>
+<h2 id="svm">SVM</h2>
+<h3 id="一般推导">一般推导</h3>
+<p>将<span class="math inline">\(D = {D_0,D_1}\)</span>用直线<span class="math inline">\(y = wx+b\)</span>分开，目的是找到最佳超平面，即最大间隔把两类样本分开的超平面。</p>
+<figure>
+<img src="./cv基础/svm.png" alt="svm" /><figcaption aria-hidden="true">svm</figcaption>
+</figure>
 <p><strong>支持向量：</strong>样本中距离超平面最近的一些点。</p>
-<p>二维点到直线距离：$\frac{Ax+By+C}{\sqrt{A^2+B^2}}$ ，n维度是：$\frac{w^Tx+b}{||w||}$ ,所以有：</p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/eq1.jpg" alt="eq1"></p>
+<p>二维点到直线距离：<span class="math inline">\(\frac{Ax+By+C}{\sqrt{A^2+B^2}}\)</span> ，n维度是：<span class="math inline">\(\frac{w^Tx+b}{||w||}\)</span> ,所以有：</p>
+<figure>
+<img src="cv基础/eq1.jpg" alt="eq1" /><figcaption aria-hidden="true">eq1</figcaption>
+</figure>
 <p>即</p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/eq2.png#pic_center" alt="eq2"></p>
-<p>即$\frac{y(w^Tx+b)}{||w||d}&gt;&#x3D;1$  </p>
+<figure>
+<img src="cv基础/eq2.png#pic_center" alt="eq2" /><figcaption aria-hidden="true">eq2</figcaption>
+</figure>
+<p>即<span class="math inline">\(\frac{y(w^Tx+b)}{||w||d}&gt;=1\)</span></p>
 <p>所以最大化超平面间隔是:</p>
-<p>$max{2\times \frac{|w^Tx+b|}{||w||}}&#x3D;&#x3D;&#x3D;&#x3D;&gt;max{2\times \frac{y(w^Tx+b)}{||w||}}&#x3D;&#x3D;&#x3D;&#x3D;&gt;max{2\times \frac{1}{||w||}}$ </p>
-<p>后面的转换是假设$||w||d&#x3D;1$，<strong>为什么可行？</strong></p>
-<p>是因为超平面是$w^Tx+b&#x3D;0$，支持向量代表的直线是$w^Tx+b&#x3D;c$可以变成$w_1^Tx+b_1&#x3D;1$，超平面是$w_1^Tx+b_1&#x3D;0$，只是换了个下标而已，优化目标一样的。</p>
+<p><span class="math inline">\(max\{2\times \frac{|w^Tx+b|}{||w||}\}====&gt;max\{2\times \frac{y(w^Tx+b)}{||w||}\}====&gt;max\{2\times \frac{1}{||w||}\}\)</span></p>
+<p>后面的转换是假设<span class="math inline">\(||w||d=1\)</span>，<strong>为什么可行？</strong></p>
+<p>是因为超平面是<span class="math inline">\(w^Tx+b=0\)</span>，支持向量代表的直线是<span class="math inline">\(w^Tx+b=c\)</span>可以变成<span class="math inline">\(w_1^Tx+b_1=1\)</span>，超平面是<span class="math inline">\(w_1^Tx+b_1=0\)</span>，只是换了个下标而已，优化目标一样的。</p>
 <p>所以最后问题转换为：</p>
-<p>$min f(w) &#x3D;  0.5\cdot||w||^2$   $s.t. y_i(w^Txi+b)\geq 1&#x3D;&#x3D;&gt;g_i(w)&#x3D;1-y_i(w^Txi+b)\leq0$</p>
-<p>引入松弛变量$a_i^2$ 则$h_i(w,a_i)&#x3D;g_i(w)+a_i^2&#x3D;0$ </p>
+<p><span class="math inline">\(min f(w) = 0.5\cdot||w||^2\)</span> <span class="math inline">\(s.t. y_i(w^Txi+b)\geq 1==&gt;g_i(w)=1-y_i(w^Txi+b)\leq0\)</span></p>
+<p>引入松弛变量<span class="math inline">\(a_i^2\)</span> 则<span class="math inline">\(h_i(w,a_i)=g_i(w)+a_i^2=0\)</span></p>
 <p>此时得到拉格朗日函数：</p>
-<p>$L(w,\lambda,a)&#x3D;f(w)+\sum_{i&#x3D;1}^n\lambda_ih_i(w)&#x3D;f(w)+\sum_{i&#x3D;1}^n\lambda_i(g_i(w)+a_i^2)) $     $\lambda_i\geq0$ </p>
+<p>$L(w,,a)=f(w)+_{i=1}<sup>n<em>ih_i(w)=f(w)+</em>{i=1}</sup>n_i(g_i(w)+a_i^2)) $ <span class="math inline">\(\lambda_i\geq0\)</span></p>
 <p>得:</p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/eq3.png" alt="eq3"></p>
-<p>讨论$\lambda_i a_i&#x3D;0可得$ ：</p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/eq4.png" alt="eq4"></p>
-<p>以上便是不等式约束优化优化问题的 <strong>KKT(Karush-Kuhn-Tucker) 条件</strong>， $\lambda_i$ 称为 KKT 乘子。</p>
-<p>而支持向量$g_i(w)&#x3D;0$ 所以$\lambda_i\geq0$即可。</p>
-<p>所以$min L(w,\lambda,a)$可转成$minL(w,\lambda,a) &#x3D; f(w)\ + \sum_{i&#x3D;1}^n\lambda_ig_i(w)+\sum_{i&#x3D;1}^n\lambda_ia_i^2$</p>
-<p>而$\sum_{i&#x3D;1}^n\lambda_ia_i^2\geq0$</p>
-<h4 id="这里的推导比较好看懂"><a href="#这里的推导比较好看懂" class="headerlink" title="这里的推导比较好看懂"></a>这里的推导比较好看懂</h4><p>所以问题最终转为$minL(w,\lambda) &#x3D; f(w)\ + \sum_{i&#x3D;1}^n\lambda_ig_i(w)$</p>
-<p>$L(w,\lambda,a)&#x3D;1&#x2F;2||w||^2+\sum_{i&#x3D;1}^n\lambda_i(g_i(w)+a_i^2) $ </p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/eq5.png" alt="eq5"></p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/eq6.png" alt="eq6"></p>
+<figure>
+<img src="cv基础/eq3.png" alt="eq3" /><figcaption aria-hidden="true">eq3</figcaption>
+</figure>
+<p>讨论<span class="math inline">\(\lambda_i a_i=0可得\)</span> ：</p>
+<figure>
+<img src="cv基础/eq4.png" alt="eq4" /><figcaption aria-hidden="true">eq4</figcaption>
+</figure>
+<p>以上便是不等式约束优化优化问题的 <strong>KKT(Karush-Kuhn-Tucker) 条件</strong>， <span class="math inline">\(\lambda_i\)</span> 称为 KKT 乘子。</p>
+<p>而支持向量<span class="math inline">\(g_i(w)=0\)</span> 所以<span class="math inline">\(\lambda_i\geq0\)</span>即可。</p>
+<p>所以<span class="math inline">\(min L(w,\lambda,a)\)</span>可转成<span class="math inline">\(minL(w,\lambda,a) = f(w)\ + \sum_{i=1}^n\lambda_ig_i(w)+\sum_{i=1}^n\lambda_ia_i^2\)</span></p>
+<p>而<span class="math inline">\(\sum_{i=1}^n\lambda_ia_i^2\geq0\)</span></p>
+<h4 id="这里的推导比较好看懂">这里的推导比较好看懂</h4>
+<p>所以问题最终转为<span class="math inline">\(minL(w,\lambda) = f(w)\ + \sum_{i=1}^n\lambda_ig_i(w)\)</span></p>
+<p>$L(w,,a)=1/2||w||^2+_{i=1}^n_i(g_i(w)+a_i^2) $</p>
+<figure>
+<img src="cv基础/eq5.png" alt="eq5" /><figcaption aria-hidden="true">eq5</figcaption>
+</figure>
+<figure>
+<img src="cv基础/eq6.png" alt="eq6" /><figcaption aria-hidden="true">eq6</figcaption>
+</figure>
 <p>此时只需要考虑支持向量就可以了，减少计算量</p>
 <p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.clickhttps://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.click">视频推导</a></p>
-<h3 id="软间隔"><a href="#软间隔" class="headerlink" title="软间隔"></a>软间隔</h3><p>求解上面的对偶问题的一个著名算法是 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Sequential_minimal_optimization">SMO (Sequential Minimal Optimization)</a>，这里不展开叙述。</p>
-<p>同时上面是基于数据可以分隔的假设进行的，若不可分隔，那可以设置一个惩罚项：$\xi_i &#x3D; max{1-y_i(w\cdot x_i+b),0}$</p>
-<p>则原来的优化问题则转换成了$min f(w) &#x3D;  0.5\cdot||w||^2+C\sum_{i&#x3D;1}^m\xi_i$   $s.t. y_i(w^Txi+b)\geq 1$</p>
-<p>$\xi$是<strong>折页损失（hinge loss）</strong></p>
-<h3 id="核方法："><a href="#核方法：" class="headerlink" title="核方法："></a>核方法：</h3><p>样本是非线性可分的时候，可以采用核技巧（kernel trick），将样本映射至高维空间，变成高维空间中线性可分的即可。考虑一个映射函数$\phi(x)$，将 <em>d</em> 维特征映射至 <em>m</em> 维：</p>
+<h3 id="软间隔">软间隔</h3>
+<p>求解上面的对偶问题的一个著名算法是 <a target="_blank" rel="noopener" href="https://en.wikipedia.org/wiki/Sequential_minimal_optimization">SMO (Sequential Minimal Optimization)</a>，这里不展开叙述。</p>
+<p>同时上面是基于数据可以分隔的假设进行的，若不可分隔，那可以设置一个惩罚项：<span class="math inline">\(\xi_i = max\{1-y_i(w\cdot x_i+b),0\}\)</span></p>
+<p>则原来的优化问题则转换成了<span class="math inline">\(min f(w) = 0.5\cdot||w||^2+C\sum_{i=1}^m\xi_i\)</span> <span class="math inline">\(s.t. y_i(w^Txi+b)\geq 1\)</span></p>
+<p><span class="math inline">\(\xi\)</span>是<strong>折页损失（hinge loss）</strong></p>
+<h3 id="核方法">核方法：</h3>
+<p>样本是非线性可分的时候，可以采用核技巧（kernel trick），将样本映射至高维空间，变成高维空间中线性可分的即可。考虑一个映射函数<span class="math inline">\(\phi(x)\)</span>，将 <em>d</em> 维特征映射至 <em>m</em> 维：</p>
 <p>核技巧的思想是用核函数 <em>K</em> 避免在高维 <em>m</em> 空间中计算映射函数的内积，这样能够极大简化运算。</p>
 <p><em>K</em> 能够满足成为核函数的充分必要条件是 <em>K</em> 是半正定（positive semidefinite）</p>
 <p>常用核函数：多项式核函数、高斯核函数、线性核函数。</p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/kernel.png" alt="kernal"></p>
-<h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><h4 id="优点"><a href="#优点" class="headerlink" title="优点"></a>优点</h4><p>1、可解释</p>
+<figure>
+<img src="cv基础/kernel.png" alt="kernal" /><figcaption aria-hidden="true">kernal</figcaption>
+</figure>
+<h3 id="优缺点">优缺点</h3>
+<h4 id="优点">优点</h4>
+<p>1、可解释</p>
 <p>2、能找出对任务至关重要的关键样本（即：支持向量）；</p>
 <p>3、可以处理非线性的问题</p>
 <p>4、最终决策函数只由少数的支持向量所确定，计算的复杂性取决于支持向量的数目，而不是样本空间的维数</p>
-<h4 id="缺点"><a href="#缺点" class="headerlink" title="缺点"></a>缺点</h4><p>1、训练时间长。当采用 SMO 算法时，由于每次都需要挑选一对参数，因此时间复杂度为$O(n^2)$</p>
-<p>2、使用核函数时，空间复杂度也是$O(n^2)$</p>
+<h4 id="缺点">缺点</h4>
+<p>1、训练时间长。当采用 SMO 算法时，由于每次都需要挑选一对参数，因此时间复杂度为<span class="math inline">\(O(n^2)\)</span></p>
+<p>2、使用核函数时，空间复杂度也是<span class="math inline">\(O(n^2)\)</span></p>
 <p>3、sv数量大时预测计算复杂度高</p>
 <p>因此支持向量机目前只适合小批量样本的任务，无法适应百万甚至上亿样本的任务。</p>
-<h3 id="代码实现"><a href="#代码实现" class="headerlink" title="代码实现"></a>代码实现</h3><figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sklearn.svm.SVC(C=1.0, kernel=&#x27;rbf&#x27;, degree=3, gamma=&#x27;auto&#x27;, coef0=0.0, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape=None,random_state=None)</span><br></pre></td></tr></table></figure>
-
+<h3 id="代码实现">代码实现</h3>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sklearn.svm.SVC(C=1.0, kernel=&#x27;rbf&#x27;, degree=3, gamma=&#x27;auto&#x27;, coef0=0.0, shrinking=True, probability=False, tol=0.001, cache_size=200, class_weight=None, verbose=False, max_iter=-1, decision_function_shape=None,random_state=None)</span><br></pre></td></tr></table></figure>
 <p><code>degree:kernel是poly的时候的指数</code> <code>C：惩罚项的权重</code> <code>gamma:核函数的参数，默认是1/n_features</code></p>
 <p><code>coef0:核函数的常数项。对于‘poly’和 ‘sigmoid’有用。</code></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm</span><br><span class="line">X = [[<span class="number">0</span>, <span class="number">0</span>], [<span class="number">1</span>, <span class="number">1</span>]]</span><br><span class="line">y = [<span class="number">0</span>, <span class="number">1</span>]</span><br><span class="line">clf = svm.SVC()</span><br><span class="line">clf.fit(X, y)</span><br><span class="line"><span class="comment"># Create SVM classification object</span></span><br></pre></td></tr></table></figure>
-
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> matplotlib.pyplot <span class="keyword">as</span> plt</span><br><span class="line"><span class="keyword">from</span> sklearn <span class="keyword">import</span> svm, datasets</span><br><span class="line"><span class="comment"># 引用 iris 数据集</span></span><br><span class="line">iris = datasets.load_iris()</span><br><span class="line">X = iris.data[:, :<span class="number">2</span>] <span class="comment"># 选取前两列作为X参数</span></span><br><span class="line">y = iris.target <span class="comment"># 采集标签作为y参数</span></span><br><span class="line">C = <span class="number">1.0</span> <span class="comment"># SVM regularization parameter</span></span><br><span class="line"></span><br><span class="line"><span class="comment"># 将所得参数进行模型训练</span></span><br><span class="line">svc = svm.SVC(kernel=<span class="string">&#x27;linear&#x27;</span>, C=<span class="number">1</span>, gamma=<span class="string">&#x27;auto&#x27;</span>).fit(X, y)</span><br><span class="line"><span class="comment"># 建图</span></span><br><span class="line">x_min, x_max = X[:, <span class="number">0</span>].<span class="built_in">min</span>() - <span class="number">1</span>, X[:, <span class="number">0</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line">y_min, y_max = X[:, <span class="number">1</span>].<span class="built_in">min</span>() - <span class="number">1</span>, X[:, <span class="number">1</span>].<span class="built_in">max</span>() + <span class="number">1</span></span><br><span class="line">h = (x_max / x_min)/<span class="number">100</span></span><br><span class="line">xx, yy = np.meshgrid(np.arange(x_min, x_max, h),</span><br><span class="line"> np.arange(y_min, y_max, h))<span class="comment"># X, Y = np.meshgrid(x, y) 代表的是将x中每一个数据和y中每一个数据组合生成很多点,然后将这些点的x坐标放入到X中,y坐标放入Y中,并且相应位置是对应的</span></span><br><span class="line"></span><br><span class="line">plt.subplot(<span class="number">1</span>, <span class="number">1</span>, <span class="number">1</span>) <span class="comment"># 将显示界面分割成1*1 图形标号为1的网格</span></span><br><span class="line">Z = svc.predict(np.c_[xx.ravel(), yy.ravel()]) <span class="comment"># np.c按行连接两个矩阵,但变量为两个数组，按列连接 ravel：将数组拉成一维</span></span><br><span class="line">Z = Z.reshape(xx.shape)<span class="comment"># 重新构造行列</span></span><br><span class="line">plt.contourf(xx, yy, Z, cmap=plt.cm.Paired, alpha=<span class="number">0.8</span>)<span class="comment"># 绘制等高线</span></span><br><span class="line">plt.scatter(X[:, <span class="number">0</span>], X[:, <span class="number">1</span>], c=y, cmap=plt.cm.Paired) <span class="comment"># 生成一个scatter散点图。</span></span><br><span class="line">plt.xlabel(<span class="string">&#x27;Sepal length&#x27;</span>) <span class="comment"># x轴标签</span></span><br><span class="line">plt.ylabel(<span class="string">&#x27;Sepal width&#x27;</span>) <span class="comment"># y轴标签</span></span><br><span class="line">plt.xlim(xx.<span class="built_in">min</span>(), xx.<span class="built_in">max</span>()) <span class="comment"># 设置x轴的数值显示范围</span></span><br><span class="line">plt.title(<span class="string">&#x27;SVC with linear kernel&#x27;</span>) <span class="comment"># 设置显示图像的名称</span></span><br><span class="line">plt.savefig(<span class="string">&#x27;./test1.png&#x27;</span>) <span class="comment">#存储图像</span></span><br><span class="line">plt.show() <span class="comment"># 显示</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-
-
-
 <p>参考：</p>
 <p><a target="_blank" rel="noopener" href="https://blog.imfing.com/2020/06/svm-explained/">支持向量机 (SVM) 的解析与推导</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/77750026">【机器学习】支持向量机 <em>SVM</em>（非常详细）</a></p>
 <p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/35755150">推导 | SVM详解（1）SVM基本型</a></p>
 <p><a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.clickhttps://www.bilibili.com/video/BV13r4y1z7AG/?spm_id_from=333.1007.top_right_bar_window_history.content.click">视频推导</a></p>
-<h2 id="插值算法"><a href="#插值算法" class="headerlink" title="插值算法"></a>插值算法</h2><p>插值算法是一种用于从给定数据点中估计未知数据点值的技术。以下是一些常用的插值算法：</p>
-<ol>
+<h2 id="插值算法">插值算法</h2>
+<p>插值算法是一种用于从给定数据点中估计未知数据点值的技术。以下是一些常用的插值算法：</p>
+<ol type="1">
 <li>线性插值：在两个已知数据点之间使用一条直线来估计未知数据点的值。这是最简单的插值方法之一，但可能不足以捕捉数据中的复杂性。</li>
 <li>多项式插值：在给定数据点的基础上构建一个多项式函数来估计未知数据点的值。这可以通过拉格朗日插值或牛顿插值来完成。</li>
 <li>样条插值：将数据点分段，每一段用一个多项式函数来估计未知数据点的值。这种方法可以更好地适应数据的变化，并且可以控制估计的平滑度。</li>
@@ -259,30 +282,29 @@
 <li>逆距离加权插值：根据已知数据点的距离对未知数据点进行加权平均。距离越近的数据点的权重越大，距离越远的数据点的权重越小。</li>
 <li>自然邻域插值：根据已知数据点周围的最近邻数据点来估计未知数据点的值。这种方法可以更好地处理数据点密度不均匀的情况。</li>
 </ol>
-<p>我常见的是线性(linear Interpolation)、多项式(poly&#x2F;cubic是三次)、最近邻插值(nearest)</p>
-<h2 id="topk准确率"><a href="#topk准确率" class="headerlink" title="topk准确率"></a>topk准确率</h2><p>以imagenet为例，计算imagenet上的top1准确率的代码为：</p>
+<p>我常见的是线性(linear Interpolation)、多项式(poly/cubic是三次)、最近邻插值(nearest)</p>
+<h2 id="topk准确率">topk准确率</h2>
+<p>以imagenet为例，计算imagenet上的top1准确率的代码为：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils.data <span class="keyword">import</span> Dataloader</span><br><span class="line">transform = transforms.Compose([transforms.Resize(<span class="number">256</span>), transforms.CenterCrop(<span class="number">224</span>)</span><br><span class="line">                               , transforms.ToTensor(), transforms.Normalize(mean = [<span class="number">0.485</span>, <span class="number">0.456</span>, <span class="number">0.406</span>], std =[<span class="number">0.229</span>, <span class="number">0.224</span>, <span class="number">0.225</span>])])</span><br><span class="line"></span><br><span class="line">testset = torchvision.datasets.ImageNet(root=<span class="string">&#x27;&#x27;</span>, split=<span class="string">&#x27;val&#x27;</span>, transform = transform)</span><br><span class="line">test_loader = Dataloader(testset, bath_size=<span class="number">32</span>, shuffle = false, num_workers=<span class="number">1</span>)</span><br><span class="line">model = ResNet50()</span><br><span class="line">state_dict = torch.load(<span class="string">&quot;./resnet50.pth&quot;</span>)</span><br><span class="line">model.load_state_dic(state_dict)</span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line">total=correct=<span class="number">0</span></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    <span class="keyword">for</span> images, labels <span class="keyword">in</span> test_loader:</span><br><span class="line">        outputs = model(images)</span><br><span class="line">        _, predicts = torch.<span class="built_in">max</span>(outputs.data, <span class="number">1</span>)</span><br><span class="line">        total +=labels.size(<span class="number">0</span>)</span><br><span class="line">        correct += (labels==predicts).<span class="built_in">sum</span>().item()</span><br><span class="line">        </span><br><span class="line">top1 = correct/total</span><br></pre></td></tr></table></figure>
-
 <p>topk:</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> Dataloader</span><br><span class="line"></span><br><span class="line">transform = transforms.Compose([transforms.Resize(<span class="number">256</span>), transforms.CenterCrop(<span class="number">224</span>), transforms.ToTensor(),</span><br><span class="line">                               transforms.Normalize(mean = [], std = [])])</span><br><span class="line">dataset = torch.utils.ImageNet(<span class="string">&quot;path&quot;</span>, split=<span class="string">&#x27;val&#x27;</span>, transform=transform)</span><br><span class="line">test_loader = Dataloader(dataset, batch_size=<span class="number">32</span>, num_worksers=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">state_dict = torch.load(<span class="string">&quot;./model.pth&quot;</span>)</span><br><span class="line">model = resnet.load_state_dict(state_dict)</span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line">topk = [<span class="number">1</span>, <span class="number">5</span>]</span><br><span class="line"><span class="keyword">for</span> inputs, labels <span class="keyword">in</span> test_loader:</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    </span><br><span class="line">    maxk = <span class="built_in">max</span>(topk)</span><br><span class="line">    _, predicts = outputs.topk(maxk, <span class="number">1</span>, <span class="literal">True</span>, <span class="literal">True</span>)	<span class="comment"># 在维度1上获取top maxk 返回最大值以及排序,结果是维度为[bs, topk]所以要先转置成[topk, batchsize]</span></span><br><span class="line">    predicts = predicts.t() <span class="comment">#转置</span></span><br><span class="line">    correct = predicts.eq(labels.view(<span class="number">1</span>, -<span class="number">1</span>)).expand_as(predicts)</span><br><span class="line">    <span class="comment"># labels.view(1, -1)把labels从(bs,1)转成(1, bs)这是为了让labels的形状在转置后与predicts的形状匹配</span></span><br><span class="line">    res = []</span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> topk:</span><br><span class="line">    	<span class="comment">#correct_k = correct[:k].view(-1).float().sum(0, keepdim = True) 这里有问题，因为pytorch 转置、permute后内存是不连续的，不能直接view 要先.contiguous</span></span><br><span class="line">        correct[:k].contiguous().view(-<span class="number">1</span>).<span class="built_in">float</span>().<span class="built_in">sum</span>(<span class="number">0</span>, keepdim = <span class="literal">True</span>)</span><br><span class="line">        res.append(correct_k.mul_(<span class="number">100.0</span> / batch_size))<span class="comment">#一个batch的topk</span></span><br><span class="line">    <span class="keyword">return</span> res    </span><br></pre></td></tr></table></figure>
-
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torchvision</span><br><span class="line"><span class="keyword">from</span> torchvision <span class="keyword">import</span> transforms</span><br><span class="line"><span class="keyword">from</span> torch.utils <span class="keyword">import</span> Dataloader</span><br><span class="line"></span><br><span class="line">transform = transforms.Compose([transforms.Resize(<span class="number">256</span>), transforms.CenterCrop(<span class="number">224</span>), transforms.ToTensor(),</span><br><span class="line">                               transforms.Normalize(mean = [], std = [])])</span><br><span class="line">dataset = torch.utils.ImageNet(<span class="string">&quot;path&quot;</span>, split=<span class="string">&#x27;val&#x27;</span>, transform=transform)</span><br><span class="line">test_loader = Dataloader(dataset, batch_size=<span class="number">32</span>, num_worksers=<span class="number">8</span>)</span><br><span class="line"></span><br><span class="line">state_dict = torch.load(<span class="string">&quot;./model.pth&quot;</span>)</span><br><span class="line">model = resnet.load_state_dict(state_dict)</span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line">topk = [<span class="number">1</span>, <span class="number">5</span>]</span><br><span class="line"><span class="keyword">for</span> inputs, labels <span class="keyword">in</span> test_loader:</span><br><span class="line">    outputs = model(inputs)</span><br><span class="line">    _, pred = outputs.topk(<span class="built_in">max</span>(topk), <span class="number">1</span>, <span class="literal">True</span>, <span class="literal">True</span>)</span><br><span class="line">    pred = pred.t()<span class="comment">#[topk, bs]</span></span><br><span class="line">    corrects = pred.eq(labels.view(<span class="number">1</span>,-<span class="number">1</span>)).expand_as(pred)</span><br><span class="line">    </span><br><span class="line">    res = []<span class="comment">#一个batch的topk</span></span><br><span class="line">    <span class="keyword">for</span> k <span class="keyword">in</span> topk:</span><br><span class="line">        correct_k = correct[:k].contiguous().view(-<span class="number">1</span>).<span class="built_in">float</span>().<span class="built_in">sum</span>(<span class="number">0</span>, keepdim=<span class="literal">True</span>)</span><br><span class="line">        res.append(correct_k.mul_(<span class="number">100</span>/batch_size))</span><br><span class="line">    </span><br></pre></td></tr></table></figure>
-
-<h2 id="优化器"><a href="#优化器" class="headerlink" title="优化器"></a>优化器</h2><p><strong>BGD</strong>: 最小化损失函数的过程中，<strong>需要</strong>不断反复的更新weights使得误差函数减小，<strong>每一次的参数更新都用到了所有的训练数据</strong></p>
+<h2 id="优化器">优化器</h2>
+<p><strong>BGD</strong>: 最小化损失函数的过程中，<strong>需要</strong>不断反复的更新weights使得误差函数减小，<strong>每一次的参数更新都用到了所有的训练数据</strong></p>
 <p><strong>SGD:</strong> 随机梯度下降，通过每个样本来迭代更新一次，<strong>SGD伴随的一个问题是噪音较BGD要多，使得SGD并不是每次迭代都向着整体最优化方向。</strong>一个epoch过程只有一次迭代和一个更新数据。</p>
-<p>就是求导，然后a &#x3D; a-t*f(a)，其中t是学习率，fa是对a的偏导数，缺点：下降慢。容易震荡。</p>
+<p>就是求导，然后a = a-t*f(a)，其中t是学习率，fa是对a的偏导数，缺点：下降慢。容易震荡。</p>
 <p><strong>SGDM</strong>： 加入了惯性，就是梯度下降的时候，如果梯度比较大，就多下降一点，引入了一阶动量。</p>
-<p>$$v_t &#x3D; \alpha_1 \cdot v_{t-1}+\eta_t\nabla(W_t, X, Y) $$其中$v_t$是加速度，$\alpha$是动力大小，一般是0.9</p>
-<p>然后参数更新就是$W_t &#x3D; W_{t-1}-v_t$</p>
-<p>其中$\nabla(W_t, X, Y) $是SGD算的梯度，t时刻下降的方向不仅由梯度决定，也有此前累积的下降方向决定，</p>
-<p><strong>SGD with Nesterov Acceleration （NAG）</strong> ：对于 SGDM 在时刻 t 的主要下降方向是由累积动量决定的，自己的梯度方向说了也不算，那与其看当前梯度方向，不如先看看如果跟着累积动量走了一步， NAG 不计算当前位置的梯度方向，而是计算如果按累计动量走了的话，梯度下降的方向，然后用下一个点的梯度方向，与累计动量结合，即gt算的不是当前点的梯度，而是$(w_t - \alpha\cdot\nabla(W_t-\alpha v_{t-1}))$ 位置的梯度</p>
+<p><span class="math display">\[v_t = \alpha_1 \cdot v_{t-1}+\eta_t\nabla(W_t, X, Y) \]</span>其中<span class="math inline">\(v_t\)</span>是加速度，<span class="math inline">\(\alpha\)</span>是动力大小，一般是0.9</p>
+<p>然后参数更新就是<span class="math inline">\(W_t = W_{t-1}-v_t\)</span></p>
+<p>其中$(W_t, X, Y) $是SGD算的梯度，t时刻下降的方向不仅由梯度决定，也有此前累积的下降方向决定，</p>
+<p><strong>SGD with Nesterov Acceleration （NAG）</strong> ：对于 SGDM 在时刻 t 的主要下降方向是由累积动量决定的，自己的梯度方向说了也不算，那与其看当前梯度方向，不如先看看如果跟着累积动量走了一步， NAG 不计算当前位置的梯度方向，而是计算如果按累计动量走了的话，梯度下降的方向，然后用下一个点的梯度方向，与累计动量结合，即gt算的不是当前点的梯度，而是<span class="math inline">\((w_t - \alpha\cdot\nabla(W_t-\alpha v_{t-1}))\)</span> 位置的梯度</p>
 <p><strong>AdaGrad</strong>：独立地适应所有模型参数的学习率，缩放每个参数反比于其所有梯度历史平均值总和的平方根。具有代价函数最大梯度的参数相应地有个快速下降的学习率，而具有小梯度的参数在学习率上有相对较小的下降。</p>
 <p>SGD及其变种以同样的学习率更新每个参数，但深度神经网络往往包含大量的参数，这些参数并不是总会用得到;对于经常更新的参数，我们已经积累了大量关于它的知识，不希望被单个样本影响太大，希望学习速率慢一些；对于偶尔更新的参数，我们了解的信息太少，希望能从每个偶然出现的样本身上多学一些，即学习速率大一些。</p>
 <p>用二阶动量保存迄今为止所有梯度值的平方和</p>
-<p>$g_{t,i} &#x3D; \nabla J(\theta_{t,i})$</p>
-<p>$s_{t,i} &#x3D; \sum_{k&#x3D;1}^{t} g_{k,i}^2$</p>
-<p>$\theta_{t+1,i} &#x3D; \theta_{t,i} - \dfrac{\eta}{\sqrt{s_{t,i}}+\epsilon} g_{t,i}$</p>
-<p>其中，$g_{t,i}$ 是第 $i$ 个参数在时间步 $t$ 的梯度，$s_{t,i}$ 是前 $t$ 个时间步中第 $i$ 个参数梯度平方和的累加值，$\theta_{t,i}$ 是第 $i$ 个参数在时间步 $t$ 的取值，$\eta$ 是学习率，$\epsilon$ 是为了数值稳定性而添加的小常数。公式中的除法是逐元素操作，表示对于每个参数，都会根据其历史梯度信息动态地调整学习率。</p>
+<p><span class="math inline">\(g_{t,i} = \nabla J(\theta_{t,i})\)</span></p>
+<p><span class="math inline">\(s_{t,i} = \sum_{k=1}^{t} g_{k,i}^2\)</span></p>
+<p><span class="math inline">\(\theta_{t+1,i} = \theta_{t,i} - \dfrac{\eta}{\sqrt{s_{t,i}}+\epsilon} g_{t,i}\)</span></p>
+<p>其中，<span class="math inline">\(g_{t,i}\)</span> 是第 <span class="math inline">\(i\)</span> 个参数在时间步 <span class="math inline">\(t\)</span> 的梯度，<span class="math inline">\(s_{t,i}\)</span> 是前 <span class="math inline">\(t\)</span> 个时间步中第 <span class="math inline">\(i\)</span> 个参数梯度平方和的累加值，<span class="math inline">\(\theta_{t,i}\)</span> 是第 <span class="math inline">\(i\)</span> 个参数在时间步 <span class="math inline">\(t\)</span> 的取值，<span class="math inline">\(\eta\)</span> 是学习率，<span class="math inline">\(\epsilon\)</span> 是为了数值稳定性而添加的小常数。公式中的除法是逐元素操作，表示对于每个参数，都会根据其历史梯度信息动态地调整学习率。</p>
 <ul>
 <li>从表达式可以看出，对出现比较多的类别数据，Adagrad给予越来越小的学习率，而对于比较少的类别数据，会给予较大的学习率。因此Adagrad适用于数据稀疏或者分布不平衡的数据集。</li>
 <li>Adagrad 的主要优势在于不需要人为的调节学习率，它可以自动调节；缺点在于，随着迭代次数增多，学习率会越来越小，最终会趋近于0。</li>
@@ -291,26 +313,28 @@
 <p><strong>RMSProp</strong>:</p>
 <p>Adagrad存在两个问题：首先，随着训练的进行，学习率会趋向于零，导致训练过程停滞不前；其次，学习率对于所有参数都是相同的，无法进行自适应调整。</p>
 <p>由于AdaGrad单调递减的学习率变化过于激进，我们考虑一个改变二阶动量计算方法的策略：<strong>RMSProp主要思想：使用指数加权移动平均的方法计算累积梯度</strong>，以丢弃遥远的梯度历史信息（让距离当前越远的梯度的缩减学习率的权重越小）。</p>
-<p>$v_t &#x3D; \beta v_{t-1}+(1-\beta)g_t^2$</p>
-<p>$w_{t+1} &#x3D; w_t-\frac{\eta}{\sqrt{v_t +\epsilon}}g_t$</p>
-<p>其中，$w_t$表示在$t$时刻的模型参数，$g_t$表示在$t$时刻的梯度，$\eta$表示学习率，$\epsilon$是一个很小的常数，用来避免分母为零的情况。$v_t$是针对每个参数维护的历史梯度平方的指数加权移动平均，$\beta$是一个控制历史梯度平方对当前梯度平方的相对贡献的超参数，通常取值为0.9。</p>
+<p><span class="math inline">\(v_t = \beta v_{t-1}+(1-\beta)g_t^2\)</span></p>
+<p><span class="math inline">\(w_{t+1} = w_t-\frac{\eta}{\sqrt{v_t +\epsilon}}g_t\)</span></p>
+<p>其中，<span class="math inline">\(w_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的模型参数，<span class="math inline">\(g_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的梯度，<span class="math inline">\(\eta\)</span>表示学习率，<span class="math inline">\(\epsilon\)</span>是一个很小的常数，用来避免分母为零的情况。<span class="math inline">\(v_t\)</span>是针对每个参数维护的历史梯度平方的指数加权移动平均，<span class="math inline">\(\beta\)</span>是一个控制历史梯度平方对当前梯度平方的相对贡献的超参数，通常取值为0.9。</p>
 <p><strong>AdaDelta</strong>:</p>
 <p>Adadelta算法的核心思想是针对每个参数维护两个指数加权移动平均：一个是平均梯度平方的指数加权移动平均，一个是平均参数更新量平方的指数加权移动平均。具体来说，Adadelta算法的更新规则如下：</p>
-<p><img src="/./cv%E5%9F%BA%E7%A1%80/adadelta1.png" alt="1"></p>
-<p>其中，$x_t$表示在$t$时刻的模型参数，$g_t$表示在$t$时刻的梯度，$\epsilon$是一个很小的常数，用来避免分母为零的情况。$E[g^2]<em>t$表示在$t$时刻历史梯度平方的指数加权移动平均，$\gamma$是衰减系数，用来控制历史梯度平方的相对贡献。$\Delta x_t$表示在$t$时刻的参数更新量，通过除以$\sqrt{E[g^2]*t+\epsilon}$将学习率自适应地调整到每个参数的尺度，再乘以$\sqrt{\Delta x</em>{t-1}+\epsilon}$得到参数更新量。</p>
-<p>参数$\rho$，用来控制历史平方梯度的相对贡献。具体来说，在计算$\Delta x_t$时，需要乘以一个调整因子$\sqrt{\Delta x_{t-1}+\epsilon}$，这个调整因子的作用是让历史梯度平方的影响随着时间的推移而逐渐减小，同时也起到了防止更新量过小的作用。</p>
+<figure>
+<img src="cv基础/adadelta1.png" alt="1" /><figcaption aria-hidden="true">1</figcaption>
+</figure>
+<p>其中，<span class="math inline">\(x_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的模型参数，<span class="math inline">\(g_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的梯度，<span class="math inline">\(\epsilon\)</span>是一个很小的常数，用来避免分母为零的情况。<span class="math inline">\(E[g^2]_t\)</span>表示在<span class="math inline">\(t\)</span>时刻历史梯度平方的指数加权移动平均，<span class="math inline">\(\gamma\)</span>是衰减系数，用来控制历史梯度平方的相对贡献。<span class="math inline">\(\Delta x_t\)</span>表示在<span class="math inline">\(t\)</span>时刻的参数更新量，通过除以<span class="math inline">\(\sqrt{E[g^2]*t+\epsilon}\)</span>将学习率自适应地调整到每个参数的尺度，再乘以<span class="math inline">\(\sqrt{\Delta x_{t-1}+\epsilon}\)</span>得到参数更新量。</p>
+<p>参数<span class="math inline">\(\rho\)</span>，用来控制历史平方梯度的相对贡献。具体来说，在计算<span class="math inline">\(\Delta x_t\)</span>时，需要乘以一个调整因子<span class="math inline">\(\sqrt{\Delta x_{t-1}+\epsilon}\)</span>，这个调整因子的作用是让历史梯度平方的影响随着时间的推移而逐渐减小，同时也起到了防止更新量过小的作用。</p>
 <p>Adadelta算法相对于RMSProp算法的改进在于，它不需要手动设置初始学习率，而是通过适当的调整参数更新量的尺度来自</p>
-<p><strong>Adam</strong>:  </p>
+<p><strong>Adam</strong>:</p>
 <p>用了一阶和二阶动量</p>
-<p>$m_t &#x3D; \beta_1\cdot m_{t-1} + (1-\beta_1)\cdot g_t$</p>
-<p>$v_t &#x3D; \beta_2\cdot v_{t-1}+(1-\beta_2)g_t^2$</p>
-<p>$w_t &#x3D; w_{t-1}-lr\cdot \frac{m_t}{\sqrt{v_t}+\epsilon}$</p>
+<p><span class="math inline">\(m_t = \beta_1\cdot m_{t-1} + (1-\beta_1)\cdot g_t\)</span></p>
+<p><span class="math inline">\(v_t = \beta_2\cdot v_{t-1}+(1-\beta_2)g_t^2\)</span></p>
+<p><span class="math inline">\(w_t = w_{t-1}-lr\cdot \frac{m_t}{\sqrt{v_t}+\epsilon}\)</span></p>
 <p>Adam可能<strong>不收敛</strong></p>
 <p>SGD没有用到二阶动量，因此学习率是恒定的（实际使用过程中会采用学习率衰减策略，因此学习率递减）AdaGrad的二阶动量不断累积，单调递增，因此学习率是单调递减的。因此，这两类算法会使得学习率不断递减，最终收敛到0，模型也得以收敛。但AdaDelta和Adam则不然，他们关注窗口可能会使得学习率时大时小，而不是单调的</p>
 <p>可能<strong>错过全局最优解</strong></p>
 <p>参考文献:</p>
 <p><a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_40170902/article/details/80092628">机器学习：各种优化器Optimizer的总结与比较</a></p>
-<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzU0NjgzMDIxMQ==&mid=2247602050&idx=5&sn=7b9c643c0728570c13c4536f566a83d6&chksm=fb54ad6ecc232478c7302dfa91fe3d007598886d5277d482c92fdba57c239e7134bd9d7175c6&scene=27">Adam的优化能力那么强，为什么还对SGD念念不忘</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzU0NjgzMDIxMQ==&amp;mid=2247602050&amp;idx=5&amp;sn=7b9c643c0728570c13c4536f566a83d6&amp;chksm=fb54ad6ecc232478c7302dfa91fe3d007598886d5277d482c92fdba57c239e7134bd9d7175c6&amp;scene=27">Adam的优化能力那么强，为什么还对SGD念念不忘</a></p>
 
       
     </div>
@@ -699,6 +723,12 @@
   
 
 
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">false</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
 
 
 
