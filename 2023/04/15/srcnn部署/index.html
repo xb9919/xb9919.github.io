@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="配置Windows下的 OpenCV 和 ONNXruntime OpenCV 这部分就不展开了，最好配置的了，网上都比较全，这里给个参考链接 visual studio 配置opencv ONNXRUNTIME （ChatGPT真是个好东西） 配置ONNX Runtime-win-x64-1.14.1，您需要执行以下步骤：  下载ONNX Runtime 您可以从ONNX Run">
+<meta property="og:type" content="article">
+<meta property="og:title" content="srcnn部署">
+<meta property="og:url" content="http://example.com/2023/04/15/srcnn%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="配置Windows下的 OpenCV 和 ONNXruntime OpenCV 这部分就不展开了，最好配置的了，网上都比较全，这里给个参考链接 visual studio 配置opencv ONNXRUNTIME （ChatGPT真是个好东西） 配置ONNX Runtime-win-x64-1.14.1，您需要执行以下步骤：  下载ONNX Runtime 您可以从ONNX Run">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-15T03:56:26.000Z">
+<meta property="article:modified_time" content="2023-04-15T04:01:16.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="job">
+<meta property="article:tag" content="部署">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/04/15/srcnn%E9%83%A8%E7%BD%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/15/srcnn%E9%83%A8%E7%BD%B2/","path":"2023/04/15/srcnn部署/","title":"srcnn部署"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>srcnn部署 | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEwindows%E4%B8%8B%E7%9A%84-opencv-%E5%92%8C-onnxruntime"><span class="nav-number">1.</span> <span class="nav-text">配置Windows下的 OpenCV 和 ONNXruntime</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#opencv"><span class="nav-number">1.1.</span> <span class="nav-text">OpenCV</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#onnxruntime"><span class="nav-number">1.2.</span> <span class="nav-text">ONNXRUNTIME</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%B6%85%E5%88%86%E7%BD%91%E7%BB%9C%E9%83%A8%E7%BD%B2"><span class="nav-number">2.</span> <span class="nav-text">超分网络部署</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E7%AB%AF%E9%83%A8%E7%BD%B2"><span class="nav-number">2.1.</span> <span class="nav-text">python端部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#c%E7%AB%AF%E9%83%A8%E7%BD%B2"><span class="nav-number">2.2.</span> <span class="nav-text">c++端部署</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%8C%E6%95%B4%E4%BB%A3%E7%A0%81"><span class="nav-number">2.2.1.</span> <span class="nav-text">完整代码</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%9E%E7%8E%B0%E5%8A%A8%E6%80%81%E8%BE%93%E5%85%A5"><span class="nav-number">2.3.</span> <span class="nav-text">实现动态输入</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/15/srcnn%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="srcnn部署 | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          srcnn部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-04-15 11:56:26 / 修改时间：12:01:16" itemprop="dateCreated datePublished" datetime="2023-04-15T11:56:26+08:00">2023-04-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">模型部署</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2023/04/15/srcnn%E9%83%A8%E7%BD%B2/" class="post-meta-item leancloud_visitors" data-flag-title="srcnn部署" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="配置windows下的-opencv-和-onnxruntime">配置Windows下的 OpenCV 和 ONNXruntime</h1>
+<h2 id="opencv">OpenCV</h2>
+<p>这部分就不展开了，最好配置的了，网上都比较全，这里给个参考链接</p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/527989879">visual studio 配置opencv</a></p>
+<h2 id="onnxruntime">ONNXRUNTIME</h2>
+<p>（ChatGPT真是个好东西）</p>
+<p>配置ONNX Runtime-win-x64-1.14.1，您需要执行以下步骤：</p>
+<ol type="1">
+<li>下载ONNX Runtime 您可以从ONNX Runtime的GitHub存储库中下载1.14.1版本，这里是它的链接：https://github.com/microsoft/onnxruntime/releases/tag/v1.14.1。下载后，您可以解压缩并将文件保存在您选择的文件夹中。</li>
+<li>在Visual Studio中使用ONNX Runtime 如果您正在使用Visual Studio开发C++应用程序，则可以将ONNX Runtime的头文件和库文件添加到您的项目中。请参照上一条回答中的第三步，将ONNX Runtime的头文件和库文件添加到您的项目中。</li>
+</ol>
+<p>我这里一直报错，程序崩溃，发现是之前安装过onnxruntime. C:32里的还在，估计是和我新下载的不一致导致冲突了</p>
+<p>然后是Ort::Session session(env, model_path, session_options);报错，开始以为是wchar_t的问题，发现是在调试模式下session的numthreads不能设成1，改成0了，2是模型名错了</p>
+<h1 id="超分网络部署">超分网络部署</h1>
+<p>按照MMdeploy的教程，得到SRCNN的模型文件及ONNX文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">SuperResolutionNet</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,upscale_factor</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.upscale_factor = upscale_factor</span><br><span class="line">        self.img_upsampler = nn.Upsample(</span><br><span class="line">            scale_factor=self.upscale_factor,</span><br><span class="line">            mode=<span class="string">&#x27;bicubic&#x27;</span>,</span><br><span class="line">            align_corners=<span class="literal">False</span>)</span><br><span class="line">        </span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">3</span>,<span class="number">64</span>,kernel_size=<span class="number">9</span>,padding=<span class="number">4</span>)</span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">64</span>,<span class="number">32</span>,kernel_size=<span class="number">1</span>,padding=<span class="number">0</span>)</span><br><span class="line">        self.conv3 = nn.Conv2d(<span class="number">32</span>,<span class="number">3</span>,kernel_size=<span class="number">5</span>,padding=<span class="number">2</span>)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self,x</span>):</span><br><span class="line">        x = self.img_upsampler(x)</span><br><span class="line">        out = self.relu(self.conv1(x))</span><br><span class="line">        out = self.relu(self.conv2(out))</span><br><span class="line">        out = self.conv3(out)</span><br><span class="line">        <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure>
+<p>然后通过<code>torch.onnx.export()</code>导出ONNX文件</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">x = torch.rand(<span class="number">1</span>,<span class="number">3</span>,<span class="number">256</span>,<span class="number">256</span>)</span><br><span class="line">state_dict = torch.load(<span class="string">&#x27;/home/carey/deploy/pretrained_model/srcnn_x4k915_1x16_1000k_div2k_20200608-4186f232.pth&#x27;</span>)[<span class="string">&#x27;state_dict&#x27;</span>]</span><br><span class="line"><span class="keyword">for</span> old_key <span class="keyword">in</span> <span class="built_in">list</span>(state_dict.keys()):</span><br><span class="line">    new_key = <span class="string">&#x27;.&#x27;</span>.join(old_key.split(<span class="string">&#x27;.&#x27;</span>)[<span class="number">1</span>:])</span><br><span class="line">    state_dict[new_key] = state_dict.pop(old_key)</span><br><span class="line">model.load_state_dict(state_dict=state_dict)</span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    torch.onnx.export(</span><br><span class="line">        model,</span><br><span class="line">        x,</span><br><span class="line">        <span class="string">&quot;srcnn.onnx&quot;</span>,</span><br><span class="line">        opset_version=<span class="number">11</span>,<span class="comment">#op算子的版本</span></span><br><span class="line">        input_names=[<span class="string">&#x27;input&#x27;</span>],</span><br><span class="line">        output_names=[<span class="string">&#x27;output&#x27;</span>]</span><br><span class="line">    )</span><br><span class="line">    onnx_model = onnx.load(<span class="string">&quot;./srcnn.onnx&quot;</span>)<span class="comment">#验证一下</span></span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        onnx.checker.check_model(onnx_model)</span><br><span class="line">    <span class="keyword">except</span> Exception:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;error!&quot;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;successful!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="python端部署">python端部署</h2>
+<p>python端的部署就很简单傻瓜了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> onnxruntime</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line">onnx_model = onnx.load(<span class="string">&quot;srcnn.onnx&quot;</span>)</span><br><span class="line">session = onnxruntime.InferenceSession(model_path)<span class="comment">#onnx文件路径</span></span><br><span class="line">img = cv2.imread(img_path)</span><br><span class="line">img = np.transpose(img,[<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>])</span><br><span class="line">img = np.expand_dims(img, <span class="number">0</span>)<span class="comment">#[1,3,256,256]</span></span><br><span class="line">input_dict = &#123;<span class="string">&quot;input&quot;</span>:img&#125;</span><br><span class="line">ort_output = session.run([<span class="string">&quot;output&quot;</span>], input_dict)[<span class="number">0</span>]<span class="comment">#output本身是字典，length是batch</span></span><br><span class="line">output = ort_output.squeeze()</span><br><span class="line">output = np.clip(output, <span class="number">0</span>,<span class="number">255</span>)</span><br><span class="line">output = np.transpose(output, [<span class="number">1</span>,<span class="number">2</span>,<span class="number">0</span>]).astype(uint8)</span><br><span class="line">cv2.imwrite(img_path, output)</span><br></pre></td></tr></table></figure>
+<h2 id="c端部署">c++端部署</h2>
+<p>c++端部署就很麻烦了。。虽然是个很简单的网络，但是可能是第一次的原因吧，整了一整天才搞定</p>
+<p>先是配置visual studio端的opencv和onnx。</p>
+<p>这里踩坑也比较多，代码应该不是最简洁的，但是起码能用，网上的很多其实都执行不了，估计是版本问题。</p>
+<p>先是导包，读取图片到 OpenCV 的 Mat 里</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;opencv2/opencv.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;opencv2/objdetect.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;opencv2/highgui.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;onnxruntime_cxx_api.h&gt;</span></span></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    std::string path = <span class="string">&quot;./img.png&quot;</span>;		<span class="comment">//图片路径</span></span><br><span class="line">    cv::Mat img = cv::<span class="built_in">imread</span>(path, cv::IMREAD_COLOR);	<span class="comment">//改成IMREAD_GREY应该可以改成读灰度图</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着要把他转成 Tensor，这一步卡住了，很多方法转的都有问题，虽然能转，但是关键是前处理要一致，即最后要变成NCHW (rrr ggg bbb) 的形式输入到onnxruntime中，但是实际上Mat读进来是HWC的（rgb rgb rgb），所以要改掉他。</p>
+<p>据说</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> tmp = cv::dnn::<span class="built_in">blobFromImage</span>(image, <span class="number">1.0</span>, cv::<span class="built_in">Size</span>(<span class="number">256</span>, <span class="number">256</span>), cv::<span class="built_in">Scalar</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="literal">true</span>, <span class="literal">false</span>, CV_32F);</span><br></pre></td></tr></table></figure>
+<p>也可以，但是我测试了下还是不行。。不知道是用错了，还是啥问题，这里用了最傻瓜的方法，建立NCHW的数组，给数组赋值然后再转到Tensor里面去。另外，Mat读图片时一般是unsigned char类型存储的(8字节)，而float是32位的(4字节)，所以要把他用 static_cast<floor> 转成floor。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span> arr[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>];</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">256</span>;i++)&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* rdata = img.<span class="built_in">ptr</span>&lt;<span class="type">unsigned</span> <span class="type">char</span>*&gt;(i);<span class="comment">//这里unsigned char* 换成float*是不行的</span></span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">0</span>;j&lt;<span class="number">256</span>;j++)&#123;</span><br><span class="line">        arr[<span class="number">0</span>][<span class="number">0</span>][i][j] = <span class="built_in">static_cast</span>(*rdata);rdata++;</span><br><span class="line">        arr[<span class="number">0</span>][<span class="number">1</span>][i][j] = <span class="built_in">static_cast</span>(*rdata);rdata++;</span><br><span class="line">        arr[<span class="number">0</span>][<span class="number">2</span>][i][j] = <span class="built_in">static_cast</span>(*rdata);rdata++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>接着就好说了,先是定义好session，注意，model_path一定要是wchar_t</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">srcnn</span><span class="params">(<span class="type">float</span> arr[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>])</span></span>&#123;</span><br><span class="line">    <span class="function">Ort::Env <span class="title">env</span><span class="params">(ORT_LOGGING_LEVEL_VERBOSE, <span class="string">&quot;test&quot;</span>)</span></span>;</span><br><span class="line">    Ort::SessionOption session_optio;</span><br><span class="line">    session_opt.<span class="built_in">setIntraOpNumThreads</span>(<span class="number">0</span>);<span class="comment">//设置线程</span></span><br><span class="line">    session_opt.<span class="built_in">SetGraphOptimizationLevel</span>(GraphOptimizationLevel::ORT_ENABLE_ALL);<span class="comment">//静态图加速</span></span><br><span class="line">    <span class="type">wchar_t</span> model_path = <span class="string">&quot;srcnn.onnx&quot;</span> </span><br><span class="line">    Ort::Session <span class="built_in">session</span>(env, model_path, session_options);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>ps:<code>Ort::Env env(ORT_LOGGING_LEVEL_VERBOSE, "test")</code>创建了一个<code>Ort::Env</code>对象，用于在ONNX运行时中管理资源和配置。<code>Ort::Env</code>是一个C++封装器，用于访问ONNX运行时环境中的各种功能，例如模型加载、推理计算等。</p>
+<p>这个构造函数接受两个参数。第一个参数指定日志级别(就是运行的时候会有很多warning，不想要就调高级别)，可以是以下值之一：</p>
+<ul>
+<li><code>ORT_LOGGING_LEVEL_FATAL</code>：致命错误</li>
+<li><code>ORT_LOGGING_LEVEL_ERROR</code>：错误</li>
+<li><code>ORT_LOGGING_LEVEL_WARNING</code>：警告</li>
+<li><code>ORT_LOGGING_LEVEL_INFO</code>：信息</li>
+<li><code>ORT_LOGGING_LEVEL_VERBOSE</code>：详细信息</li>
+</ul>
+<p>此处将日志级别设置为<code>ORT_LOGGING_LEVEL_VERBOSE</code>，表示将输出详细信息。</p>
+<p>第二个参数是一个字符串，用于设置ONNX运行时环境的名称。这个名称将用于标识此环境，并在日志输出中显示。在这个例子中，将环境名称设置为"test"。</p>
+<p><code>session_options.SetGraphOptimizationLevel(GraphOptimizationLevel::ORT_ENABLE_ALL);</code>设置了图优化级别，以控制ONNX模型在运行时进行优化的程度。</p>
+<ul>
+<li><code>ORT_DISABLE_ALL</code>：禁用所有优化</li>
+<li><code>ORT_ENABLE_BASIC</code>：启用基本优化（默认值）</li>
+<li><code>ORT_ENABLE_EXTENDED</code>：启用扩展优化</li>
+<li><code>ORT_ENABLE_ALL</code>：启用所有优化</li>
+</ul>
+<p>接着创建我们的input_tensor 先定义好shape</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">std::vector&lt;<span class="type">int64_t</span>&gt; input_shape = &#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">256</span>,<span class="number">256</span>&#125;;</span><br><span class="line"><span class="type">size_t</span> size = <span class="built_in">sizeof</span>(<span class="number">1</span>*<span class="number">3</span>*<span class="number">256</span>*<span class="number">256</span>*<span class="built_in">sizeof</span>(<span class="type">float</span>));</span><br><span class="line"><span class="keyword">auto</span> input_tensors = Ort::<span class="built_in">CreateTensor</span>&lt;<span class="type">float</span>&gt;(Ort::MemoryInfo::<span class="built_in">CreateCpu</span>(OrtDeviceAllocator, OrtMemTypeDefault), &amp;arr[<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>], size, input_shape.<span class="built_in">data</span>(), input_shape.<span class="built_in">size</span>());</span><br><span class="line">std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt;input_names = &#123;<span class="string">&quot;input&quot;</span>&#125;;<span class="comment">//和python输出的时候一致</span></span><br><span class="line">std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt;output_names = &#123;<span class="string">&quot;output&quot;</span>&#125;;</span><br></pre></td></tr></table></figure>
+<p>PS：<code>Ort::MemoryInfo::CreateCpu(OrtDeviceAllocator, OrtMemTypeDefault)</code>申请cpu内存</p>
+<ul>
+<li>OrtDeviceAllocator：这是一个分配器对象，用于分配和释放内存。OrtDeviceAllocator 是一个抽象类，用于支持不同的硬件设备（例如 CPU、GPU 等）和不同的内存管理方案。传递一个 OrtDeviceAllocator 对象作为参数，意味着在创建内存信息对象时使用该对象的默认分配器。</li>
+<li>OrtMemTypeDefault：这是一个枚举值，表示要分配的内存类型。在这种情况下，OrtMemTypeDefault 表示分配默认类型的内存，即在 CPU 上分配内存。</li>
+</ul>
+<p>想放在GPU上可以改成<code>Ort::MemoryInfo memory_info_gpu = Ort::MemoryInfo::CreateCuda(cuda_id, OrtDeviceAllocator);</code></p>
+<p>接着就能放进去run了</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">auto</span> output_tensors = session.<span class="built_in">Run</span>(Ort::RunOptions&#123;&#125;, input_names.<span class="built_in">data</span>(), &amp;input_tensor, <span class="number">1</span>, outputnames.<span class="built_in">data</span>(), <span class="number">1</span>);</span><br><span class="line">std::vector&lt;<span class="type">int64_t</span>&gt;shape1 = output_tensors.GetTensorTypeAndShapeInfo.<span class="built_in">GetShape</span>();</span><br></pre></td></tr></table></figure>
+<ul>
+<li><code>session</code>：一个 <code>Ort::Session</code> 对象，代表了一个已经加载的模型。</li>
+<li><code>Ort::RunOptions&#123;&#125;</code>：一个 <code>Ort::RunOptions</code> 对象，用于指定运行选项。在这里我们使用了默认选项，即不对运行进行任何特殊配置。</li>
+<li><code>input_names.data()</code>：输入张量的名称数组的指针，其中 <code>input_names</code> 是一个字符串向量，包含了所有输入张量的名称。</li>
+<li><code>&amp;input_tensor</code>：一个输入张量的指针，指向要传递给模型的输入数据。在这里我们只传递了一个输入张量。</li>
+<li><code>1</code>：输入张量的数量，即我们只传递了一个输入张量。</li>
+<li><code>output_names.data()</code>：输出张量的名称数组的指针，其中 <code>output_names</code> 是一个字符串向量，包含了所有输出张量的名称。</li>
+<li><code>1</code>：输出张量的数量，即我们只希望获取一个输出张量。</li>
+<li><code>output_tensors</code>：一个 <code>Ort::Value</code> 数组，包含了所有输出张量的值。每</li>
+</ul>
+<p>然后我们就成功得到了ONNX的输出，要把他转成图片保存，重新又创建一个新的array的话好像会超出寄存器的容量，所以直接赋值给Mat，在内存里操作就没事了。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="type">float</span>* data = output_tensors.<span class="built_in">front</span>().<span class="built_in">GetTensorMutableData</span>&lt;<span class="type">float</span>&gt;();</span><br><span class="line">cv::Mat new_img = (shape1[<span class="number">2</span>], shape1[<span class="number">3</span>], CV_32FC3);</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;shape1[<span class="number">2</span>];i++)&#123;</span><br><span class="line">    <span class="type">float</span>* rdata = new_img.<span class="built_in">ptr</span>&lt;<span class="type">float</span>&gt;(i);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">0</span>;j&lt;shape1[<span class="number">3</span>];j++)&#123;</span><br><span class="line">        *rdata = data[<span class="number">0</span>*shape[<span class="number">2</span>]*shape[<span class="number">3</span>]+i*shape[<span class="number">3</span>]+j];rdata++;</span><br><span class="line">        *rdata = data[<span class="number">1</span>*shape[<span class="number">2</span>]*shape[<span class="number">3</span>]+i*shape[<span class="number">3</span>]+j];rdata++;</span><br><span class="line">        *rdata = data[<span class="number">2</span>*shape[<span class="number">2</span>]*shape[<span class="number">3</span>]+i*shape[<span class="number">3</span>]+j];rdata++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line">cv::<span class="built_in">imwrite</span>(new_img_path, new_img);</span><br></pre></td></tr></table></figure>
+<h3 id="完整代码">完整代码</h3>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">void</span> <span class="title">test1</span><span class="params">(<span class="type">float</span> arr[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>])</span> </span>&#123;</span><br><span class="line">    <span class="comment">//定义session</span></span><br><span class="line">    <span class="function">Ort::Env <span class="title">env</span><span class="params">(ORT_LOGGING_LEVEL_VERBOSE, <span class="string">&quot;test&quot;</span>)</span></span>;</span><br><span class="line">    Ort::SessionOptions session_options;</span><br><span class="line">    session_options.<span class="built_in">SetIntraOpNumThreads</span>(<span class="number">1</span>);</span><br><span class="line">    session_options.<span class="built_in">SetGraphOptimizationLevel</span>(GraphOptimizationLevel::ORT_ENABLE_ALL);</span><br><span class="line">    <span class="type">wchar_t</span> model_path[] = <span class="string">L&quot;./srcnn1.onnx&quot;</span>;</span><br><span class="line">    <span class="function">Ort::Session <span class="title">session</span><span class="params">(env, model_path, session_options)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//定义input_tensor</span></span><br><span class="line">    <span class="type">size_t</span> size = <span class="number">1</span> * <span class="number">3</span> * <span class="number">256</span> * <span class="number">256</span> * <span class="built_in">sizeof</span>(<span class="type">float</span>);</span><br><span class="line">    std::vector&lt;<span class="type">int64_t</span>&gt; shape = &#123; <span class="number">1</span>, <span class="number">3</span>, <span class="number">256</span>, <span class="number">256</span> &#125;;</span><br><span class="line">    <span class="keyword">auto</span> input_tensor = Ort::Value::<span class="built_in">CreateTensor</span>&lt;<span class="type">float</span>&gt;(Ort::MemoryInfo::<span class="built_in">CreateCpu</span>(OrtDeviceAllocator, OrtMemTypeDefault), &amp;arr[<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>], size, shape.<span class="built_in">data</span>(), shape.<span class="built_in">size</span>());</span><br><span class="line">    std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt; input_names = &#123; <span class="string">&quot;input&quot;</span> &#125;;</span><br><span class="line"> </span><br><span class="line">    <span class="comment">//get output_tensor</span></span><br><span class="line">    std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt; output_names = &#123; <span class="string">&quot;output&quot;</span> &#125;;</span><br><span class="line">    <span class="keyword">auto</span> output_tensors = session.<span class="built_in">Run</span>(Ort::RunOptions&#123;&#125;, input_names.<span class="built_in">data</span>(), &amp;input_tensor, <span class="number">1</span>, output_names.<span class="built_in">data</span>(), <span class="number">1</span>);</span><br><span class="line">    Ort::Value&amp; output = output_tensors.<span class="built_in">front</span>();</span><br><span class="line">    std::vector&lt;<span class="type">int64_t</span>&gt;shape1 = output.<span class="built_in">GetTensorTypeAndShapeInfo</span>().<span class="built_in">GetShape</span>();</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//save new_img</span></span><br><span class="line">    <span class="type">float</span>* data = output.<span class="built_in">GetTensorMutableData</span>&lt;<span class="type">float</span>&gt;();</span><br><span class="line">    <span class="function">cv::Mat <span class="title">new_image</span><span class="params">(shape1[<span class="number">2</span>], shape1[<span class="number">3</span>], CV_32FC3)</span></span>;</span><br><span class="line">    <span class="comment">//cv::cvtColor(new_image, new_image, cv::COLOR_RGB2BGR);</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">768</span>; i++) &#123;</span><br><span class="line">        <span class="type">float</span>* rdata = new_image.<span class="built_in">ptr</span>&lt;<span class="type">float</span>&gt;(i);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">768</span>; j++) &#123;</span><br><span class="line">            *rdata = data[<span class="number">0</span> * <span class="number">768</span> * <span class="number">768</span> + i * <span class="number">768</span> + j]; rdata++;</span><br><span class="line">            *rdata = data[<span class="number">1</span> * <span class="number">768</span> * <span class="number">768</span> + i * <span class="number">768</span> + j]; rdata++;</span><br><span class="line">            *rdata = data[<span class="number">2</span> * <span class="number">768</span> * <span class="number">768</span> + i * <span class="number">768</span> + j]; rdata++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    cv::<span class="built_in">imwrite</span>(<span class="string">&quot;C:/Users/care/Desktop/leetcode/result.png&quot;</span>, new_image);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    std::string path = <span class="string">&quot;C:/Users/care/Desktop/leetcode/img.png&quot;</span>;</span><br><span class="line">    cv::Mat image = cv::<span class="built_in">imread</span>(path, cv::IMREAD_COLOR);</span><br><span class="line">    <span class="keyword">auto</span> tmp = cv::dnn::<span class="built_in">blobFromImage</span>(image, <span class="number">1.0</span>, cv::<span class="built_in">Size</span>(<span class="number">256</span>, <span class="number">256</span>), cv::<span class="built_in">Scalar</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="literal">true</span>, <span class="literal">false</span>, CV_32F);</span><br><span class="line">    <span class="type">float</span> arr[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">256</span>; i++) &#123;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">char</span>* rdata = image.<span class="built_in">ptr</span>&lt;<span class="type">unsigned</span> <span class="type">char</span>&gt;(i);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">256</span>; ++j) &#123;</span><br><span class="line">            arr[<span class="number">0</span>][<span class="number">0</span>][i][j] = <span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*rdata);</span><br><span class="line">            ++rdata;</span><br><span class="line">            arr[<span class="number">0</span>][<span class="number">1</span>][i][j] = <span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*rdata);</span><br><span class="line">            ++rdata;</span><br><span class="line">            arr[<span class="number">0</span>][<span class="number">2</span>][i][j] = <span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*rdata);</span><br><span class="line">            ++rdata;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="built_in">test1</span>(arr);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="实现动态输入">实现动态输入</h2>
+<p>上述代码中，upscale的参数是固定是3，但是我们实际场景中，有可能是需要动态放大的，所以需要把scale变成动态的，</p>
+<p>网络定义首先要变，把nn.Upsample改成nn.functional.interpolate()</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">from</span> torch.nn.functional <span class="keyword">import</span> interpolate</span><br><span class="line"><span class="keyword">class</span> <span class="title class_">SuperResolutionNet</span>(nn.Moudle):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="built_in">super</span>.__init__()</span><br><span class="line">        self.conv1 = nn.Conv2d(<span class="number">3</span>,<span class="number">64</span>, kernel_size=<span class="number">9</span>, padding=<span class="number">4</span>)</span><br><span class="line">        self.conv2 = nn.Conv2d(<span class="number">64</span>,<span class="number">32</span>, kernel_size=<span class="number">1</span>, padding=<span class="number">0</span>)</span><br><span class="line">        self.conv3 = nn.Conv2d(<span class="number">32</span>,<span class="number">3</span>, kernel_size=<span class="number">5</span>, padding=<span class="number">2</span>)</span><br><span class="line">        self.relu = nn.ReLU()</span><br><span class="line">        </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">x, upscale</span>):</span><br><span class="line">        x = interpolate(x, scale_factor=upscale.item(), mode=<span class="string">&#x27;bicubic&#x27;</span>, align_corners=<span class="literal">False</span>)</span><br><span class="line">        out = self.relu(self.conv1(x))</span><br><span class="line">        out = self.relu(self.conv2(x))</span><br><span class="line">        out = self.conv3(x)</span><br><span class="line">        <span class="keyword">return</span> out</span><br></pre></td></tr></table></figure>
+<p>这里要注意的是，转onnx的时候，由于需要追踪，upscale需要是一个tensor，但是interpolate函数里要求他是一个int，所以要.item()，但是这时候解析的onnx是不能追踪到upscale的，因此我们要自定义算子</p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/job/" rel="tag"># job</a>
+              <a href="/tags/%E9%83%A8%E7%BD%B2/" rel="tag"># 部署</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/14/cpp%E5%9F%BA%E7%A1%80/" rel="prev" title="cpp基础">
+                  <i class="fa fa-chevron-left"></i> cpp基础
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/15/facenet-mtcnn%E9%83%A8%E7%BD%B2/" rel="next" title="facenet_mtcnn部署">
+                  facenet_mtcnn部署 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>

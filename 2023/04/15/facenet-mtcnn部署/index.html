@@ -1,0 +1,379 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="visual studio调试错位 https:&#x2F;&#x2F;blog.csdn.net&#x2F;ermu114&#x2F;article&#x2F;details&#x2F;121945771 FaceNet 和 MTCNN 转 TFLITE 和 CoreML 下载预训练模型 将预训练模型 20180402-114759 下载并解压 将training graph 转为 eval graph 1、安装cmake 2、配置caff">
+<meta property="og:type" content="article">
+<meta property="og:title" content="facenet_mtcnn部署">
+<meta property="og:url" content="http://example.com/2023/04/15/facenet-mtcnn%E9%83%A8%E7%BD%B2/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="visual studio调试错位 https:&#x2F;&#x2F;blog.csdn.net&#x2F;ermu114&#x2F;article&#x2F;details&#x2F;121945771 FaceNet 和 MTCNN 转 TFLITE 和 CoreML 下载预训练模型 将预训练模型 20180402-114759 下载并解压 将training graph 转为 eval graph 1、安装cmake 2、配置caff">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-04-15T03:56:54.000Z">
+<meta property="article:modified_time" content="2023-04-15T04:03:44.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="job">
+<meta property="article:tag" content="部署">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/04/15/facenet-mtcnn%E9%83%A8%E7%BD%B2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/15/facenet-mtcnn%E9%83%A8%E7%BD%B2/","path":"2023/04/15/facenet-mtcnn部署/","title":"facenet_mtcnn部署"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>facenet_mtcnn部署 | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#facenet-%E5%92%8C-mtcnn-%E8%BD%AC-tflite-%E5%92%8C-coreml"><span class="nav-number">1.</span> <span class="nav-text">FaceNet 和 MTCNN 转 TFLITE 和 CoreML</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%BA%E8%84%B8%E6%A3%80%E6%B5%8B"><span class="nav-number">2.</span> <span class="nav-text">人脸检测</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#visual-studio-%E9%85%8D%E7%BD%AEopencv"><span class="nav-number">2.1.</span> <span class="nav-text">visual studio 配置opencv</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%85%8D%E7%BD%AEonnxruntime"><span class="nav-number">2.2.</span> <span class="nav-text">配置ONNXRUNTIME</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#cpp-opencv"><span class="nav-number">2.3.</span> <span class="nav-text">cpp opencv</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BA%BA%E8%84%B8%E8%AF%86%E5%88%AB"><span class="nav-number">3.</span> <span class="nav-text">人脸识别</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#python%E7%AB%AF%E9%83%A8%E7%BD%B2"><span class="nav-number">3.1.</span> <span class="nav-text">python端部署</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#c%E7%AB%AF%E9%83%A8%E7%BD%B2"><span class="nav-number">3.2.</span> <span class="nav-text">c++端部署</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">8</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">3</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/15/facenet-mtcnn%E9%83%A8%E7%BD%B2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="facenet_mtcnn部署 | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          facenet_mtcnn部署
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-04-15 11:56:54 / 修改时间：12:03:44" itemprop="dateCreated datePublished" datetime="2023-04-15T11:56:54+08:00">2023-04-15</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E6%A8%A1%E5%9E%8B%E9%83%A8%E7%BD%B2/" itemprop="url" rel="index"><span itemprop="name">模型部署</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2023/04/15/facenet-mtcnn%E9%83%A8%E7%BD%B2/" class="post-meta-item leancloud_visitors" data-flag-title="facenet_mtcnn部署" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <p>visual studio调试错位</p>
+<p>https://blog.csdn.net/ermu114/article/details/121945771</p>
+<h1 id="facenet-和-mtcnn-转-tflite-和-coreml">FaceNet 和 MTCNN 转 TFLITE 和 CoreML</h1>
+<p>下载预训练模型</p>
+<p>将预训练模型 <code>20180402-114759</code> 下载并解压</p>
+<p>将training graph 转为 eval graph</p>
+<p>1、安装cmake</p>
+<p>2、<a target="_blank" rel="noopener" href="https://www.likecs.com/show-204783258.html">配置caffe</a></p>
+<p>3、<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/527989879">visual studio 配置opencv</a></p>
+<h1 id="人脸检测">人脸检测</h1>
+<h2 id="visual-studio-配置opencv"><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/527989879">visual studio 配置opencv</a></h2>
+<p>PS:配置完可能用不了，实际上是因为模式是Debug，没改成Release。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;opencv2/opencv.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;opencv2/objdetect.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;opencv2/highgui.hpp&gt;</span></span></span><br><span class="line"><span class="meta">#<span class="keyword">include</span> <span class="string">&lt;iostream&gt;</span></span></span><br><span class="line"></span><br><span class="line"><span class="function">cv::Mat <span class="title">getImage</span><span class="params">(std::string path)</span> </span>&#123;</span><br><span class="line">    cv::CascadeClassifier face_cascade;</span><br><span class="line">    face_cascade.<span class="built_in">load</span>(<span class="string">&quot;H:\\opencv\\opencv\\sources\\data\\haarcascades\\haarcascade_frontalface_alt.xml&quot;</span>);</span><br><span class="line"></span><br><span class="line">    cv::Mat image = cv::<span class="built_in">imread</span>(path);</span><br><span class="line">    cv::Mat gray_image;</span><br><span class="line">    cv::<span class="built_in">cvtColor</span>(image, gray_image, cv::COLOR_BGR2GRAY);</span><br><span class="line">    cv::Mat roi_image;</span><br><span class="line">    std::vector&lt;cv::Rect&gt; faces;</span><br><span class="line">    face_cascade.<span class="built_in">detectMultiScale</span>(gray_image, faces, <span class="number">1.1</span>, <span class="number">2</span>, <span class="number">0</span> | cv::CASCADE_SCALE_IMAGE, cv::<span class="built_in">Size</span>(<span class="number">30</span>, <span class="number">30</span>));</span><br><span class="line">    <span class="comment">//cv::rectangle(image, faces[i], cv::Scalar(0, 0, 255), 2);</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">size_t</span> i = <span class="number">0</span>; i &lt; faces.<span class="built_in">size</span>(); i++)</span><br><span class="line">    &#123;</span><br><span class="line">        std::cout &lt;&lt; faces[i];</span><br><span class="line">        roi_image = <span class="built_in">image</span>(faces[i]);</span><br><span class="line">        <span class="comment">//cv::rectangle(image, faces[i], cv::Scalar(0, 0, 255), 2);</span></span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    cv::<span class="built_in">imshow</span>(<span class="string">&quot;Faces found&quot;</span>, roi_image);</span><br><span class="line">    <span class="keyword">return</span> roi_image;</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">    <span class="keyword">auto</span> tmp = <span class="built_in">getImage</span>(<span class="string">&quot;C:\\Users\\care\\Desktop\\leetcode\\hxb.jpg&quot;</span>);</span><br><span class="line">    cv::<span class="built_in">waitKey</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="配置onnxruntime">配置ONNXRUNTIME</h2>
+<p>这里一直报错，程序崩溃，发现是之前安装过onnxruntime. c32里的还在，估计是和我新下载的不一致导致冲突了</p>
+<p>然后是Ort::Session session(env, model_path, session_options);报错，开始以为是wchar_t的问题，发现是在调试模式下session的numthreads不能设成1，改成0了，2是模型名错了</p>
+<h2 id="cpp-opencv">cpp opencv</h2>
+<p>赋值Mat有问题,别人可以直接mat.at(i,j,k)不知道为啥我的不行，版本问题？</p>
+<pre><code>cv::Mat mat(3, 3, CV_32FC3);
+cv::randu(mat, -1.0f, 1.0f);
+float count = 0;
+for (int i = 0; i &lt; mat.rows; i++) &#123;
+    for (int j = 0; j &lt; mat.cols; j++) &#123;
+        mat.at&lt;cv::Vec3f&gt;(i, j)[0] = count + 1; count++;
+        mat.at&lt;cv::Vec3f&gt;(i, j)[1] = count + 1; count++;
+        mat.at&lt;cv::Vec3f&gt;(i, j)[2] = count + 1; count++;
+        //mat.at&lt;float&gt;(i, j, 2) = count;
+    &#125;
+&#125;</code></pre>
+<p>之前一直在找hwc-&gt;chw的方法，发现可以直接</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cv::dnn::<span class="built_in">blobFromImage</span>(img, <span class="number">1.0</span>, cv::<span class="built_in">Size</span>(<span class="number">256</span>, <span class="number">256</span>), cv::<span class="built_in">Scalar</span>(<span class="number">0</span>, <span class="number">0</span>, <span class="number">0</span>), <span class="literal">true</span>, <span class="literal">false</span>, CV_32F);</span><br></pre></td></tr></table></figure>
+<h1 id="人脸识别">人脸识别</h1>
+<p>facenet 部署，先导出ONNX</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> onnx</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">from</span> models.inception_resnet_v1 <span class="keyword">import</span> InceptionResnetV1</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cvtimg</span>(<span class="params">img</span>): <span class="comment">#img2tensor</span></span><br><span class="line">    img = cv2.resize(img, (<span class="number">256</span>,<span class="number">256</span>))</span><br><span class="line">    img = np.transpose(img/<span class="number">256.</span>, [<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>])</span><br><span class="line">    np.expand_dims(img, <span class="number">0</span>)</span><br><span class="line">    <span class="keyword">return</span> torch.from_numpy(img)</span><br><span class="line">img = cv2.imread(img_path).astype(np.float32)</span><br><span class="line">input_tensor = cvtimg(img)</span><br><span class="line">model = InceptionResnetV1(pretrained=<span class="string">&quot;casia-webface&quot;</span>)</span><br><span class="line">model.<span class="built_in">eval</span>()</span><br><span class="line"></span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">    torch.onnx.export(model, input_tensor, <span class="string">&quot;./facenet.onnx&quot;</span>, optset_version=<span class="number">11</span>, input_names = [<span class="string">&#x27;input&#x27;</span>], output_names=[<span class="string">&#x27;output&#x27;</span>])</span><br><span class="line">onnx_model = onnx.load(<span class="string">&quot;./facenet.onnx&quot;</span>)</span><br><span class="line"><span class="keyword">try</span>:</span><br><span class="line">    onnx.checker.check_model(onnx_model)</span><br><span class="line"><span class="keyword">except</span> Exception:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;error!&quot;</span>)</span><br><span class="line"><span class="keyword">else</span>:</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;success!&quot;</span>)</span><br></pre></td></tr></table></figure>
+<h2 id="python端部署">python端部署</h2>
+<p>然后测试一下python端的输出，这里顺便用余弦相似度和欧氏距离算了下，只是测试可以直接看输出的和torch的输出是否一致就可以了</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> onnxruntime</span><br><span class="line">img1 = cv2.imread(img1_path).astype(np.float32)</span><br><span class="line">img2 = cv2.imread(img2_path).astype(np.float32)</span><br><span class="line">img3 = cv2.imread(img3_path).astype(np.float32)</span><br><span class="line">img4 = cv2.imread(img4_path).astype(np.float32)</span><br><span class="line">ndist = torch.nn.PariwiseDistance(p=<span class="number">2</span>)</span><br><span class="line"><span class="keyword">def</span> <span class="title function_">cosine_similarity</span>(<span class="params">tensor1, tensor2</span>):</span><br><span class="line">    <span class="keyword">return</span> (np.<span class="built_in">sum</span>(tensor1*tensor2)/(np.linalg(tensor1,<span class="built_in">ord</span>=<span class="number">2</span>), np.linalg(tensor2, <span class="built_in">ord</span>=<span class="number">2</span>))</span><br><span class="line">            </span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dis</span>(<span class="params">tensor1, tensor2</span>):</span><br><span class="line">    <span class="keyword">return</span> np.<span class="built_in">sum</span>(np.linalg((tensor1-tensor2), <span class="built_in">ord</span>=<span class="number">2</span>))</span><br><span class="line">input_tensor1 = cvtimg(img1)</span><br><span class="line">input_tensor2 = cvtimg(img2)</span><br><span class="line">input_tensor3 = cvtimg(img3)</span><br><span class="line">input_tensor4 = cvtimg(img4)</span><br><span class="line"><span class="keyword">with</span> torch.no_grad():</span><br><span class="line">	output1 = model(input_tensor1)</span><br><span class="line">    output2 = model(input_tensor2)</span><br><span class="line">    output3 = model(input_tensor3)</span><br><span class="line">    output4 = model(input_tensor4)</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;dist1&quot;</span>, ndist(output1, output2), <span class="string">&quot;dist2&quot;</span>, ndist(output1, output3), <span class="string">&quot;dist3&quot;</span>, ndist(output1, output4))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;\n&quot;</span>)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;cosine&quot;</span>, torch.cosine_similarity(output1, output2), <span class="string">&quot;cosine&quot;</span>, torch.cosine_similarity(output1, output3), <span class="string">&quot;cosine&quot;</span>, torch.cosine_similarity(output1, output4))</span><br><span class="line"></span><br><span class="line">session = onnx.InferenceSession(<span class="string">&quot;./facenet.onnx&quot;</span>)</span><br><span class="line">input_t1 = input_tensor1.numpy()</span><br><span class="line">input_t2 = input_tensor2.numpy()</span><br><span class="line">input_t3 = input_tensor3.numpy()</span><br><span class="line">input_t4 = input_tensor4.numpy()</span><br><span class="line">input_t = [input_t1, input_t2, input_t3, input_t4]</span><br><span class="line">out_t = []</span><br><span class="line"><span class="keyword">for</span> inp <span class="keyword">in</span> input_t:</span><br><span class="line">    input_dict = &#123;<span class="string">&quot;input&quot;</span>:inp&#125;</span><br><span class="line">    out_put = session.run([<span class="string">&quot;output&quot;</span>], input_dict)</span><br><span class="line">    out_t.append(input_dict)</span><br><span class="line">tmp = out_t[<span class="number">0</span>]</span><br><span class="line"><span class="keyword">for</span> ot <span class="keyword">in</span> out_t[<span class="number">1</span>:]:</span><br><span class="line">	<span class="built_in">print</span>(cosine_similarity(tmp, ot))</span><br><span class="line">    <span class="built_in">print</span>(dis(tmp, ot))</span><br></pre></td></tr></table></figure>
+<h2 id="c端部署">c++端部署</h2>
+<p>踩坑也很多，同时也没找到原因，我估计是机器不行，栈空间太小了，没尝试调大他</p>
+<p>facenet原理很简单，就是把一个人脸图片embedding 到一个1*512的特征向量，然后可以根据不同的特征向量之间的距离（欧氏距离、余弦相似度等）判断是否是同一个人。</p>
+<p>所以先定义一下欧氏距离和余弦相似度：</p>
+<p>​ <span class="math display">\[ dis = \sqrt{\sum_{i=1}^{len}(tensor1_i-tensor2_i)^2} \]</span></p>
+<p>​ <span class="math display">\[cos = \frac{tensor1\cdot tensor2}{\sqrt{\sum tensor1^2}\cdot \sqrt{\sum tensor2^2}}\]</span></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">float</span> <span class="title">dis</span><span class="params">(std::vector&lt;<span class="type">float</span>&gt;ten1, std::vector&lt;<span class="type">float</span>&gt;ten2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ten1.<span class="built_in">size</span>() != ten2.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="type">float</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ten1.<span class="built_in">size</span>(); i++) sum += <span class="built_in">pow</span>((ten1[i] - ten2[i]), <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sqrt</span>(sum);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">float</span> <span class="title">cosine_similarity</span><span class="params">(std::vector&lt;<span class="type">float</span>&gt;ten1, std::vector&lt;<span class="type">float</span>&gt;ten2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ten1.<span class="built_in">size</span>() != ten2.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="type">float</span> sum = <span class="number">0</span>, mo1=<span class="number">0</span>, mo2=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ten1.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">        sum += (ten1[i] * ten2[i]);</span><br><span class="line">        mo1 += <span class="built_in">pow</span>(ten1[i], <span class="number">2</span>);</span><br><span class="line">        mo2 += <span class="built_in">pow</span>(ten2[i], <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> sum/(<span class="built_in">sqrt</span>(mo1)*<span class="built_in">sqrt</span>(mo2));</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后定义一下图像处理的过程，假设已经是有一个人脸图像了，我们需要做的是把他先转成onnx的tensor，具体步骤和<a href="./srcnn部署.md">srcnn</a>一样，这里不进行赘述。</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">cv::Mat src = cv::<span class="built_in">imread</span>(img_path, cv::IMREAD_COLOR);</span><br><span class="line">src = cv::<span class="built_in">resize</span>(src, cv::<span class="built_in">Size</span>(<span class="number">256</span>, <span class="number">256</span>));</span><br><span class="line"><span class="type">float</span> ar[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>];</span><br><span class="line"><span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>;i&lt;<span class="number">256</span>;i++)&#123;</span><br><span class="line">    <span class="type">unsigned</span> <span class="type">char</span>* data = src.<span class="built_in">ptr</span>&lt;<span class="type">unsigned</span> <span class="type">char</span>&gt;(i);</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> j=<span class="number">0</span>;i&lt;<span class="number">256</span>;j++)&#123;</span><br><span class="line">        ar[<span class="number">0</span>][<span class="number">0</span>][i][j] = <span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)/<span class="number">255</span>;data++;</span><br><span class="line">        ar[<span class="number">0</span>][<span class="number">1</span>][i][j] = <span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)/<span class="number">255</span>;data++;</span><br><span class="line">        ar[<span class="number">0</span>][<span class="number">2</span>][i][j] = <span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)/<span class="number">255</span>;data++;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后定义一个函数<code>faceEmbedding</code>用于将人脸图像使用Facenet进行<code>Embedding</code></p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">faceEmbedding</span><span class="params">(<span class="type">float</span> ar[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>])</span></span>&#123;</span><br><span class="line">    <span class="function">Ort::Env <span class="title">env</span><span class="params">(<span class="string">&quot;ORT_LOGGING_LEVEL_ERROR&quot;</span>, <span class="string">&quot;facenet&quot;</span>)</span></span>;</span><br><span class="line">    Ort::SessionOptions session_option;</span><br><span class="line">    session_option.<span class="built_in">SetGraphOptimizationLevel</span>(GraphOptimizationLevel::ORT_ENABLE_ALL);</span><br><span class="line">    session_option.<span class="built_in">SetInterOpNumThreads</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="type">wchar_t</span> model_path[] = <span class="string">L&quot;./facenet.onnx&quot;</span>;</span><br><span class="line">    <span class="function">Ort::Session <span class="title">session</span><span class="params">(env, session_option, model_path)</span></span>;</span><br><span class="line">    </span><br><span class="line">    <span class="type">size_t</span> size = <span class="number">1</span>*<span class="number">3</span>*<span class="number">256</span>*<span class="number">256</span>*<span class="built_in">sizeof</span>(<span class="type">float</span>);</span><br><span class="line">    std::vector&lt;<span class="type">int64_t</span>&gt; shape = &#123;<span class="number">1</span>,<span class="number">3</span>,<span class="number">256</span>,<span class="number">256</span>&#125;;</span><br><span class="line">    Ort::Value&amp; input_tensors = <span class="built_in">CreateTensor</span>&lt;<span class="type">float</span>&gt;(Ort::MemoryInfo::<span class="built_in">CreateCpu</span>(OrtDeviceAllocator, OrtMemTypeDefault), &amp;a[<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>], size, shape.<span class="built_in">data</span>(), shape.<span class="built_in">size</span>());</span><br><span class="line">    std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt; input_names = &#123;<span class="string">&quot;input&quot;</span>&#125;;</span><br><span class="line">    std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt; output_names = &#123;<span class="string">&quot;output&quot;</span>&#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">auto</span> output_tensors = session.<span class="built_in">run</span>(Ort::RunOptions&#123;&#125;, input_names.<span class="built_in">data</span>(), &amp;input_tensors, <span class="number">1</span>, output_names.<span class="built_in">data</span>(), <span class="number">1</span>);</span><br><span class="line">    <span class="keyword">auto</span> out = output_tensors.<span class="built_in">front</span>();</span><br><span class="line">    <span class="type">int64_t</span> len=<span class="number">1</span>;</span><br><span class="line">    <span class="keyword">auto</span> shape1 = out.<span class="built_in">GetTensorTypeAndShapeInfo</span>().<span class="built_in">GetShape</span>();</span><br><span class="line">    <span class="keyword">for</span>(<span class="keyword">auto</span> sa:shape1) len*=sa;</span><br><span class="line">    std:: <span class="function">vector&lt;<span class="type">float</span>&gt; <span class="title">res</span><span class="params">(len, <span class="number">0</span>)</span></span>;</span><br><span class="line">    *data = out.<span class="built_in">GetTensorMutableDate</span>&lt;<span class="type">float</span>&gt;();</span><br><span class="line">    <span class="keyword">for</span>(<span class="type">int</span> i=<span class="number">0</span>; i&lt;len; i++)&#123;</span><br><span class="line">         res[i] = *data;</span><br><span class="line">         data++;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> res;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>然后将src的人脸图片和target库里的进行对比一下就可以识别出这个人是谁了。完整代码如下：</p>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="type">float</span> <span class="title">dis</span><span class="params">(std::vector&lt;<span class="type">float</span>&gt;ten1, std::vector&lt;<span class="type">float</span>&gt;ten2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ten1.<span class="built_in">size</span>() != ten2.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="type">float</span> sum = <span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ten1.<span class="built_in">size</span>(); i++) sum += <span class="built_in">pow</span>((ten1[i] - ten2[i]), <span class="number">2</span>);</span><br><span class="line">    <span class="keyword">return</span> <span class="built_in">sqrt</span>(sum);</span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="type">float</span> <span class="title">cosine_similarity</span><span class="params">(std::vector&lt;<span class="type">float</span>&gt;ten1, std::vector&lt;<span class="type">float</span>&gt;ten2)</span> </span>&#123;</span><br><span class="line">    <span class="keyword">if</span> (ten1.<span class="built_in">size</span>() != ten2.<span class="built_in">size</span>()) <span class="keyword">return</span> <span class="number">-1</span>;</span><br><span class="line">    <span class="type">float</span> sum = <span class="number">0</span>, mo1=<span class="number">0</span>, mo2=<span class="number">0</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; ten1.<span class="built_in">size</span>(); i++) &#123;</span><br><span class="line">        sum += (ten1[i] * ten2[i]);</span><br><span class="line">        mo1 += <span class="built_in">pow</span>(ten1[i], <span class="number">2</span>);</span><br><span class="line">        mo2 += <span class="built_in">pow</span>(ten2[i], <span class="number">2</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> sum/(<span class="built_in">sqrt</span>(mo1)*<span class="built_in">sqrt</span>(mo2));</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function">std::vector&lt;<span class="type">float</span>&gt; <span class="title">faceEmbedding</span><span class="params">(<span class="type">float</span> ar[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>])</span> </span>&#123;</span><br><span class="line">    <span class="function">Ort::Env <span class="title">env</span><span class="params">(ORT_LOGGING_LEVEL_ERROR, <span class="string">&quot;test_face&quot;</span>)</span></span>;</span><br><span class="line">    Ort::SessionOptions session_options;</span><br><span class="line">    session_options.<span class="built_in">SetGraphOptimizationLevel</span>(GraphOptimizationLevel::ORT_ENABLE_ALL);</span><br><span class="line">    session_options.<span class="built_in">SetInterOpNumThreads</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="type">wchar_t</span> model_path[] = <span class="string">L&quot;C://Users//care//Desktop//leetcode//facenet.onnx&quot;</span>;</span><br><span class="line">    <span class="comment">//std::cout &lt;&lt; &quot;here!&quot;;</span></span><br><span class="line">    <span class="function">Ort::Session <span class="title">session</span><span class="params">(env, model_path, session_options)</span></span>;</span><br><span class="line"></span><br><span class="line">    <span class="type">size_t</span> size = <span class="number">1</span> * <span class="number">3</span> * <span class="number">256</span> * <span class="number">256</span> * <span class="built_in">sizeof</span>(<span class="type">float</span>);</span><br><span class="line">    std::vector&lt;<span class="type">int64_t</span>&gt; shape = &#123; <span class="number">1</span>,<span class="number">3</span>,<span class="number">256</span>,<span class="number">256</span> &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">auto</span> input_tensors = Ort::Value::<span class="built_in">CreateTensor</span>&lt;<span class="type">float</span>&gt;(Ort::MemoryInfo::<span class="built_in">CreateCpu</span>(OrtDeviceAllocator, OrtMemTypeDefault), &amp;ar[<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>], size, shape.<span class="built_in">data</span>(), shape.<span class="built_in">size</span>());</span><br><span class="line"></span><br><span class="line">    <span class="type">float</span>* ptr = input_tensors.<span class="built_in">GetTensorMutableData</span>&lt;<span class="type">float</span>&gt;();</span><br><span class="line"></span><br><span class="line">    std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt; input_names = &#123; <span class="string">&quot;input&quot;</span> &#125;;</span><br><span class="line">    std::vector&lt;<span class="type">const</span> <span class="type">char</span>*&gt; output_names = &#123; <span class="string">&quot;output&quot;</span> &#125;;</span><br><span class="line">    <span class="keyword">auto</span> output_tensors = session.<span class="built_in">Run</span>(Ort::RunOptions&#123;&#125;, input_names.<span class="built_in">data</span>(), &amp;input_tensors, <span class="number">1</span>, output_names.<span class="built_in">data</span>(), <span class="number">1</span>);</span><br><span class="line">    </span><br><span class="line">    <span class="type">float</span>* outputf1 = output_tensors.<span class="built_in">front</span>().<span class="built_in">GetTensorMutableData</span>&lt;<span class="type">float</span>&gt;();</span><br><span class="line">    std::vector&lt;<span class="type">int64_t</span>&gt;out_shape = output_tensors.<span class="built_in">front</span>().<span class="built_in">GetTensorTypeAndShapeInfo</span>().<span class="built_in">GetShape</span>();</span><br><span class="line">    <span class="type">int64_t</span> len = <span class="number">1</span>;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">auto</span> sap : out_shape) len *= sap;</span><br><span class="line">    std::vector&lt;<span class="type">float</span>&gt;flo;</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; len; i++) &#123;</span><br><span class="line">        flo.<span class="built_in">push_back</span>(*outputf1);outputf1++;</span><br><span class="line">    &#125; </span><br><span class="line">    </span><br><span class="line">    <span class="keyword">return</span> flo;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="type">int</span> <span class="title">main</span><span class="params">()</span></span>&#123;</span><br><span class="line">    std::string path1 = <span class="string">&quot;C:\\Users\\care\\Desktop\\leetcode\\compare.png&quot;</span>;</span><br><span class="line">    std::string path2 = <span class="string">&quot;C:\\Users\\care\\Desktop\\leetcode\\image\\face1\\0.png&quot;</span>;</span><br><span class="line">    std::string path3 = <span class="string">&quot;C:\\Users\\care\\Desktop\\leetcode\\image\\face1\\1.png&quot;</span>;</span><br><span class="line">    std::string path4 = <span class="string">&quot;C:\\Users\\care\\Desktop\\leetcode\\image\\face2\\f_3.png&quot;</span>;</span><br><span class="line">    std::vector&lt;std::string&gt; path = &#123; path2, path3, path4 &#125;;</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//计算src的特征向量</span></span><br><span class="line">    cv::Mat src = cv::<span class="built_in">imread</span>(path1, cv::IMREAD_COLOR);</span><br><span class="line">    <span class="type">float</span> ar[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>];</span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">256</span>; i++) &#123;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">char</span>* data = src.<span class="built_in">ptr</span>&lt;<span class="type">unsigned</span> <span class="type">char</span>&gt;(i);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">256</span>; j++) &#123;</span><br><span class="line">            ar[<span class="number">0</span>][<span class="number">0</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data))/<span class="number">255</span>; data++;</span><br><span class="line">            ar[<span class="number">0</span>][<span class="number">1</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)) / <span class="number">255</span>; data++;</span><br><span class="line">            ar[<span class="number">0</span>][<span class="number">2</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)) / <span class="number">255</span>; data++;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="comment">//cv::Size();</span></span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">auto</span> tmp = <span class="built_in">faceEmbedding</span>(ar);</span><br><span class="line">    </span><br><span class="line">    <span class="comment">//逐一和target库里的人脸图片进行对比</span></span><br><span class="line">        <span class="keyword">for</span> (<span class="keyword">auto</span> pa : path) &#123;</span><br><span class="line">        cv::Mat target = cv::<span class="built_in">imread</span>(pa, cv::IMREAD_COLOR);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">256</span>; i++) &#123;</span><br><span class="line">            <span class="type">unsigned</span> <span class="type">char</span>* data = target.<span class="built_in">ptr</span>&lt;<span class="type">unsigned</span> <span class="type">char</span>&gt;(i);</span><br><span class="line">            <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">256</span>; j++) &#123;</span><br><span class="line">                ar[<span class="number">0</span>][<span class="number">0</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)) / <span class="number">255</span>; data++;</span><br><span class="line">                ar[<span class="number">0</span>][<span class="number">1</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)) / <span class="number">255</span>; data++;</span><br><span class="line">                ar[<span class="number">0</span>][<span class="number">2</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*data)) / <span class="number">255</span>; data++;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">auto</span> tar = <span class="built_in">faceEmbedding</span>(ar);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">10</span>; i++) std::cout &lt;&lt; tar[i] &lt;&lt; <span class="string">&quot; &quot;</span>;</span><br><span class="line">        std::cout &lt;&lt; std::endl;</span><br><span class="line">        <span class="type">float</span> res = <span class="built_in">dis</span>(tmp, tar);</span><br><span class="line">        <span class="type">float</span> coSim = <span class="built_in">cosine_similarity</span>(tmp, tar);</span><br><span class="line">        std::cout &lt;&lt;<span class="string">&quot;dis:&quot;</span>&lt;&lt; res &lt;&lt; <span class="string">&quot;\t cosine_similarity: &quot;</span>&lt;&lt;coSim&lt;&lt;std::endl;</span><br><span class="line">        <span class="keyword">if</span> (res &lt; <span class="number">0.5</span> &amp;&amp; coSim&gt;<span class="number">0.88</span>) std::cout &lt;&lt; <span class="string">&quot;Same person!&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">        <span class="keyword">else</span> std::cout &lt;&lt; <span class="string">&quot;Not the same person!&quot;</span> &lt;&lt; std::endl;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>PS: 这里面也挺多坑的，弄了我大半天，本以为应该会挺简单的，主要集中在：</p>
+<ul>
+<li>本来我建立了一个str2ten函数，用于直接将img_path转换成一个Ort::Value对象，就不用main函数里面的大量重复的for循环了</li>
+</ul>
+<figure class="highlight c++"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="function">Ort::Value <span class="title">stoten</span><span class="params">(std::string path, <span class="type">float</span> a[<span class="number">1</span>][<span class="number">3</span>][<span class="number">256</span>][<span class="number">256</span>])</span> </span>&#123;</span><br><span class="line">    cv::Mat img = cv::<span class="built_in">imread</span>(path, cv::IMREAD_COLOR);</span><br><span class="line">    <span class="comment">//float a[1][3][256][256];</span></span><br><span class="line">    <span class="keyword">for</span> (<span class="type">int</span> i = <span class="number">0</span>; i &lt; <span class="number">256</span>; i++) &#123;</span><br><span class="line">        <span class="type">unsigned</span> <span class="type">char</span>* rdata = img.<span class="built_in">ptr</span>&lt;<span class="type">unsigned</span> <span class="type">char</span>&gt;(i);</span><br><span class="line">        <span class="keyword">for</span> (<span class="type">int</span> j = <span class="number">0</span>; j &lt; <span class="number">256</span>; j++) &#123;</span><br><span class="line">            a[<span class="number">0</span>][<span class="number">0</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*rdata)) / <span class="number">255</span>; rdata++;</span><br><span class="line">            a[<span class="number">0</span>][<span class="number">1</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*rdata)) / <span class="number">255</span>; rdata++;</span><br><span class="line">            a[<span class="number">0</span>][<span class="number">2</span>][i][j] = (<span class="built_in">static_cast</span>&lt;<span class="type">float</span>&gt;(*rdata)) / <span class="number">255</span>; rdata++;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="type">size_t</span> size = <span class="number">1</span> * <span class="number">3</span> * <span class="number">256</span> * <span class="number">256</span> * <span class="built_in">sizeof</span>(<span class="type">float</span>);</span><br><span class="line">    std::vector&lt;<span class="type">int64_t</span>&gt; shape = &#123; <span class="number">1</span>,<span class="number">3</span>,<span class="number">256</span>,<span class="number">256</span> &#125;;</span><br><span class="line">    <span class="keyword">auto</span> tensor = Ort::Value::<span class="built_in">CreateTensor</span>&lt;<span class="type">float</span>&gt;(Ort::MemoryInfo::<span class="built_in">CreateCpu</span>(OrtDeviceAllocator, OrtMemTypeDefault), &amp;a[<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>][<span class="number">0</span>], size, shape.<span class="built_in">data</span>(), shape.<span class="built_in">size</span>());</span><br><span class="line">    <span class="keyword">return</span> tensor;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>但是这里会溢出，可能是我的栈空间不够，用函数传参的时候传不完整，最后算出来的output_tensor都是-NAN（不懂）。</p>
+<ul>
+<li>然后是调试的时候遇到了最上面的visual studio的自动代码优化，整的我的断点错位了，按<a target="_blank" rel="noopener" href="https://blog.csdn.net/ermu114/article/details/121945771">这里</a>说的把他改过来就好了。</li>
+</ul>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/job/" rel="tag"># job</a>
+              <a href="/tags/%E9%83%A8%E7%BD%B2/" rel="tag"># 部署</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/15/srcnn%E9%83%A8%E7%BD%B2/" rel="prev" title="srcnn部署">
+                  <i class="fa fa-chevron-left"></i> srcnn部署
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/04/15/leetcode/" rel="next" title="leetcode">
+                  leetcode <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
