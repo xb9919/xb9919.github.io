@@ -1,0 +1,386 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="0序言 因为论文里面用到了小波变换，看大家手撕代码可能和自己的论文关系比较大的（Transformer based的muti head self-attention，弱监督的CAM）这里记录一下怎么手撕小波">
+<meta property="og:type" content="article">
+<meta property="og:title" content="pytorch实现小波变换">
+<meta property="og:url" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="0序言 因为论文里面用到了小波变换，看大家手撕代码可能和自己的论文关系比较大的（Transformer based的muti head self-attention，弱监督的CAM）这里记录一下怎么手撕小波">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/ori_img.png">
+<meta property="og:image" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/img_new.png">
+<meta property="og:image" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/ll.png">
+<meta property="og:image" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/lh.png">
+<meta property="og:image" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/hl.png">
+<meta property="og:image" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/hh.png">
+<meta property="article:published_time" content="2023-04-23T13:04:52.000Z">
+<meta property="article:modified_time" content="2023-04-23T16:47:14.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="job">
+<meta property="article:tag" content="c&#x2F;cpp">
+<meta property="article:tag" content="-code">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/ori_img.png">
+
+
+<link rel="canonical" href="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/","path":"2023/04/23/pytorch实现小波变换/","title":"pytorch实现小波变换"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>pytorch实现小波变换 | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">0序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#dwt2d"><span class="nav-number">2.</span> <span class="nav-text">DWT2D</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#idwt"><span class="nav-number">3.</span> <span class="nav-text">IDWT</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">9</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">4</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">6</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="pytorch实现小波变换 | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          pytorch实现小波变换
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+
+      <time title="创建时间：2023-04-23 21:04:52" itemprop="dateCreated datePublished" datetime="2023-04-23T21:04:52+08:00">2023-04-23</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-04-24 00:47:14" itemprop="dateModified" datetime="2023-04-24T00:47:14+08:00">2023-04-24</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">计算机视觉相关</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2023/04/23/pytorch%E5%AE%9E%E7%8E%B0%E5%B0%8F%E6%B3%A2%E5%8F%98%E6%8D%A2/" class="post-meta-item leancloud_visitors" data-flag-title="pytorch实现小波变换" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="序言">0序言</h1>
+<p>因为论文里面用到了小波变换，看大家手撕代码可能和自己的论文关系比较大的（Transformer based的muti head self-attention，弱监督的CAM）这里记录一下怎么手撕小波</p>
+<span id="more"></span>
+<h1 id="dwt2d">DWT2D</h1>
+<p>主要用到了pywt的库，pywt可以通过调用pywt.Wavelet得到小波变换的基函数，然后取得他的小波高频的基函数和低频的基函数</p>
+<p>参数说明：</p>
+<ul>
+<li><p><strong>wavename</strong>：</p>
+<p>对滤波器初始化使用的小波，暂时只支持 2 进制的标量小波。其他小波或超小波，如 a 进制小波、多小波、小波框架、曲波、脊波、条带波、小波框架等暂不适用； 对于 2D/3D 数据，相应的滤波器是由 1D 滤波器组进行张量相乘得到的，对应的小波称为张量小波或可分离小波，若要使用不可分离小波，则要重建脚本</p></li>
+<li><p><strong>pad_type</strong> ：</p>
+<p>对输入数据的边界延拓方式，理论上使用对称小波如 bior2.2/bior3.3 等，同时对数据进行对称延拓，可以精确重构原数据，但是脚本的实现有点问题，除非使用 haar 小波，否则无法精确重构，可能是由于 python 包 pywt 中的小波滤波器组的排列方式引起的,padding_mode可选择四种padding方法：zeros（常量填充）（默认0填充）、reflect（反射填充,就是以矩阵的边界为中心，对称填充，比如左边是12,padding后左边的就是212）、replicate（复制填充,就是复制，比如第一行是1234复制后第一第二行是1234,1234然后角落的那个就近，注意的是复制的都是第一行的，）、circular（循环填充，就是循环下去，比如1234左右padding就是212341）。</p></li>
+<li><p><strong>stride</strong>：</p>
+<p>采样步长，脚本设置这个值必须为2，非要设置为其他数值也是可以运行的（此时需屏蔽脚本中的 assert self.stride == 2），但是不满足小波理论；若是用任意进制的小波，如3进制小波，可相应调整这个参数，但此时有更多的滤波器组，会相应分解出更多高频分量，对应的还要更新脚本内容</p></li>
+<li><p><strong>in_channels&amp;out_channels</strong></p>
+<p>输入输出的通道数</p></li>
+<li><p><strong>groups</strong></p>
+<p>对通道这一维度的分组数目，这个值需要能被 in_channels 整除，默认值与输入数据的通道数相同，即为 in_channels（即小波分解是对图像的每个通道去进行分解）；一般的卷积操作这里默认值为 1</p></li>
+<li><p><strong>kernel_size</strong></p>
+<p>卷积核尺寸，这个参数与参数 wavename 有一定的冲突，即该参数值必须大于初始化小波滤波器长度；该参数的默认值是等于初始化所用小波滤波器长度若训练过程中不对滤波器组进行学习更新，即参数 trainable 设置为 False，则建议参数 kernel_size 选用默认值，因为此时除了运算量的提升，并不能带来任何增益。若参数 trainable 设置为 True，参数 kernel_size 应大于等于初始化所用小波的滤波器长度，此时有可能训练得到更适用于当前数据分布的滤波器组 个人<strong>不建议 kernel_size 的值设置的比初始化小波滤波器长度大的很多，个人建议这个超出值不要大于 3</strong></p></li>
+<li><p><strong>trainable</strong></p>
+<p>标记是否在训练过程中更新滤波器组参数；若这个参数设置为 True，且同时 groups 设置为 1 ，那么：DWT层等价于多个 stride = 2 的卷积层，只是对卷积核的大小以及初始化方式不同。</p>
+<p>IDWT层等价于多个 stride = 2 的反卷积层操作后相加，同样卷积核的大小以及初始化方式不同 当 out_channels 和 groups 都采用默认值时，对应的是对输入数据逐通道进行小波变换。</p>
+<p>当 groups 取值为 1 时候，与一般的卷积操作有相似，可理解为融合数据在不同通道的相同频段内的信息。与一般的卷积层一样，理论上这些层可以处理任意尺寸的数据。但是，如果输入数据某个维度上尺寸小于滤波器组长度的1/2，在重构过程中对数据延拓时会报错。另外，我们建议输入数据各个维度上的尺寸是偶数值。</p></li>
+</ul>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">DWT_2D</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self,pad_type = <span class="string">&#x27;reflect&#x27;</span>, wavename = <span class="string">&#x27;haar&#x27;</span>, stride = <span class="number">2</span>, in_channels = <span class="number">1</span>, out_channels = <span class="literal">None</span>, groups = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                kernel_size = <span class="literal">None</span>, trainable = <span class="literal">False</span>, normailzed = <span class="literal">False</span></span>):</span><br><span class="line">        <span class="built_in">super</span>(dwt2d, self).__init__()</span><br><span class="line">        self.train_able = trainable</span><br><span class="line">        self.in_channels = in_channels</span><br><span class="line">        self.out_channels = out_channels</span><br><span class="line">        self.wavename = wavename</span><br><span class="line">        self.groups = self.in_channels <span class="keyword">if</span> groups==<span class="literal">None</span> <span class="keyword">else</span> groups</span><br><span class="line">        self.out_channels = self.in_channels <span class="keyword">if</span> out_channels==<span class="literal">None</span> <span class="keyword">else</span> groups</span><br><span class="line">        self.stride = stride</span><br><span class="line">        self.kernel_size = kernel_size</span><br><span class="line">        self.pad_type = pad_type</span><br><span class="line">        self.normailized = normailzed</span><br><span class="line">        self.get_filters()</span><br><span class="line">        self.initialization()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_filters</span>(<span class="params">self</span>):</span><br><span class="line">        wavelet = pywt.Wavelet(self.wavename)</span><br><span class="line">        band_low = torch.tensor(wavelet.rec_lo)</span><br><span class="line">        band_high = torch.tensor(wavelet.rec_hi)</span><br><span class="line">        length_band = band_low.size()[<span class="number">0</span>]</span><br><span class="line">        self.kernel_size = length_band <span class="keyword">if</span> self.kernel_size == <span class="literal">None</span> <span class="keyword">else</span> self.kernel_size</span><br><span class="line">        <span class="keyword">assert</span> self.kernel_size &gt;= length_band, <span class="string">&#x27;kernel_size 不能小于滤波器长度&#x27;</span></span><br><span class="line">        a = (self.kernel_size-length_band)//<span class="number">2</span> </span><br><span class="line">        <span class="comment">#a意思是假如kernel比较大的时候，哪段是会进行采样的，如kernel_size=4, length_band=2，a=1, b=-0,就是第一个不会采样</span></span><br><span class="line">        b = -(self.kernel_size - length_band -a)//<span class="number">2</span></span><br><span class="line">        b = <span class="literal">None</span> <span class="keyword">if</span> b==<span class="number">0</span> <span class="keyword">else</span> b</span><br><span class="line">        self.filt_low = torch.zeros(self.kernel_size)</span><br><span class="line">        self.filt_high = torch.zeros(self.kernel_size)</span><br><span class="line">        self.filt_low[a:b] = band_low</span><br><span class="line">        self.filt_high[a:b] = band_high</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">initialization</span>(<span class="params">self</span>):</span><br><span class="line">        self.filter_ll = self.filt_low[:, <span class="literal">None</span>]* self.filt_low[<span class="literal">None</span>, :]</span><br><span class="line">        self.filter_lh = self.filt_low[:, <span class="literal">None</span>]* self.filt_high[<span class="literal">None</span>, :]</span><br><span class="line">        self.filter_hl = self.filt_high[:, <span class="literal">None</span>]* self.filt_low[<span class="literal">None</span>, :]</span><br><span class="line">        self.filter_hh = self.filt_high[:, <span class="literal">None</span>]* self.filt_high[<span class="literal">None</span>, :]</span><br><span class="line"></span><br><span class="line">        self.filter_ll = self.filter_ll[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels//self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        self.filter_lh = self.filter_lh[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels//self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        self.filter_hl = self.filter_hl[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels//self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        self.filter_hh = self.filter_hh[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels//self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.normailized:</span><br><span class="line">            <span class="comment">#不同小波基函数有不同的能量和幅度特性，如果不对小波系数进行归一化处理，可能会导致不同子带之间的能量差异很大，从而影响小波变换的性能。</span></span><br><span class="line">            self.filter_ll = self.filter_ll /<span class="number">2</span></span><br><span class="line">            self.filter_lh = self.filter_lh * math.sqrt(<span class="number">2</span>)</span><br><span class="line">            self.filter_hl = self.filter_hl * math.sqrt(<span class="number">2</span>)</span><br><span class="line">            self.filter_hh = self.filter_hh * <span class="number">2</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">if</span> self.train_able:</span><br><span class="line">            self.filter_ll = nn.Parameter(self.filter_ll)</span><br><span class="line">            self.filter_lh = nn.Parameter(self.filter_lh)</span><br><span class="line">            self.filter_hl = nn.Parameter(self.filter_hl)</span><br><span class="line">            self.filter_hh = nn.Parameter(self.filter_hh)</span><br><span class="line">        <span class="keyword">if</span> self.kernel_size % <span class="number">2</span> == <span class="number">0</span>:</span><br><span class="line">            self.pad_sizes = [self.kernel_size // <span class="number">2</span> - <span class="number">1</span>, self.kernel_size // <span class="number">2</span> - <span class="number">1</span>,</span><br><span class="line">                              self.kernel_size // <span class="number">2</span> - <span class="number">1</span>, self.kernel_size // <span class="number">2</span> - <span class="number">1</span>]</span><br><span class="line">            <span class="comment">#根据小波分解的结果是输入的1/2计算的出来的（floor((n+2*p-k)/s+1) = n/2）,n是图像维度，p是padding，k是卷积大小，s是stride</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.pad_sizes = [self.kernel_size // <span class="number">2</span>, self.kernel_size // <span class="number">2</span>,</span><br><span class="line">                              self.kernel_size // <span class="number">2</span>, self.kernel_size // <span class="number">2</span>]</span><br><span class="line">    </span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, <span class="built_in">input</span></span>):</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">isinstance</span>(<span class="built_in">input</span>, torch.Tensor)</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">len</span>(<span class="built_in">input</span>.size())==<span class="number">4</span></span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">input</span>.size()[<span class="number">1</span>] == self.in_channels</span><br><span class="line">        <span class="built_in">input</span> = F.pad(<span class="built_in">input</span>, pad = self.pad_sizes, mode = self.pad_type)</span><br><span class="line">        <span class="keyword">return</span> F.conv2d(<span class="built_in">input</span>, self.filter_ll, stride = self.stride, groups=self.groups), \</span><br><span class="line">            F.conv2d(<span class="built_in">input</span>, self.filter_lh, stride = self.stride, groups=self.groups), \</span><br><span class="line">            F.conv2d(<span class="built_in">input</span>, self.filter_hl, stride = self.stride, groups=self.groups), \</span><br><span class="line">            F.conv2d(<span class="built_in">input</span>, self.filter_hh, stride = self.stride, groups=self.groups)</span><br></pre></td></tr></table></figure>
+<h1 id="idwt">IDWT</h1>
+<p>小波分解可以通过逆变换把分解的结果重构成原始的输入</p>
+<p>例如假如对一维的数据进行小波变换，haar小波基为band_low = ($/2,/2 <span class="math inline">\(),band_high = (\)</span>/2,-/2 $)</p>
+<p>假如数据是a = (<span class="math inline">\(\sqrt2, \sqrt2, \sqrt2, \sqrt2\)</span>),得到的结果是a_low = （2，2）,a_high =（0，0）小波逆变换就是a_1 = <span class="math inline">\(\sqrt2/2(low_1+high_1)\)</span>, a_2 = <span class="math inline">\(\sqrt2/2(low_1-high_1)\)</span></p>
+<p>low1 = (0,1,0,1,0),high1 = (0,0,0,0,0) 再用对应的解码小波基去(这里对应的是band_low, -band_high)卷积得到结果分别是(<span class="math inline">\(\sqrt2/2, \sqrt2/2, \sqrt2/2, \sqrt2/2\)</span>),(<span class="math inline">\(0, 0, 0, 0\)</span>),</p>
+<p>假如a是a*(1,2,3,4)那 a_low = (3,7) a_high = (-1,-1) 上采样就是(0,3,0,7,0)(0,-1,0,-1,0)，卷积的结果是<span class="math inline">\(\sqrt2(3/2,3/2,7/2,7/2)\)</span>和<span class="math inline">\(\sqrt2(-1/2,1/2,-1/2,1/2)\)</span>然后把他们相加就是原来的信号了。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">upsample_2d_v1</span>(<span class="params">tensor</span>):</span><br><span class="line">    <span class="comment">#[1,2,3,4]-&gt;[1,0,2,0,3,0,4,0]</span></span><br><span class="line">    N, C, H, W = tensor.size()</span><br><span class="line">    tensor2 = torch.zeros((N,C,<span class="number">2</span>*H,<span class="number">2</span>*W), dtype = tensor.dtype)</span><br><span class="line">    <span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">        tensor2 = tensor2.cuda()</span><br><span class="line">    tensor2[:,:,::<span class="number">2</span>,::<span class="number">2</span>] = tensor</span><br><span class="line">    <span class="keyword">return</span> tensor2</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="title class_">IDWT_2D</span>(nn.Module):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, pad_type = <span class="string">&#x27;reflect&#x27;</span>, wavename = <span class="string">&#x27;haar&#x27;</span>,</span></span><br><span class="line"><span class="params">                 stride = <span class="number">2</span>, in_channels = <span class="number">1</span>, out_channels = <span class="literal">None</span>, groups = <span class="literal">None</span>,</span></span><br><span class="line"><span class="params">                 kernel_size = <span class="literal">None</span>, trainable = <span class="literal">False</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">            参照 DWT_1D 中的说明</span></span><br><span class="line"><span class="string">            理论上，使用简单上采样和卷积实现的 IDWT 要比矩阵法计算量小、速度快，</span></span><br><span class="line"><span class="string">            然而由于 Pytorch 中没有实现简单上采样，在实现 IDWT 只能用与 [[1,0],[0,0]] 做反卷积 Deconvolution 来实现简单上采样</span></span><br><span class="line"><span class="string">            这使得该方法比矩阵法实现 IDWT 速度慢非常多。</span></span><br><span class="line"><span class="string">            目前，在论文 https://arxiv.org/abs/2005.14461 中，构建 WaveSNet 事实上仍使用 DWT/IDWT 的矩阵法实现</span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        <span class="built_in">super</span>(IDWT_2D, self).__init__()</span><br><span class="line">        self.trainable = trainable</span><br><span class="line">        self.kernel_size = kernel_size</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> self.trainable:</span><br><span class="line">            <span class="keyword">assert</span> self.kernel_size == <span class="literal">None</span>, <span class="string">&#x27;若训练过程中不更新滤波器组，请将 kernel_size 设置为默认值 None&#x27;</span></span><br><span class="line">        self.in_channels = in_channels</span><br><span class="line">        self.out_channels = self.in_channels <span class="keyword">if</span> out_channels == <span class="literal">None</span> <span class="keyword">else</span> out_channels</span><br><span class="line">        self.groups = self.in_channels <span class="keyword">if</span> groups == <span class="literal">None</span> <span class="keyword">else</span> groups</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">isinstance</span>(self.groups, <span class="built_in">int</span>) <span class="keyword">and</span> self.in_channels % self.groups == <span class="number">0</span></span><br><span class="line">        self.stride = stride</span><br><span class="line">        <span class="keyword">assert</span> self.stride == <span class="number">2</span></span><br><span class="line">        self.wavename = wavename</span><br><span class="line">        self.pad_type = pad_type</span><br><span class="line">        </span><br><span class="line">        self.is_cuda_available = torch.cuda.is_available()</span><br><span class="line">        self.get_filters()</span><br><span class="line">        self.initialization()</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">get_filters</span>(<span class="params">self</span>):</span><br><span class="line">        wavelet = pywt.Wavelet(self.wavename)</span><br><span class="line">        band_low = torch.tensor(wavelet.dec_lo)</span><br><span class="line">        band_high = torch.tensor(wavelet.dec_hi)</span><br><span class="line">        length_band = band_low.size()[<span class="number">0</span>]</span><br><span class="line">        self.kernel_size = length_band <span class="keyword">if</span> self.kernel_size == <span class="literal">None</span> <span class="keyword">else</span> self.kernel_size</span><br><span class="line">        <span class="keyword">assert</span> self.kernel_size &gt;= length_band, <span class="string">&#x27;参数 kernel_size 的取值不能小于 初始化所用小波的滤波器长度&#x27;</span></span><br><span class="line">        a = (self.kernel_size - length_band) // <span class="number">2</span></span><br><span class="line">        b = - (self.kernel_size - length_band - a)</span><br><span class="line">        b = <span class="literal">None</span> <span class="keyword">if</span> b == <span class="number">0</span> <span class="keyword">else</span> b</span><br><span class="line">        self.filt_low = torch.zeros(self.kernel_size)</span><br><span class="line">        self.filt_high = torch.zeros(self.kernel_size)</span><br><span class="line">        self.filt_low[a:b] = band_low</span><br><span class="line">        self.filt_high[a:b] = band_high</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">initialization</span>(<span class="params">self</span>):</span><br><span class="line">        self.filter_ll = self.filt_low[:, <span class="literal">None</span>] * self.filt_low[<span class="literal">None</span>,:]</span><br><span class="line">        self.filter_lh = self.filt_low[:, <span class="literal">None</span>] * self.filt_high[<span class="literal">None</span>,:]</span><br><span class="line">        self.filter_hl = self.filt_high[:, <span class="literal">None</span>] * self.filt_low[<span class="literal">None</span>,:]</span><br><span class="line">        self.filter_hh = self.filt_high[:, <span class="literal">None</span>] * self.filt_high[<span class="literal">None</span>,:]</span><br><span class="line">        self.filter_ll = self.filter_ll[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels // self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        self.filter_lh = self.filter_lh[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels // self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        self.filter_hl = self.filter_hl[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels // self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        self.filter_hh = self.filter_hh[<span class="literal">None</span>, <span class="literal">None</span>, :, :].repeat((self.out_channels, self.in_channels // self.groups, <span class="number">1</span>, <span class="number">1</span>))</span><br><span class="line">        <span class="keyword">if</span> torch.cuda.is_available():</span><br><span class="line">            self.filter_ll = self.filter_ll.cuda()</span><br><span class="line">            self.filter_lh = self.filter_lh.cuda()</span><br><span class="line">            self.filter_hl = self.filter_hl.cuda()</span><br><span class="line">            self.filter_hh = self.filter_hh.cuda()</span><br><span class="line">        <span class="keyword">if</span> self.trainable:</span><br><span class="line">            self.filter_ll = nn.Parameter(self.filter_ll)</span><br><span class="line">            self.filter_lh = nn.Parameter(self.filter_lh)</span><br><span class="line">            self.filter_hl = nn.Parameter(self.filter_hl)</span><br><span class="line">            self.filter_hh = nn.Parameter(self.filter_hh)</span><br><span class="line">        <span class="keyword">if</span> self.kernel_size % <span class="number">2</span> == <span class="number">0</span>:<span class="comment">#和DWT一样</span></span><br><span class="line">            self.pad_sizes = [self.kernel_size // <span class="number">2</span> - <span class="number">0</span>, self.kernel_size // <span class="number">2</span> - <span class="number">1</span>,</span><br><span class="line">                              self.kernel_size // <span class="number">2</span> - <span class="number">0</span>, self.kernel_size // <span class="number">2</span> - <span class="number">1</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            self.pad_sizes = [self.kernel_size // <span class="number">2</span> - <span class="number">1</span>, self.kernel_size // <span class="number">2</span> + <span class="number">1</span>,</span><br><span class="line">                              self.kernel_size // <span class="number">2</span> - <span class="number">1</span>, self.kernel_size // <span class="number">2</span> + <span class="number">1</span>]</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, LL, LH, HL, HH</span>):</span><br><span class="line">        <span class="keyword">assert</span> <span class="built_in">len</span>(LL.size()) == <span class="built_in">len</span>(LH.size()) == <span class="built_in">len</span>(HL.size()) == <span class="built_in">len</span>(HH.size()) == <span class="number">4</span></span><br><span class="line">        <span class="keyword">assert</span> LL.size()[<span class="number">0</span>] == LH.size()[<span class="number">0</span>] == HL.size()[<span class="number">0</span>] == HH.size()[<span class="number">0</span>]</span><br><span class="line">        <span class="keyword">assert</span> LL.size()[<span class="number">1</span>] == LH.size()[<span class="number">1</span>] == HL.size()[<span class="number">1</span>] == HH.size()[<span class="number">1</span>] == self.in_channels</span><br><span class="line">        LL_ = upsample_2d_v1(LL)</span><br><span class="line">        LH_ = upsample_2d_v1(LH)</span><br><span class="line">        HL_ = upsample_2d_v1(HL)</span><br><span class="line">        HH_ = upsample_2d_v1(HH)</span><br><span class="line">        LL = F.pad(LL_, pad = self.pad_sizes, mode = self.pad_type)</span><br><span class="line">        LH = F.pad(LH_, pad = self.pad_sizes, mode = self.pad_type)</span><br><span class="line">        HL = F.pad(HL_, pad = self.pad_sizes, mode = self.pad_type)</span><br><span class="line">        HH = F.pad(HH_, pad = self.pad_sizes, mode = self.pad_type)</span><br><span class="line">        <span class="keyword">return</span> F.conv2d(LL, self.filter_ll, stride = <span class="number">1</span>, groups = self.groups) + \</span><br><span class="line">               F.conv2d(LH, self.filter_lh, stride = <span class="number">1</span>, groups = self.groups) + \</span><br><span class="line">               F.conv2d(HL, self.filter_hl, stride = <span class="number">1</span>, groups = self.groups) + \</span><br><span class="line">               F.conv2d(HH, self.filter_hh, stride = <span class="number">1</span>, groups = self.groups)</span><br></pre></td></tr></table></figure>
+<p>测试一下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">img_path = <span class="string">&quot;/raid/xiaobin/FAS/OULU-NPU/Train_files/6_3_20_5/1.png&quot;</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> cv2</span><br><span class="line">img = cv2.imread(img_path)</span><br><span class="line">img = cv2.cvtColor(img, cv2.COLOR_BGR2RGB)</span><br><span class="line">img = img.transpose([<span class="number">2</span>,<span class="number">0</span>,<span class="number">1</span>])</span><br><span class="line"></span><br><span class="line">img = np.expand_dims(img/<span class="number">255</span>, <span class="number">0</span>).astype(np.float32)</span><br><span class="line">img = torch.from_numpy(img)</span><br><span class="line">Wave = dwt2d(wavename = <span class="string">&#x27;haar&#x27;</span>, in_channels = <span class="number">3</span>, kernel_size = <span class="literal">None</span>, trainable = <span class="literal">False</span>)</span><br><span class="line">ll,lh,hl,hh = Wave(img)</span><br><span class="line">idwt = IDWT_2D(wavename = <span class="string">&quot;haar&quot;</span>, in_channels = <span class="number">3</span>, kernel_size = <span class="literal">None</span>, trainable = <span class="literal">False</span>)</span><br><span class="line">img_new = idwt(ll, lh, hl, hh)</span><br><span class="line">save_image(img, <span class="string">&quot;/raid/c/tmp/ori_img.png&quot;</span>)</span><br><span class="line">save_image(img_new, <span class="string">&quot;/raid/c/tmp/img_new.png&quot;</span>)</span><br><span class="line">save_image(ll, <span class="string">&quot;/raid/c/tmp/ll.png&quot;</span>)</span><br><span class="line">save_image(<span class="number">15</span>*lh, <span class="string">&quot;/raid/c/tmp/lh.png&quot;</span>)</span><br><span class="line">save_image(<span class="number">15</span>*hl, <span class="string">&quot;/raid/c/tmp/hl.png&quot;</span>)</span><br><span class="line">save_image(<span class="number">15</span>*hh, <span class="string">&quot;/raid/c/tmp/hh.png&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p>得到的图依次是：</p>
+<figure>
+<img src="ori_img.png" alt="ori_img" /><figcaption aria-hidden="true">ori_img</figcaption>
+</figure>
+<figure>
+<img src="img_new.png" alt="img_rec" /><figcaption aria-hidden="true">img_rec</figcaption>
+</figure>
+<figure>
+<img src="ll.png" alt="ll" /><figcaption aria-hidden="true">ll</figcaption>
+</figure>
+<figure>
+<img src="lh.png" alt="lh" /><figcaption aria-hidden="true">lh</figcaption>
+</figure>
+<figure>
+<img src="hl.png" alt="hl" /><figcaption aria-hidden="true">hl</figcaption>
+</figure>
+<figure>
+<img src="hh.png" alt="hh" /><figcaption aria-hidden="true">hh</figcaption>
+</figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/job/" rel="tag"># job</a>
+              <a href="/tags/c-cpp/" rel="tag"># c/cpp</a>
+              <a href="/tags/code/" rel="tag"># -code</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/04/15/%E7%AC%94%E8%AF%95%E7%9C%9F%E9%A2%98/" rel="prev" title="笔试真题">
+                  <i class="fa fa-chevron-left"></i> 笔试真题
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
