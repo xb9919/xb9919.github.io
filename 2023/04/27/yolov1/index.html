@@ -28,8 +28,10 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2023/04/27/yolov1/detect_sys.png">
 <meta property="og:image" content="http://example.com/2023/04/27/yolov1/model.png">
+<meta property="og:image" content="http://example.com/2023/04/27/yolov1/backbone.png">
+<meta property="og:image" content="http://example.com/2023/04/27/yolov1/lossfunc.png">
 <meta property="article:published_time" content="2023-04-27T02:13:17.000Z">
-<meta property="article:modified_time" content="2023-04-27T05:09:38.000Z">
+<meta property="article:modified_time" content="2023-04-27T08:39:54.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="job">
 <meta property="article:tag" content="cv">
@@ -117,7 +119,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#unified-detection"><span class="nav-number">3.</span> <span class="nav-text">Unified Detection</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#unified-detection"><span class="nav-number">3.</span> <span class="nav-text">Unified Detection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E6%83%B3"><span class="nav-number">3.1.</span> <span class="nav-text">思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">损失函数</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -200,7 +202,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-04-27 10:13:17 / 修改时间：13:09:38" itemprop="dateCreated datePublished" datetime="2023-04-27T10:13:17+08:00">2023-04-27</time>
+      <time title="创建时间：2023-04-27 10:13:17 / 修改时间：16:39:54" itemprop="dateCreated datePublished" datetime="2023-04-27T10:13:17+08:00">2023-04-27</time>
     </span>
 
   
@@ -223,6 +225,7 @@
         <h1 id="序言">序言</h1>
 <p>记录一下yolov1</p>
 <span id="more"></span>
+<p>mAP:就是不同的阈值下会得到不同的精度和召回率，然后画出PR图并计算PR图和坐标的面积</p>
 <h1 id="introduction">Introduction</h1>
 <p>目前的检测系统重新利用分类器来执行检测。为了检测一个对象，这些系统为该对象使用分类器，并在测试图像的不同位置和尺度对其进行评估。像可变形部件模型（DPM）这样的系统使用滑动窗口方法，其中分类器在整个图像上均匀间隔的位置运行</p>
 <p>RCNN首先在图像中生成潜在的边界框，然后在这些提议的边界框上运行一个分类器。分类后，使用后处理方法对边界框进行细化，消除重复检测，并基于场景中的其他对象对边界框进行重新评分。这些复杂的管道非常缓慢，难以优化，因为每个单独的组件必须单独训练。</p>
@@ -241,14 +244,34 @@
 </ol>
 <p>但是在小物体上效果不好</p>
 <h1 id="unified-detection">Unified Detection</h1>
-<p>1、将以前目标检测很多的组件统一成一个单一的神经网络，网络可以预测anchor也可以分类。</p>
+<h2 id="思想">思想</h2>
+<p>将以前目标检测很多的组件统一成一个单一的神经网络，网络可以预测anchor也可以分类。</p>
 <div data-align="center">
 <img src="model.png">
 </div>
 <center>
 <font color="AAAAAA">model</font>
 </center>
-<p>先</p>
+<p>如图所示，先把image分成<span class="math inline">\(s\times s\)</span>个网格，如果一个对象的中心落入一个网格单元中，该网格单元负责检测该对象。每个grid预测B个bounding box以及这些boxes的置信度即<span class="math inline">\(Pr(Object)*IOU_{pred}^{truth}\)</span></p>
+<p>bounding box回归出5个值(x,y,w,h,confidence)就是相对于grid的中心的坐标x,y以及box的宽和高，置信度预测表示预测框和任何地面真实框之间的IOU。</p>
+<p>然后每个grid同时会预测C个类别标签<span class="math inline">\(Pr(Class_{i}|Object)\)</span> ,一个grid只预测一个class</p>
+<p>测试的时候用到了confidence score就是：</p>
+<p><span class="math inline">\(Pr(Class_{i}|Object)*Pr(Object)*IOU_{pred}^{truth} = Pr(Class_{i})*IOU_{truth}^{pred}\)</span></p>
+<h2 id="网络结构">网络结构</h2>
+<div data-align="center">
+<img src="backbone.png">
+</div>
+<center>
+<font color="AAAAAA">backbone</font>
+</center>
+<p>网络结构借鉴了GoogLeNet分类网络结构,由24个卷积层和2个全连接层组成,但是没有使用Inception module，使用的1×1卷积（交替的1×1卷积用来减少前几层的特征空间）和3×3卷积简单替代。网络输入的图片大小为448×448，最终输出为 <strong>的张量</strong>（在PASCAL VOC数据集上，其中7×7为grid的个数，然后每个grid有个20分类和2个bounding box，每个bounding box有5个输出，所以是7×7×30）。</p>
+<h2 id="损失函数">损失函数</h2>
+<div data-align="center">
+<img src="lossfunc.png">
+</div>
+<center>
+<font color="AAAAAA">loss function</font>
+</center>
 
     </div>
 
