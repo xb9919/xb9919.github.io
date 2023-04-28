@@ -30,10 +30,10 @@
 <meta property="og:image" content="http://example.com/2023/04/28/yolov2/kmeans.png">
 <meta property="og:image" content="http://example.com/2023/04/28/yolov2/darknet.png">
 <meta property="og:image" content="http://example.com/2023/04/28/yolov2/loc_pred.png">
-<meta property="og:image" content="http://example.com/2023/04/28/yolov2/wordtree.png">
+<meta property="og:image" content="http://example.com/2023/04/28/yolov2/worldtree.png">
 <meta property="og:image" content="http://example.com/2023/04/28/yolov2/softmax.png">
 <meta property="article:published_time" content="2023-04-28T01:53:56.000Z">
-<meta property="article:modified_time" content="2023-04-28T06:43:30.000Z">
+<meta property="article:modified_time" content="2023-04-28T06:44:50.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="job">
 <meta property="article:tag" content="cv">
@@ -204,7 +204,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-04-28 09:53:56 / 修改时间：14:43:30" itemprop="dateCreated datePublished" datetime="2023-04-28T09:53:56+08:00">2023-04-28</time>
+      <time title="创建时间：2023-04-28 09:53:56 / 修改时间：14:44:50" itemprop="dateCreated datePublished" datetime="2023-04-28T09:53:56+08:00">2023-04-28</time>
     </span>
 
   
@@ -284,7 +284,7 @@
 <h2 id="dataset-combination-with-wordtree">Dataset combination with WordTree</h2>
 <p>在文中，作者使用WordTree，解决了ImageNet与coco之间的类别问题。</p>
 <div data-align="center">
-<img src="wordtree.png" style="width:40%;height:40%;">
+<img src="worldtree.png" style="width:40%;height:40%;">
 </div>
 <center>
 <font color="AAAAAA">WordTree</font>
@@ -296,7 +296,7 @@
 <center>
 <font color="AAAAAA">softmax</font>
 </center>
-<p>在预测时，从树的根节点开始向下检索，每次选取预测分值最高的子节点，直到所有选择的节点预测分值连乘后小于某一阈值时停止。在训练时，如果标签为人，那么只对人这个节点以及其所有的父节点进行loss计算，而其子节点，男人、女人、小孩等，不进行loss计算。</p>
+<p>在预测时，从树的根节点开始向下l检索，每次选取预测分值最高的子节点，直到所有选择的节点预测分值连乘后小于某一阈值时停止。在训练时，如果标签为人，那么只对人这个节点以及其所有的父节点进行loss计算，而其子节点，男人、女人、小孩等，不进行loss计算。</p>
 <h1 id="优缺点">优缺点</h1>
 <p>Yolo v2将同期业界的很多深度学习技巧结合进来，将Yolo的性能与精度又提升了一个层次。Yolo9000的物体检测分类技巧，可以很好的被运用到工程中，并不需要对所有的物体都进行费时费力的检测标注，而是同时利用分类标签与检测标签达到同样的效果，从而减轻了标注成本与时间。</p>
 <p>但是yolov2联合训练的方式在实际中存在一些问题，imagenet图像是标准的数据集，图像中目标很显著，占的面积较大，而且图像中只存在单类的物体，所以能很明确的知道预测框的类别，但在实际中，图像可能存在多个类别的物体，也会存在其他未知的干扰，很难像imagenet数据集那么“干净”</p>
