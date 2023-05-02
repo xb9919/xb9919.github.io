@@ -19,27 +19,33 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="Welcome to XBlog! 本站记录一下暑期-秋招-春招的整个过程以及准备的一些东西">
+    <meta name="description" content="序言 记录一下AI编译器设计原理相关的一些知识点">
 <meta property="og:type" content="article">
-<meta property="og:title" content="Hello World">
-<meta property="og:url" content="http://example.com/2023/04/14/hello-world/index.html">
+<meta property="og:title" content="编译器设计">
+<meta property="og:url" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/index.html">
 <meta property="og:site_name" content="XBlog">
-<meta property="og:description" content="Welcome to XBlog! 本站记录一下暑期-秋招-春招的整个过程以及准备的一些东西">
+<meta property="og:description" content="序言 记录一下AI编译器设计原理相关的一些知识点">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-04-14T03:09:09.200Z">
-<meta property="article:modified_time" content="2023-04-24T02:36:16.000Z">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/LLVM%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/TensorFlow-IR.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/%E7%BC%96%E8%AF%91%E5%99%A8%E6%95%B4%E4%BD%93%E6%B5%81%E7%A8%8B.jpg">
+<meta property="article:published_time" content="2023-05-02T11:37:34.000Z">
+<meta property="article:modified_time" content="2023-05-02T12:26:46.000Z">
 <meta property="article:author" content="Carey">
+<meta property="article:tag" content="job">
+<meta property="article:tag" content="编译器设计">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/LLVM%E5%9F%BA%E7%A1%80%E7%BB%93%E6%9E%84.png">
 
 
-<link rel="canonical" href="http://example.com/2023/04/14/hello-world/">
+<link rel="canonical" href="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/14/hello-world/","path":"2023/04/14/hello-world/","title":"Hello World"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/","path":"2023/05/02/编译器设计/","title":"编译器设计"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>Hello World | XBlog</title>
+<title>编译器设计 | XBlog</title>
   
 
 
@@ -98,7 +104,7 @@
   
   <aside class="sidebar">
 
-    <div class="sidebar-inner sidebar-overview-active">
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
       <ul class="sidebar-nav">
         <li class="sidebar-nav-toc">
           文章目录
@@ -111,6 +117,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A4%9A%E5%B1%82%E7%BA%A7ir%E8%AE%BE%E8%AE%A1"><span class="nav-number">2.</span> <span class="nav-text">多层级IR设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96"><span class="nav-number">2.1.</span> <span class="nav-text">图编译优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%A1%AC%E4%BB%B6%E7%9B%B8%E5%85%B3%E7%9A%84%E9%80%9A%E7%94%A8%E7%BC%96%E8%AF%91%E4%BC%98%E5%8C%96"><span class="nav-number">2.2.</span> <span class="nav-text">硬件相关的通用编译优化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%89%B9%E5%AE%9A%E7%A1%AC%E4%BB%B6%E5%8A%A0%E9%80%9F%E5%99%A8%E4%B8%93%E6%9C%89%E7%9A%84ir"><span class="nav-number">2.3.</span> <span class="nav-text">特定硬件加速器专有的IR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">2.4.</span> <span class="nav-text">优缺点</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -163,7 +170,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/14/hello-world/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/xb9919.jpg">
@@ -176,12 +183,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="Hello World | XBlog">
+      <meta itemprop="name" content="编译器设计 | XBlog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          Hello World
+          编译器设计
         </h1>
 
         <div class="post-meta-container">
@@ -191,19 +198,13 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2023-04-14 11:09:09" itemprop="dateCreated datePublished" datetime="2023-04-14T11:09:09+08:00">2023-04-14</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-04-24 10:36:16" itemprop="dateModified" datetime="2023-04-24T10:36:16+08:00">2023-04-24</time>
+      <time title="创建时间：2023-05-02 19:37:34 / 修改时间：20:26:46" itemprop="dateCreated datePublished" datetime="2023-05-02T19:37:34+08:00">2023-05-02</time>
     </span>
 
   
-    <span id="/2023/04/14/hello-world/" class="post-meta-item leancloud_visitors" data-flag-title="Hello World" title="阅读次数">
+    <span id="/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/" class="post-meta-item leancloud_visitors" data-flag-title="编译器设计" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -219,8 +220,56 @@
     
     
     <div class="post-body" itemprop="articleBody">
-        <p>Welcome to XBlog!</p>
-<p>本站记录一下暑期-秋招-春招的整个过程以及准备的一些东西</p>
+        <h1 id="序言">序言</h1>
+<p>记录一下AI编译器设计原理相关的一些知识点</p>
+<span id="more"></span>
+<p>AI编译器的设计受到了主流编译器（如底层虚拟机LLVM，<strong>L</strong>ow <strong>L</strong>evel <strong>V</strong>irtual <strong>M</strong>achine）的影响。</p>
+<div data-align="center">
+<img src="LLVM基础结构.png" style="width:40%;height:40%;">
+</div>
+<center>
+<front color="AAAAAA">LLVM基础架构</front>
+</center>
+<p>如图所示，LLVM包括前端、IR（Intermediate Representation中间表示）、后端三个部分，前端将高级语言转换成IP。后端将IP转换为目标硬件上的机器指令，IR作为桥梁在前后端之间进行基于IR的各种优化，这样无论是新增硬件的支持还是新增前端的支持，都可以尽可能的复用IR</p>
+<div data-align="center">
+<img src="TensorFlow-IR.png" style="width:40%;height:40%;">
+</div>
+<center>
+<front color="AAAAAA">TensorFlow-IR</front>
+</center>
+<h1 id="多层级ir设计">多层级IR设计</h1>
+<p>AI编译器一般采用多层级IR设计，如TensorFlow利用MLIR实现多层IR设计，包含了三个层次的IR，即TensorFlow <strong>Graph IR</strong>， XLA（Accelerated Linear Algebra，加速线性代数）、HLO（High Level Operations，高级运算）以及特定硬件的LLVM IR 或者TPU IR</p>
+<h2 id="图编译优化">图编译优化</h2>
+<p>计算图中涉及的编译优化一般称为图编译优化（Graph IR）。主要实现的是整图的优化和操作，如图优化、切分，比较适合静态图的执行模式</p>
+<h2 id="硬件相关的通用编译优化">硬件相关的通用编译优化</h2>
+<p>而整图级别的IR缺少相应的硬件信息，难以进行硬件相关的优化，所以在中间层次就出现了硬件相关的通用编译优化，比如XLA、Tensor RT、MindSpore的图算融合等，他们通过针对不同的硬件进行算子融合等优化，提升不同网络在特定硬件上的性能。</p>
+<h2 id="特定硬件加速器专有的ir">特定硬件加速器专有的IR</h2>
+<p>这个一般是硬件厂商自带的编译器提供，如昇腾（Ascend）自带的TBE编译器就是基于TVM的Halide IR生成高效的执行算子。</p>
+<h2 id="优缺点">优缺点</h2>
+<p>使用多层级IR的优势是在表达上可以更灵活，可以在不同层级的IR上进行合适的pass优化，更加便捷和高效。而多层级的IR也有一切缺点：</p>
+<ol type="1">
+<li><p>不同层级的IR需要相互转换，而IR转换难以做到完全兼容，工程工作量非常大，还有可能带来信息的损失，上一层做的优化操作需要考虑下一层的影响（<strong>我的理解是比如在图上面做了conv和bn的融合进行优化，但是实际的硬件不支持？TODO</strong>），因此IR转换对执行的顺序有着更强的约束</p></li>
+<li><p>有些优化既可以在上一层IR进行，也可以在下一层IR进行，让框架开发者很难选择。</p></li>
+<li><p>不同层级IR定义的算子粒度大小不同，可能会带来精度的影响，如：</p>
+<p>Add算子和ReLU算子的融合就是细粒度的算子融合成了一个粗粒度的算子，然后本来是float32输入到add或者是conv然后结果输到ReLU，而融合后直接输入就是一个float32了，参数的融合可能会造成结果上的差别，这里说的可能不太清晰或不太准确，后面再勘误，<strong>TODO</strong></p></li>
+</ol>
+<p>后来，机器学习的框架都使用了MindIR来作为统一的IR设计，如图所示是MindSpore的AI编译器内部的运行流程。</p>
+<div data-align="center">
+<img src="编译器整体流程.jpg" style="width:40%;height:40%;">
+</div>
+<center>
+<front color="AAAAAA">编译器整体流程</front>
+</center>
+<p>我的理解是：</p>
+<ol type="1">
+<li>模型继承了nn，定义了一些网络之类的</li>
+<li>然后经过AST（abstract tree）生成一些抽象的东西如静态图这种</li>
+<li>然后转成MindIR，先进行一些硬件无关的优化（比如图的切分，优化）</li>
+<li>再转换成MindIR，然后转成硬件相关的优化（如图算融合、算子融合等）</li>
+<li>然后进行算子选择以及编译（如假如有个叫convBN的算子，是融合了conv和bn两个算子，融合后就可以直接用这个新的算子了）</li>
+<li>然后再转成HalideIR表示，最后进行硬件上的指令优化并发射到Device上去。</li>
+</ol>
+<p>这块对MindIR和HalideIR不知道是啥，只是大概知道了是一些中间表示？类似数据结构的东西么？后续要去了解一下TODO</p>
 
     </div>
 
@@ -229,16 +278,20 @@
     
 
     <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/job/" rel="tag"># job</a>
+              <a href="/tags/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/" rel="tag"># 编译器设计</a>
+          </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
+                <a href="/2023/04/28/yolov2/" rel="prev" title="yolov2">
+                  <i class="fa fa-chevron-left"></i> yolov2
+                </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/04/14/%E9%9D%A2%E7%BB%8F/" rel="next" title="面经">
-                  面经 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
