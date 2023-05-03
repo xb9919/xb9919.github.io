@@ -26,12 +26,16 @@
 <meta property="og:site_name" content="XBlog">
 <meta property="og:description" content="前言 这里介绍一下前面编译器设计里说的中间表示相关">
 <meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA%E7%BB%93%E6%9E%84.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-LLVMIR.jpg">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/TensorFlow-IR.png">
 <meta property="article:published_time" content="2023-05-02T12:32:35.000Z">
-<meta property="article:modified_time" content="2023-05-02T12:39:00.000Z">
+<meta property="article:modified_time" content="2023-05-03T05:19:46.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="job">
 <meta property="article:tag" content="编译器设计">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA%E7%BB%93%E6%9E%84.png">
 
 
 <link rel="canonical" href="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/">
@@ -113,7 +117,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BAirintermediate-representation"><span class="nav-number">2.</span> <span class="nav-text">中间表示IR（Intermediate Representation）</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA"><span class="nav-number">2.</span> <span class="nav-text">中间表示</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E6%A6%82%E5%BF%B5"><span class="nav-number">3.</span> <span class="nav-text">基本概念</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E5%8C%96%E5%99%A8"><span class="nav-number">4.</span> <span class="nav-text">优化器</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%89%E4%B8%AA%E9%98%B6%E6%AE%B5"><span class="nav-number">5.</span> <span class="nav-text">三个阶段</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA%E7%9A%84%E7%A7%8D%E7%B1%BB"><span class="nav-number">6.</span> <span class="nav-text">中间表示的种类</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BA%BF%E6%80%A7%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA"><span class="nav-number">6.1.</span> <span class="nav-text">线性中间表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%BE%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA"><span class="nav-number">6.2.</span> <span class="nav-text">图中间表示</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%B7%B7%E5%90%88%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA"><span class="nav-number">6.3.</span> <span class="nav-text">混合中间表示</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%BA%E5%99%A8%E5%AD%A6%E4%B9%A0%E6%A1%86%E6%9E%B6%E9%87%8C%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA"><span class="nav-number">7.</span> <span class="nav-text">机器学习框架里的中间表示</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#pytorch"><span class="nav-number">7.1.</span> <span class="nav-text">PyTorch</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#jax"><span class="nav-number">7.2.</span> <span class="nav-text">JAX</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#tensorflow"><span class="nav-number">7.3.</span> <span class="nav-text">TensorFlow</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E7%BC%96%E7%A8%8B"><span class="nav-number">7.4.</span> <span class="nav-text">数据流编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mlir"><span class="nav-number">7.5.</span> <span class="nav-text">MLIR</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mindspore"><span class="nav-number">7.6.</span> <span class="nav-text">MindSpore</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -194,9 +198,15 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
-      
 
-      <time title="创建时间：2023-05-02 20:32:35 / 修改时间：20:39:00" itemprop="dateCreated datePublished" datetime="2023-05-02T20:32:35+08:00">2023-05-02</time>
+      <time title="创建时间：2023-05-02 20:32:35" itemprop="dateCreated datePublished" datetime="2023-05-02T20:32:35+08:00">2023-05-02</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar-check"></i>
+      </span>
+      <span class="post-meta-item-text">更新于</span>
+      <time title="修改时间：2023-05-03 13:19:46" itemprop="dateModified" datetime="2023-05-03T13:19:46+08:00">2023-05-03</time>
     </span>
 
   
@@ -219,7 +229,191 @@
         <h1 id="前言">前言</h1>
 <p>这里介绍一下前面<a target="_blank" rel="noopener" href="https://xb9919.github.io/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/#more">编译器设计</a>里说的中间表示相关</p>
 <span id="more"></span>
-<h1 id="中间表示irintermediate-representation">中间表示IR（Intermediate Representation）</h1>
+<h1 id="中间表示">中间表示</h1>
+<p>中间表示IR（Intermediate Representation）是编译器的核心数据结构之一，在传统编译器和机器学习框架里都有极重要的定位。</p>
+<h1 id="基本概念">基本概念</h1>
+<p>中间表示是编译器表示源代码的数据结构或代码，是介于源语言和目标语言之间的程序表示（应该就是python和机器码）。几乎所有的编译器都需要某种形式的中间表示来对分析、转换和优化的代码进行建模（不然确实没办法做到编译器层面上的优化）。她作为桥梁的性质也要求她必须有足够的表达能力，不丢失信息的情况下能够准确的表示源代码的意思，并且充分考虑到源代码到目标代码的完备性、编译优化的易用性以及性能，<strong>总的来说就是要能表示你原本的意思，然后方便进行优化以及不会占用太大的资源</strong></p>
+<div data-align="center">
+<img src="中间表示-中间表示结构.png" style="width:65%;height:65%">
+</div>
+<center>
+<front color="AAAAAA">中间表示结构</front>
+</center>
+<p>如图所示引入中间表示的好处：</p>
+<ol type="1">
+<li>它可以面向多个前端，表达多种源程序语言（如是python写的，然后又要求c++也能实现，方便部署），又能对接多个后端，链接不同的目标机器（cpu、gpu、npu等）。</li>
+<li>同时在IR的基础上可以方便的增加更多的优化器，如<a target="_blank" rel="noopener" href="https://xb9919.github.io/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/#more">编译器设计</a>里说的<strong>图编译优化、硬件相关的通用编译优化、特定硬件加速IR优化</strong>等</li>
+</ol>
+<h1 id="优化器">优化器</h1>
+<p>这些优化流程以IR作为输入以IR作为输出，被称为<strong>优化器</strong>。优化器负责分析并改进IR，极大的提高了编译流程的可拓展性以及降低了优化流程对前端和后端的破坏性（我的理解是<strong>如果没有IR和优化器，你进行优化流程的时候前端代码要改很多，然后有的后端硬件又不支持某些优化操作，就会造成代码的不通用</strong>）</p>
+<h1 id="三个阶段">三个阶段</h1>
+<p>中间表示的发展经过了三个阶段：</p>
+<ol type="1">
+<li>封闭在编译器里，供编译器的编写者使用，就是谁写编译器谁用，限制就很大，大家只能按开发者的想法来优化</li>
+<li>随着编译器的开源，IR也逐步开源，主要供编译器设计者、分析工具设计者使用</li>
+<li>现在，IR在朝着软件生态构建的方向发展，旨在构建统一的中间表示（比如onnx在部署界的作用）</li>
+</ol>
+<h1 id="中间表示的种类">中间表示的种类</h1>
+<p>主要有三种吧，线性中间表示 Linear IR、图中间表示 Graphical IR、混合中间表示 Hybrid IR</p>
+<table>
+<thead>
+<tr class="header">
+<th>组织结构</th>
+<th>特点</th>
+<th>例子</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>Linear IR</td>
+<td>基于线性代码</td>
+<td>堆栈机代码、三地址代码</td>
+</tr>
+<tr class="even">
+<td>Graphical IR</td>
+<td>基于图</td>
+<td>抽象语法树、有向无环图、控制流图</td>
+</tr>
+<tr class="odd">
+<td>Hybrid IR</td>
+<td>基于图与线性代码混合</td>
+<td>LLVM IR</td>
+</tr>
+</tbody>
+</table>
+<h2 id="线性中间表示">线性中间表示</h2>
+<p>类似于抽象机的汇编代码，他将编译代码转换为一些操作的有序序列，且对操作序列定义了一种顺序，由于大多数处理器用的都是线性的汇编语言，所以linear IR也广泛应用于编译器设计。</p>
+<p>常见的有堆栈机代码（Stack-Machine Code）和三地址代码（Three Address Code）。以表达式a-b*5为例，堆栈机代码和三地址代码分别为：</p>
+<ul>
+<li>堆栈机代码是一个单地址代码，提供简单紧凑的便是，通常只有一个操作码，操作数存在一个栈中，大多数操作指令从栈取得操作数并将结果放入栈中。如：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">push 5</span><br><span class="line">push b</span><br><span class="line">multiply</span><br><span class="line">push a</span><br><span class="line">substract</span><br></pre></td></tr></table></figure>
+<ul>
+<li>三地址代码：简称3AC，模拟了现代RISC机器的指令格式。通过一个四元组实现，每个四元组包含一个运算符和三个地址（两个操作数、一个目标）</li>
+</ul>
+<table>
+<thead>
+<tr class="header">
+<th>目标</th>
+<th>运算符</th>
+<th>操作数1</th>
+<th>操作数2</th>
+<th>抽象表示</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>t1</td>
+<td>&lt;-</td>
+<td>5</td>
+<td></td>
+<td>t1&lt;-5</td>
+</tr>
+<tr class="even">
+<td>t2</td>
+<td>&lt;-</td>
+<td>b</td>
+<td></td>
+<td>t2&lt;-b</td>
+</tr>
+<tr class="odd">
+<td>t3</td>
+<td>X</td>
+<td>t1</td>
+<td>t2</td>
+<td>t3&lt;-t1xt2</td>
+</tr>
+<tr class="even">
+<td>t4</td>
+<td>&lt;-</td>
+<td>a</td>
+<td></td>
+<td>t4&lt;-a</td>
+</tr>
+<tr class="odd">
+<td>t5</td>
+<td>-</td>
+<td>t4</td>
+<td>t3</td>
+<td>t5&lt;-t4-t3</td>
+</tr>
+</tbody>
+</table>
+<p>优化的例子就是假如中间有些操作直到最后都没有用到，就会直接在编译阶段就把他去掉了（比如visual studio就会这样）</p>
+<h2 id="图中间表示">图中间表示</h2>
+<p>图中间表示将编译过程的一些信息保存在图中，通过图的对象如节点、边、列表、树等来表示，如ML的模型就是有向无环图，常见的图中间表示有：<strong>抽象语法树</strong>(Abstract Syntax Tree，AST)、<strong>有向无环图</strong>(Directed Acyclic Graph，DAG)、<strong>控制流图</strong>(Control-Flow Graph，CFG)等</p>
+<p>AST抽象语法树采用树型中间表示的形式，是一种接近源代码层次的表示。对于表达式ax5+ax5xb，其AST表示就为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">      +                         +</span><br><span class="line">    /  \                        |\</span><br><span class="line">  x     x                       | \ </span><br><span class="line"> / \   /  \                     |  x</span><br><span class="line">a   5 x    b                    | / \</span><br><span class="line">     / \                         x   b</span><br><span class="line">     a 5                        / \</span><br><span class="line">                               a   5</span><br><span class="line"> AST抽象语法树                 DAG有向无环图</span><br></pre></td></tr></table></figure>
+<p>但ASG形式包含了两个ax5，存在冗余，所以DAG在AST的基础上提供了简化的表达式，一个节点可以有多个父节点，相同子树可以重用。如果编译器能够证明a的值在这过程中没有重用，则DAG可以重用子树，以降低求值的计算代价。</p>
+<h2 id="混合中间表示">混合中间表示</h2>
+<p>混合中间表示是线性中间表示和图中间表示的结合，这里以LLVM IR [2004LLVM] 为例进行说明。</p>
+<p>LLVM(Low Level Virtual Machine)是2000年提出的开源编译器框架项目，旨在为不同的前端后端提供统一的中间表示。</p>
+<div data-align="center">
+<img src="中间表示-LLVMIR.jpg" style="width:65%;height:65%">
+</div>
+<center>
+<front color="AAAAAA">中间表示-LLVMIR</front>
+</center>
+<p>如图所示，LLVM IR使用线性中间表示作为表示的基本块，然后块之间的控制流用图来表示。基本块中以静态单复值指令(Static Single Assignment， SSA)的形式呈现，这些指令构成一个只能怪的先行列表。SSA形式要求每个变量只赋值一次，且变量需要在使用之前定义。控制流图中，每个节点为一个基本块，基本块间通过边实现控制转移。</p>
+<p>ps：感觉这个有点像静态图表示，每个算子节点其实都是一系列的线性指令构成的，和算子的参数进行乘加操作之类的，然后算子之间的数据传递用图的边来表示。</p>
+<h1 id="机器学习框架里的中间表示">机器学习框架里的中间表示</h1>
+<p>机器学习框架里的IR需要充分考虑以下因素</p>
+<ol type="1">
+<li><p>张量表示：ml框架处理的数据都是张量，所以正确处理张量是框架的基本要求</p></li>
+<li><p>自动微分：网络权重的优化需要求梯度，自动微分是网络模型的自动求导。主流的ml框架都提供了自动微分的功能，在设计中间表示的时候需要考虑自动微分的简洁性、性能以及高阶微分的拓展能力</p></li>
+<li><p>计算图模式：主流的框架如Tensorflow、PyTorch、MindSpore都提供了静态图和动态图两种模式：</p>
+<ul>
+<li>静态计算图要先创建定义计算图，再显示的执行，有利于对计算图进行优化，高效但不灵活</li>
+<li>动态计算图是边运行边构建图，每使用一个算子后，该算子会在计算图中立即执行得到结果，这种方式使用灵活、便于调试，但是运行效率低，中间表示设计同时支持静态图和动态图，可以针对待解决的任务需求，选择合适的模式构建算法模型。</li>
+</ul></li>
+<li><p>支持高阶函数和闭包：高阶函数和闭包是函数式编程的重要特性。支持高阶函数和闭包可以抽象通用问题，减少重复代码、提升框架表达的灵活性和简洁性</p>
+<ul>
+<li>高阶函数：使用其他函数作为参数，或者返回一个函数作为结果的函数，mindspore里可以输入training step函数到train里面去</li>
+<li>闭包：代码块和作用域环境的结合，可以在另一个作用域中调用一个函数的内部函数，并访问到该函数作用域中的成员</li>
+</ul></li>
+<li><p>编译优化：ml框架里主要指的是硬件无关的优化、硬件相关的优化、部署推理相关的优化等，这些都依赖于中间表示的实现。</p></li>
+<li><p>JIT（Just In Time）能力：编译执行加速的时候经常会用到JIT即使编译，JIT编译优化将会对中间表示中的数据流图的可优化部分实施优化，包括循环展开、融合、内联等。中间表示设计是否合理，将会影响机器学习框架的JIT编译性能和程序的运行能力。</p>
+<p>JAVA里的jit如下：</p>
+<p>JAVA有解释器和JIT编译器，解释器就是把javac编译形成的IR（这里是字节码）翻译成机器码，然后jit编译器就是类似于数据库里的高速缓存，把一些热点机器码放在这里，翻译直接查表就好了</p>
+<p>• 解释器（Interpreter）：当程序需要迅速启动时，使用解释器解释字节码，节省编译的时间，快速执行。</p>
+<p>• JIT编译器（JIT Compiler）：在程序启动后并且长时间提供服务时，JIT将越来越多的代码编译为本地机器码，获得更高的执行效率。</p></li>
+</ol>
+<h2 id="pytorch">PyTorch</h2>
+<p>PyTorch是一个基于动态计算图的机器学习框架，以python作为前端语言，有很强的易用性和灵活性，方便用户编写和调试网络代码。为了保存和加载网络模型，也提供了TorchScript方法创建可序列化和可优化的模型（类似静态图），TorchScript IR是他的中间表示，通过JIT即时编译的形式，将python代码转换乘目标模型文件，任何ts程序都可以在python进程中保存（就是在训练完后保存），然后加载在别的没有Python依赖的进程中（部署到别的不支持python的机器里）</p>
+<p>TorchScript以基于SSA（静态单复值）的线性IR为基本表示，并通过JIT即时编译的Tracing和Scripting两种方法将python转换为TorchScript IR（这里其实也是转onnx的中间过程，转onnx也是换成torchsript再转成onnx的）</p>
+<p>如以下python代码使用了scripting的方法打印其中间表示图</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="meta">@torch.jit.script</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_func</span>(<span class="params"><span class="built_in">input</span></span>):</span><br><span class="line">    rv = <span class="number">10.0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        rv = rv+<span class="built_in">input</span></span><br><span class="line">        rv = rv/<span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> rv</span><br><span class="line"><span class="built_in">print</span>(test_func.graph)</span><br></pre></td></tr></table></figure>
+<p>输出为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">graph(%input.1 : Tensor):</span><br><span class="line">  %9 : int = prim::Constant[value=1]()</span><br><span class="line">  %5 : bool = prim::Constant[value=1]() # test.py:6:1</span><br><span class="line">  %rv.1 : float = prim::Constant[value=10.]() # test.py:5:6</span><br><span class="line">  %2 : int = prim::Constant[value=5]() # test.py:6:16</span><br><span class="line">  %14 : int = prim::Constant[value=2]() # test.py:8:10</span><br><span class="line">  %rv : float = prim::Loop(%2, %5, %rv.1) # test.py:6:1</span><br><span class="line">    block0(%i : int, %rv.9 : float):</span><br><span class="line">      %rv.3 : Tensor = aten::add(%input.1, %rv.9, %9) # &lt;string&gt;:5:9</span><br><span class="line">      %12 : float = aten::FloatImplicit(%rv.3) # test.py:7:2</span><br><span class="line">      %rv.6 : float = aten::div(%12, %14) # test.py:8:7</span><br><span class="line">      -&gt; (%5, %rv.6)</span><br><span class="line">  return (%rv)</span><br></pre></td></tr></table></figure>
+<p>TorchScript是PyTorch的JIT实现，支持使用Python训练模型，然后通过JIT转换为语言无关的模块，从而提升模型部署能力，提高编译性能。同时，TorchScript IR显著改善了Pytorch框架的模型可视化效果。</p>
+<p>感觉这里的JIT能力和</p>
+<p>我自己回顾的JAVA的JIT能力还是异曲同工的，其实都是加快实时应用的能力，一个是编译成机器码的时间，一个是转成可跨平台载入，实时使用的能力。</p>
+<h2 id="jax">JAX</h2>
+<p>JAX是Google提出的Tensorflow的简化库，结合了Autograd 和 XLA，Jax框架同时支持静态图和动态图，中间表示用Jaxpr（JAX Program Representation）IR。Jaxpr IR是一种强类型、纯函数的中间表示，输入输出都带有类型信息，函数输出只依赖于输入，不依赖全局变量。</p>
+<p>Jaxpr IR的表达采用ANF（A-norm Form）函数式表达形式，其文法如下（文法是vtps，这里似乎是产生式P？<strong>看起来就是程序语句和复合程序语句两种形式</strong>）：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">&lt;aexp&gt; ::=  NUMBER | STRING | VAR | BOOLEAN | PRIMOP</span><br><span class="line">           |  (lambda (VAR ...) &lt;exp&gt;)</span><br><span class="line">&lt;cexp&gt; ::=  (&lt;aexp&gt; &lt;aexp&gt; ...)</span><br><span class="line">           ｜ (if &lt;aexp&gt; &lt;exp&gt; &lt;exp&gt;)</span><br><span class="line">&lt;exp&gt; ::=  (let ([VAR &lt;cexp&gt;]) &lt;exp&gt;) | &lt;cexp&gt; | &lt;aexp&gt;</span><br></pre></td></tr></table></figure>
+<p>如下所示：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">prodprimes</span>(<span class="params">n</span>):</span><br><span class="line">    r = n == <span class="number">1</span></span><br><span class="line">    <span class="keyword">if</span> r:</span><br><span class="line">        <span class="keyword">return</span> <span class="number">1</span></span><br><span class="line">    b = isprime(n)</span><br><span class="line">    <span class="keyword">if</span> b:</span><br><span class="line">        m = n - <span class="number">1</span></span><br><span class="line">        p = prodprimes(m)</span><br><span class="line">        <span class="keyword">return</span> n * p</span><br><span class="line">    s = n - <span class="number">1</span></span><br><span class="line"><span class="keyword">return</span> prodprimes(s)</span><br></pre></td></tr></table></figure>
+<p>的ANF形式应为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">(define prodprimes</span><br><span class="line">  (lambda (n)</span><br><span class="line">    (let (a (= n 1))</span><br><span class="line">      (if a 1 (let (b isprime(n))</span><br><span class="line">                   (if b (let (m (- n 1))</span><br><span class="line">                           (let (p (prodprimes m))</span><br><span class="line">                             (* n p)))</span><br><span class="line">                         (let (s (- n 1))</span><br><span class="line">                           (prodprimes m))</span><br><span class="line">                    ))))))</span><br></pre></td></tr></table></figure>
+<p>ANF形式将表达式分成两类：原子表达式（aexp）和复合表达式（cexp），前者用于表示常量、变量、原语（原语是一段用机器指令编写的完成特定功能的程序）、匿名函数（lambda表达式这些？），后者由多个原子表达式组成，可看成一个匿名函数或原语函数调用，第一个输入是调用的函数，其余是调用的参数。如下是打印了一个函数对应的Jaxpr IR</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> jax <span class="keyword">import</span> make_jaxpr</span><br><span class="line"><span class="keyword">import</span> jax.numpy <span class="keyword">as</span> jnp</span><br><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_func</span>(<span class="params">x, y</span>):</span><br><span class="line">    ret = x + jnp.sin(y) * <span class="number">3</span></span><br><span class="line">    <span class="keyword">return</span> jnp.<span class="built_in">sum</span>(ret)</span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(make_jaxpr(test_func)(jnp.zeros(<span class="number">8</span>), jnp.ones(<span class="number">8</span>)))</span><br></pre></td></tr></table></figure>
+<p>结果为：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123; lambda ; a:f32[8] b:f32[8]. let</span><br><span class="line">    c:f32[8] = sin b</span><br><span class="line">    d:f32[8] = mul c 3.0</span><br><span class="line">    e:f32[8] = add a d</span><br><span class="line">    f:f32[] = reduce_sum[axes=(0,)] e</span><br><span class="line">  in (f,) &#125;</span><br></pre></td></tr></table></figure>
+<p>Jax框架结合了Autograd 和 JIT，基于Jaxpr IR，支持循环、分支、递归、闭包函数求导以及三阶求导，并且支持自动微分的反向传播和前向传播。</p>
+<h2 id="tensorflow">TensorFlow</h2>
+<h2 id="数据流编程">数据流编程</h2>
+<p>我理解的数据流编程就是构建图，然后数据在图上流动（描述计算任务中数据流和计算之间的依赖关系，节点表示计算操作，边表示的是数据流动），通过将计算任务表示为数据流图，可以方便地进行并行计算和优化。</p>
+<p>TensorFlow最初是一个基于数据流编程的机器学习框架，使用数据流图（<strong>像onnx在nextron里可视化的那样</strong>）作为数据结构进行各种数值计算。在TensorFlow <strong>2.0</strong>之前，它主要采用<strong>静态图</strong>的方式进行计算，即先定义计算图，然后再将数据传入计算图中进行计算。但是，从TensorFlow 2.0开始，它也支持了<strong>动态图</strong>的方式，即用户可以像使用PyTorch一样进行计算。在动态图中，计算图是动态构建的，每次计算都会重新构建一次计算图。这种方式更加灵活和易于使用，但是在某些情况下可能会牺牲一些性能。</p>
+<div data-align="center">
+<img src="编译器设计/TensorFlow-IR.png" style="width:60%;height:60%;">
+</div>
+<center>
+<front color="AAAAAA">TensorFlow-IR</front>
+</center>
+<p>TensoFlow有三种中间表示，在运行的时候会经过一系列的抽象表示，程序逐步从高层的中间表示转向底层的中间表示</p>
+<h2 id="mlir">MLIR</h2>
+<h2 id="mindspore">MindSpore</h2>
 
     </div>
 
