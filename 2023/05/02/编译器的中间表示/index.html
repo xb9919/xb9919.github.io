@@ -28,9 +28,9 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA%E7%BB%93%E6%9E%84.png">
 <meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-LLVMIR.jpg">
-<meta property="og:image" content="http://example.com/%E7%BC%96%E8%AF%91%E5%99%A8%E8%AE%BE%E8%AE%A1/TensorFlow-IR.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/TensorFlow-IR.png">
 <meta property="article:published_time" content="2023-05-02T12:32:35.000Z">
-<meta property="article:modified_time" content="2023-05-03T05:20:38.000Z">
+<meta property="article:modified_time" content="2023-05-03T05:21:40.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="job">
 <meta property="article:tag" content="编译器设计">
@@ -206,7 +206,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-03 13:20:38" itemprop="dateModified" datetime="2023-05-03T13:20:38+08:00">2023-05-03</time>
+      <time title="修改时间：2023-05-03 13:21:40" itemprop="dateModified" datetime="2023-05-03T13:21:40+08:00">2023-05-03</time>
     </span>
 
   
@@ -406,7 +406,7 @@
 <p>我理解的数据流编程就是构建图，然后数据在图上流动（描述计算任务中数据流和计算之间的依赖关系，节点表示计算操作，边表示的是数据流动），通过将计算任务表示为数据流图，可以方便地进行并行计算和优化。</p>
 <p>TensorFlow最初是一个基于数据流编程的机器学习框架，使用数据流图（<strong>像onnx在nextron里可视化的那样</strong>）作为数据结构进行各种数值计算。在TensorFlow <strong>2.0</strong>之前，它主要采用<strong>静态图</strong>的方式进行计算，即先定义计算图，然后再将数据传入计算图中进行计算。但是，从TensorFlow 2.0开始，它也支持了<strong>动态图</strong>的方式，即用户可以像使用PyTorch一样进行计算。在动态图中，计算图是动态构建的，每次计算都会重新构建一次计算图。这种方式更加灵活和易于使用，但是在某些情况下可能会牺牲一些性能。</p>
 <div data-align="center">
-<img src="/编译器设计/TensorFlow-IR.png" style="width:60%;height:60%;">
+<img src="TensorFlow-IR.png" style="width:60%;height:60%;">
 </div>
 <center>
 <front color="AAAAAA">TensorFlow-IR</front>
