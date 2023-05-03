@@ -29,8 +29,9 @@
 <meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA%E7%BB%93%E6%9E%84.png">
 <meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-LLVMIR.jpg">
 <meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/TensorFlow-IR.png">
+<meta property="og:image" content="http://example.com/2023/05/02/%E7%BC%96%E8%AF%91%E5%99%A8%E7%9A%84%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA/%E4%B8%AD%E9%97%B4%E8%A1%A8%E7%A4%BA-MindIR.jpg">
 <meta property="article:published_time" content="2023-05-02T12:32:35.000Z">
-<meta property="article:modified_time" content="2023-05-03T05:21:40.000Z">
+<meta property="article:modified_time" content="2023-05-03T11:38:24.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="job">
 <meta property="article:tag" content="编译器设计">
@@ -206,7 +207,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-05-03 13:21:40" itemprop="dateModified" datetime="2023-05-03T13:21:40+08:00">2023-05-03</time>
+      <time title="修改时间：2023-05-03 19:38:24" itemprop="dateModified" datetime="2023-05-03T19:38:24+08:00">2023-05-03</time>
     </span>
 
   
@@ -344,7 +345,7 @@
 <p>图中间表示将编译过程的一些信息保存在图中，通过图的对象如节点、边、列表、树等来表示，如ML的模型就是有向无环图，常见的图中间表示有：<strong>抽象语法树</strong>(Abstract Syntax Tree，AST)、<strong>有向无环图</strong>(Directed Acyclic Graph，DAG)、<strong>控制流图</strong>(Control-Flow Graph，CFG)等</p>
 <p>AST抽象语法树采用树型中间表示的形式，是一种接近源代码层次的表示。对于表达式ax5+ax5xb，其AST表示就为：</p>
 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">      +                         +</span><br><span class="line">    /  \                        |\</span><br><span class="line">  x     x                       | \ </span><br><span class="line"> / \   /  \                     |  x</span><br><span class="line">a   5 x    b                    | / \</span><br><span class="line">     / \                         x   b</span><br><span class="line">     a 5                        / \</span><br><span class="line">                               a   5</span><br><span class="line"> AST抽象语法树                 DAG有向无环图</span><br></pre></td></tr></table></figure>
-<p>但ASG形式包含了两个ax5，存在冗余，所以DAG在AST的基础上提供了简化的表达式，一个节点可以有多个父节点，相同子树可以重用。如果编译器能够证明a的值在这过程中没有重用，则DAG可以重用子树，以降低求值的计算代价。</p>
+<p>但AST形式包含了两个ax5，存在冗余，所以DAG在AST的基础上提供了简化的表达式，一个节点可以有多个父节点，相同子树可以重用。如果编译器能够证明a的值在这过程中没有重用，则DAG可以重用子树，以降低求值的计算代价。</p>
 <h2 id="混合中间表示">混合中间表示</h2>
 <p>混合中间表示是线性中间表示和图中间表示的结合，这里以LLVM IR [2004LLVM] 为例进行说明。</p>
 <p>LLVM(Low Level Virtual Machine)是2000年提出的开源编译器框架项目，旨在为不同的前端后端提供统一的中间表示。</p>
@@ -354,6 +355,8 @@
 <center>
 <front color="AAAAAA">中间表示-LLVMIR</front>
 </center>
+<p>顶层是控制流图（Control Flow Graph，简写为CFG），来表示基本块（Basic Block，简写为BB）间的控制流。CFG的每个节点（Node）为一个基本块，基本块b1和b2之间有一条边（Edge）：b1-&gt;b2，如果控制流可能从基本块b1的最后一条指令流向基本块b2的第一条指令。</p>
+<p>底层是基本块，在基本块中，每条指令是以SSA（Static Single Assignment）形式呈现，这些指令构成一个指令线性列表。</p>
 <p>如图所示，LLVM IR使用线性中间表示作为表示的基本块，然后块之间的控制流用图来表示。基本块中以静态单复值指令(Static Single Assignment， SSA)的形式呈现，这些指令构成一个只能怪的先行列表。SSA形式要求每个变量只赋值一次，且变量需要在使用之前定义。控制流图中，每个节点为一个基本块，基本块间通过边实现控制转移。</p>
 <p>ps：感觉这个有点像静态图表示，每个算子节点其实都是一系列的线性指令构成的，和算子的参数进行乘加操作之类的，然后算子之间的数据传递用图的边来表示。</p>
 <h1 id="机器学习框架里的中间表示">机器学习框架里的中间表示</h1>
@@ -381,6 +384,7 @@
 <h2 id="pytorch">PyTorch</h2>
 <p>PyTorch是一个基于动态计算图的机器学习框架，以python作为前端语言，有很强的易用性和灵活性，方便用户编写和调试网络代码。为了保存和加载网络模型，也提供了TorchScript方法创建可序列化和可优化的模型（类似静态图），TorchScript IR是他的中间表示，通过JIT即时编译的形式，将python代码转换乘目标模型文件，任何ts程序都可以在python进程中保存（就是在训练完后保存），然后加载在别的没有Python依赖的进程中（部署到别的不支持python的机器里）</p>
 <p>TorchScript以基于SSA（静态单复值）的线性IR为基本表示，并通过JIT即时编译的Tracing和Scripting两种方法将python转换为TorchScript IR（这里其实也是转onnx的中间过程，转onnx也是换成torchsript再转成onnx的）</p>
+<p><strong>TorchScript是以SSA的IR为基础，通过JIT转成DAG的IR</strong></p>
 <p>如以下python代码使用了scripting的方法打印其中间表示图</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"></span><br><span class="line"><span class="meta">@torch.jit.script</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_func</span>(<span class="params"><span class="built_in">input</span></span>):</span><br><span class="line">    rv = <span class="number">10.0</span></span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">5</span>):</span><br><span class="line">        rv = rv+<span class="built_in">input</span></span><br><span class="line">        rv = rv/<span class="number">2</span></span><br><span class="line">    <span class="keyword">return</span> rv</span><br><span class="line"><span class="built_in">print</span>(test_func.graph)</span><br></pre></td></tr></table></figure>
 <p>输出为：</p>
@@ -411,9 +415,52 @@
 <center>
 <front color="AAAAAA">TensorFlow-IR</front>
 </center>
-<p>TensoFlow有三种中间表示，在运行的时候会经过一系列的抽象表示，程序逐步从高层的中间表示转向底层的中间表示</p>
+<p>TensoFlow有三种中间表示，在运行的时候会经过一系列的抽象表示，程序逐步从高层的中间表示转向底层的中间表示,其中有些是基于图的中间表示（Tensorflow Graph、xla hlo、tensor rt、ngraph、 tensorflow lite），有些是基于SSA的中间表示（图中的LLVM IR、TPU IR）等</p>
+<p>总的来说Tensorflow有多种IR设计，开始将模型抽象成图，然后逐步转向兼容底层的基于SSA的IR：</p>
+<ol type="1">
+<li>但是这个过程转换间没有有效的沟通信息，不知道其他层级做了什么优化，各中间表示只能各自重新进行优化，造成了有些优化操作的重复进行，导致优化效率的低下</li>
+<li>且图转SSA变化太大了，转换开销太大，各层级的优化代码也无法通用降低了开发效率。</li>
+</ol>
 <h2 id="mlir">MLIR</h2>
+<p>针对这个问题，tf团队推出了MLIR（Multi-Level Intermediate Represent，多级中间表示），MLIR不是一个具体的定义，而是统一的抽象表达和概念，使用者使用MLIR来定义符合自己需求的中间表示，且他不局限于TF框架，可以构建链接其他语言和后端（如LLVM）的中间表示，MLIR没有预设的操作与抽象类型，开发者可以更自由的定义中间表示，并能够<strong>更有针对性的解决其领域的问题</strong>，</p>
+<p>MLIR通过Dialect支持可拓展性：</p>
+<ul>
+<li>Dialect在特定的命名空间下为抽象提供了分组机制，为每种中间表示定义对应的产生式并绑定相应的Operation，从而生成一个MLIR类型的中间表示。(其实dialect就是命名空间)</li>
+<li>Operation是MLIR中抽象和计算的核心单元，其具有特定的语意，可以用于表示LLVM中所有核心的IR结构， 例如指令， 函数以及模块等。 如下就是一个MLIR定义下的operation：</li>
+</ul>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">%tensor = &quot;toy.transpose&quot;(%tensor) &#123;inplace = true&#125; : (tensor&lt;2x3xf64&gt;) -&gt; tensor&lt;3x2xf64&gt; loc(&quot;example/file/path&quot;:12:1)</span><br></pre></td></tr></table></figure>
+<ul>
+<li>% tensor: Operation定义的结果的名字， % 是为了避免冲突统一加入的。一个Operation可以定义0或者多个结果，它们是SSA值。</li>
+<li>“toy.transpose”: Operation的名字。它是一个唯一的字符串，其中Dialect为Toy。因此它可以理解为Toy Dialect 中的transpose Operation。</li>
+<li>(%tensor)：输入操作数（或参数）的列表，它们是由其它操作定义或引用块参数的 SSA 值。</li>
+<li>{inplace = true}：零个或多个属性的字典，这些属性是始终为常量的特殊操作数。在这里，我们定义了一个名为“inplace”的布尔属性，它的常量值为 true。</li>
+<li>(tensor&lt;2x3xf64&gt;)-&gt;tensor&lt;3x2xf64&gt;：函数形式表示的操作类型，前者是输入，后者是输出。尖括号内代表输入与输出的数据类型以及形状， 例如 &lt;2x3xf64&gt; 代表一个形状位2X3， 数据类型为float64的张量。</li>
+<li>loc(“example/file/path”:12:1)：此操作的源代码中的位置。</li>
+</ul>
+<p>各层级的中间表示都需要遵循这样的定义，所以<strong>转换就更加方便</strong>，且这样中间表示间就<strong>不再是相互独立的了</strong>，可以选合适的层进行优化，其他中间表示想做这个优化就先转换为该层的中间表示进行优化就可以了。TensorFlow从<strong>图中间表示到SSA中间表示</strong>的转换也可以通过使用MLIR来进行多层转换， 使<strong>转换更加平滑， 降低了转化的难度。</strong></p>
 <h2 id="mindspore">MindSpore</h2>
+<p>和很多框架一样MindSpore同时支持静态图和动态图，其中间表示是Mind IR。他没有采用多层的中间表示，而是用的<strong>统一的中间表示，定义了网络的逻辑结构和算子的属性</strong>，这样能够<strong>消除不同后端的模型差异</strong>，连接不同的目标机器</p>
+<p>核心目的：<strong>是服务于自动微分变换</strong>，而<strong>自动微分采用的是基于函数式编程框架的变换方法</strong>，因此MindIR采用了<strong>接近于ANF函数式的语义。</strong></p>
+<p>MindIR具有以下特点：</p>
+<p>（1）<strong>基于图的（Graph based）。</strong></p>
+<p>与TensorFlow类似，程序使用图来表示，使其容易去做优化。但跟TensorFlow不一样的是，在MindSpore中，函数是”一等公民”。函数可以被递归调用，也可以被当做参数传到其他的函数中，或者从其他函数中返回，使得MindSpore可以表达一系列的控制流结构。</p>
+<p>（2）<strong>纯函数的（Purely functional）。</strong></p>
+<p>纯函数是指函数的<strong>结果只依赖函数的参数</strong>。若函数依赖或影响外部的状态，比如，函数会修改外部全局变量，或者函数的结果依赖全局变量的值，则称函数具有<strong>副作用</strong> [spuler1994compiler] 。若使用了带有副作用的函数，代码的执行顺序必须得到严格的保证，否则可能会得到错误的结果，比如对全局变量的先写后读变成了先读后写。同时，<strong>副作用的存在也会影响自动微分</strong>，因为反向部分需要从前向部分获取中间变量，<strong>需要确保该中间变量的正确。因此需要保证自动微分的函数是纯函数</strong>。</p>
+<p>由于Python语言具有高度动态性的特点，纯函数式编程对用户使用上有一些编程限制。有些机器学习框架的自动微分功能只支持对纯函数求导，且要求用户自行保证这一点。如果用户代码中写了<strong>带有副作用的函数</strong>，那么求导的结果可能会不符合预期。<strong>MindIR支持副作用的表达，能够将副作用的表达转换为纯函数的表达</strong>，从而在保持ANF函数式语义不变的同时，确保执行顺序的正确性，从而实现自由度更高的自动微分。</p>
+<p><strong>（3）支持闭包表示的（Closure representation）。</strong></p>
+<p>反向模式的自动微分，需要存储基本操作的中间结果到闭包中，然后再去进行组合连接。所以有一个自然的闭包表示尤为重要。闭包是指代码块和作用域环境的结合，在MindIR中，代码块是以函数图呈现的，而作用域环境可以理解为该函数被调用时的上下文环境。</p>
+<p><strong>（4）强类型的（Strongly typed）。</strong></p>
+<p>每个节点需要有一个具体的类型，这个对于性能最大化很重要。在机器学习应用中，因为算子可能很耗费时间，所以越早捕获错误越好。因为需要支持函数调用和高阶函数，相比于TensorFlow的数据流图，MindIR的类型和形状推导更加复杂且强大。</p>
+<div data-align="center">
+<img src="中间表示-MindIR.jpg" style="width:60%;height:60%;">
+</div>
+<center>
+<front color="AAAAAA">MindIR</front>
+</center>
+<p>MindIR的定义如图所示，以下面代码为例，</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">func</span>(<span class="params">x, y</span>):</span><br><span class="line">    <span class="keyword">return</span> x / y</span><br><span class="line"></span><br><span class="line"><span class="meta">@ms_function</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test_f</span>(<span class="params">x, y</span>):</span><br><span class="line">    a = x - <span class="number">1</span></span><br><span class="line">    b = a + y</span><br><span class="line">    c = b * func(a, b)</span><br><span class="line">    <span class="keyword">return</span> c</span><br></pre></td></tr></table></figure>
+<p>其对应的ANF表达式是：</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">lambda (x, y)</span><br><span class="line">    let a = x - 1 in</span><br><span class="line">    let b = a + y in</span><br><span class="line">    let func = lambda (x, y)</span><br><span class="line">        let ret = x / y in</span><br><span class="line">        ret end in</span><br><span class="line">    let %1 = func(a, b) in</span><br><span class="line">    let c = b * %1 in</span><br><span class="line">    c end</span><br></pre></td></tr></table></figure>
 
     </div>
 
