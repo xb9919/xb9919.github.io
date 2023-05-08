@@ -19,35 +19,28 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="序言 记录一下yolov1 论文地址：You Only Look Once: Unified, Real-Time Object Detection GitHub：[You Only Look Once: Unified, Real-Time Object Detection]">
+    <meta name="description" content="序言 近期由于项目需要配了个linux双系统，现在记录以下如何设置通过命令行@直接@打开@软件@">
 <meta property="og:type" content="article">
-<meta property="og:title" content="yolov1">
-<meta property="og:url" content="http://example.com/2023/04/27/yolov1/index.html">
+<meta property="og:title" content="linux命令行打开软件">
+<meta property="og:url" content="http://example.com/2023/05/08/linux%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E8%BD%AF%E4%BB%B6/index.html">
 <meta property="og:site_name" content="XBlog">
-<meta property="og:description" content="序言 记录一下yolov1 论文地址：You Only Look Once: Unified, Real-Time Object Detection GitHub：[You Only Look Once: Unified, Real-Time Object Detection]">
+<meta property="og:description" content="序言 近期由于项目需要配了个linux双系统，现在记录以下如何设置通过命令行@直接@打开@软件@">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="http://example.com/2023/04/27/yolov1/detect_sys.png">
-<meta property="og:image" content="http://example.com/2023/04/27/yolov1/model.png">
-<meta property="og:image" content="http://example.com/2023/04/27/yolov1/backbone.png">
-<meta property="og:image" content="http://example.com/2023/04/27/yolov1/lossfunc.png">
-<meta property="article:published_time" content="2023-04-27T02:13:17.000Z">
-<meta property="article:modified_time" content="2023-04-28T04:16:24.000Z">
+<meta property="article:published_time" content="2023-05-08T11:39:54.000Z">
+<meta property="article:modified_time" content="2023-05-08T16:06:04.000Z">
 <meta property="article:author" content="Carey">
-<meta property="article:tag" content="job">
-<meta property="article:tag" content="cv">
-<meta property="article:tag" content="detection">
+<meta property="article:tag" content="linux">
 <meta name="twitter:card" content="summary">
-<meta name="twitter:image" content="http://example.com/2023/04/27/yolov1/detect_sys.png">
 
 
-<link rel="canonical" href="http://example.com/2023/04/27/yolov1/">
+<link rel="canonical" href="http://example.com/2023/05/08/linux%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E8%BD%AF%E4%BB%B6/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/04/27/yolov1/","path":"2023/04/27/yolov1/","title":"yolov1"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/05/08/linux%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E8%BD%AF%E4%BB%B6/","path":"2023/05/08/linux命令行打开软件/","title":"linux命令行打开软件"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>yolov1 | XBlog</title>
+<title>linux命令行打开软件 | XBlog</title>
   
 
 
@@ -119,7 +112,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#introduction"><span class="nav-number">2.</span> <span class="nav-text">Introduction</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#unified-detection"><span class="nav-number">3.</span> <span class="nav-text">Unified Detection</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%9D%E6%83%B3"><span class="nav-number">3.1.</span> <span class="nav-text">思想</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E7%BB%93%E6%9E%84"><span class="nav-number">3.2.</span> <span class="nav-text">网络结构</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8D%9F%E5%A4%B1%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">损失函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BC%98%E7%BC%BA%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">优缺点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BC%BA%E7%82%B9"><span class="nav-number">4.1.</span> <span class="nav-text">缺点</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BC%98%E7%82%B9"><span class="nav-number">4.2.</span> <span class="nav-text">优点</span></a></li></ol></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BA%8F%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">序言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E6%96%B9%E5%BC%8F"><span class="nav-number">2.</span> <span class="nav-text">快捷方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BF%AB%E6%8D%B7%E8%84%9A%E6%9C%AC"><span class="nav-number">3.</span> <span class="nav-text">快捷脚本</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -172,7 +165,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/04/27/yolov1/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/05/08/linux%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E8%BD%AF%E4%BB%B6/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/xb9919.jpg">
@@ -185,12 +178,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="yolov1 | XBlog">
+      <meta itemprop="name" content="linux命令行打开软件 | XBlog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          yolov1
+          linux命令行打开软件
         </h1>
 
         <div class="post-meta-container">
@@ -201,18 +194,18 @@
       </span>
       <span class="post-meta-item-text">发表于</span>
 
-      <time title="创建时间：2023-04-27 10:13:17" itemprop="dateCreated datePublished" datetime="2023-04-27T10:13:17+08:00">2023-04-27</time>
+      <time title="创建时间：2023-05-08 19:39:54" itemprop="dateCreated datePublished" datetime="2023-05-08T19:39:54+08:00">2023-05-08</time>
     </span>
     <span class="post-meta-item">
       <span class="post-meta-item-icon">
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-04-28 12:16:24" itemprop="dateModified" datetime="2023-04-28T12:16:24+08:00">2023-04-28</time>
+      <time title="修改时间：2023-05-09 00:06:04" itemprop="dateModified" datetime="2023-05-09T00:06:04+08:00">2023-05-09</time>
     </span>
 
   
-    <span id="/2023/04/27/yolov1/" class="post-meta-item leancloud_visitors" data-flag-title="yolov1" title="阅读次数">
+    <span id="/2023/05/08/linux%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%89%93%E5%BC%80%E8%BD%AF%E4%BB%B6/" class="post-meta-item leancloud_visitors" data-flag-title="linux命令行打开软件" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -229,74 +222,39 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="序言">序言</h1>
-<p>记录一下yolov1</p>
-<p>论文地址：<a target="_blank" rel="noopener" href="https://www.cv-foundation.org/openaccess/content_cvpr_2016/html/Redmon_You_Only_Look_CVPR_2016_paper.html">You Only Look Once: Unified, Real-Time Object Detection</a></p>
-<p>GitHub：[You Only Look Once: Unified, Real-Time Object Detection]</p>
+<p>近期由于项目需要配了个linux双系统，现在记录以下如何设置通过命令行@直接<span class="citation" data-cites="打开">@打开</span><span class="citation" data-cites="软件">@软件</span>@</p>
 <span id="more"></span>
-<p>mAP:就是不同的阈值下会得到不同的精度和召回率，然后画出PR图并计算PR图和坐标的面积</p>
-<h1 id="introduction">Introduction</h1>
-<p>目前的检测系统重新利用分类器来执行检测。为了检测一个对象，这些系统为该对象使用分类器，并在测试图像的不同位置和尺度对其进行评估。像可变形部件模型（DPM）这样的系统使用滑动窗口方法，其中分类器在整个图像上均匀间隔的位置运行</p>
-<p>RCNN首先在图像中生成潜在的边界框，然后在这些提议的边界框上运行一个分类器。分类后，使用后处理方法对边界框进行细化，消除重复检测，并基于场景中的其他对象对边界框进行重新评分。这些复杂的管道非常缓慢，难以优化，因为每个单独的组件必须单独训练。</p>
-<p>本文将目标检测重新定义为一个单一的回归问题，直接从图像像素到边界框坐标和类概率。使用我们的系统，你只看一次（YOLO）就可以预测有什么物体以及它们在哪里。</p>
-<div data-align="center">
-<img src="detect_sys.png">
-</div>
-<center>
-<font color="AAAAAA">yolo_v1</font>
-</center>
-<p>如图所示。单个卷积网络同时预测多个边界框和这些边界框的类概率。YOLO使用整张图像训练和优化。与传统的目标检测方法相比，这个统一的模型有几个优点：</p>
+<p>以pycharm为例，正常打开是需要通过bash启动的，不像windows直接打开exe文件，而是要</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bash ./pycharm/bin/pycharm.sh</span><br></pre></td></tr></table></figure>
+<p>而每次都打开脚本会很麻烦，且启动pycharm将会阻塞一个终端,关闭终端pycharm也将随之关闭，所以想要更好的提验就只有：</p>
 <ol type="1">
-<li>快，直接回归，不用复杂的pipeline，45fps，可以做到实时（延迟小于25毫秒），AP也高</li>
-<li>预测时考虑全局，和slide window的方法不同，直接输入图片就可以了</li>
-<li>泛化性强</li>
+<li>新建一个快捷方式</li>
+<li>快捷脚本</li>
 </ol>
-<p>但是在小物体上效果不好</p>
-<h1 id="unified-detection">Unified Detection</h1>
-<h2 id="思想">思想</h2>
-<p>将以前目标检测很多的组件统一成一个单一的神经网络，网络可以预测anchor也可以分类。</p>
-<div data-align="center">
-<img src="model.png">
-</div>
-<center>
-<font color="AAAAAA">model</font>
-</center>
-<p>如图所示，先把image分成<span class="math inline">\(s\times s\)</span>个网格，如果一个对象的中心落入一个网格单元中，该网格单元负责检测该对象。每个grid预测B个bounding box以及这些boxes的置信度即<span class="math inline">\(Pr(Object)*IOU_{pred}^{truth}\)</span></p>
-<p>bounding box回归出5个值(x,y,w,h,confidence)就是相对于grid的中心的坐标x,y以及box的宽和高，置信度预测表示预测框和任何地面真实框之间的IOU。</p>
-<p>然后每个grid同时会预测C个类别标签<span class="math inline">\(Pr(Class_{i}|Object)\)</span> ,一个grid只预测一个class</p>
-<p>测试的时候用到了confidence score就是：</p>
-<p><span class="math inline">\(Pr(Class_{i}|Object)*Pr(Object)*IOU_{pred}^{truth} = Pr(Class_{i})*IOU_{truth}^{pred}\)</span></p>
-<h2 id="网络结构">网络结构</h2>
-<div data-align="center">
-<img src="backbone.png">
-</div>
-<center>
-<font color="AAAAAA">backbone</font>
-</center>
-<p>网络结构借鉴了GoogLeNet分类网络结构,由24个卷积层和2个全连接层组成,但是没有使用Inception module，使用的1×1卷积（交替的1×1卷积用来减少前几层的特征空间）和3×3卷积简单替代。网络输入的图片大小为448×448，最终输出为 <strong>7×7×30的张量</strong>（在PASCAL VOC数据集上，其中7×7为grid的个数，然后每个grid有个20分类和2个bounding box，每个bounding box有5个输出，所以是7×7×30）。</p>
-<h2 id="损失函数">损失函数</h2>
-<div data-align="center">
-<img src="lossfunc.png">
-</div>
-<center>
-<font color="AAAAAA">loss function</font>
-</center>
-<ul>
-<li><strong>位置误差</strong>里只有IOU最大的会计算loss，wh取了根号是因为缓解物体尺度对loss的影响（对小物体更敏感）</li>
-<li><strong>置信度误差</strong>希望IOU大于阈值的时候预测的置信度和IOU一致（只选IOU最大的），小于阈值的时候为0，背景的数量比前景多，所以把他们分开考虑，通过加权解决</li>
-<li><strong>分类误差</strong>就直接mse，或者交叉熵。</li>
-</ul>
-<h1 id="优缺点">优缺点</h1>
-<h2 id="缺点">缺点</h2>
-<ol type="1">
-<li>重合物体难检测，一个grid只进行一个分类</li>
-<li>多分类标签的时候不好解决</li>
-<li>小物体检测不到，只有两个先验框</li>
-</ol>
-<h2 id="优点">优点</h2>
-<ol type="1">
-<li>简单</li>
-<li>快</li>
-</ol>
+<h1 id="快捷方式">快捷方式</h1>
+<p>方法一（仅适用于jetbrain系列或者是提供相关操作的软件）：</p>
+<p>1、终端直接运行 pycharm.sh</p>
+<p>2、进入pycharm后点击”tools”</p>
+<p>3、点击”Create Desktop Entry…” 再关闭pycharm</p>
+<p>4、返回桌面,点击显示应用程序（桌面左下角），在全部程序中即可找到pycharm的启动方式，之后可以右键收藏到快捷启动栏（这一步不同虚拟机操作不同但是都已经成功创建了，只需要我们找一下即可）</p>
+<p>方法二：</p>
+<p>直接配置桌面入口文件</p>
+<p>1、首先进入到“/”目录用vim打开这个文件</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim /usr/share/applications/Pycharm.desktop</span><br></pre></td></tr></table></figure>
+<p>2、输入以下内容</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">[Desktop Entry]</span><br><span class="line"> Type=Application</span><br><span class="line"> Name=Pycharm</span><br><span class="line"> GenericName=Pycharm3</span><br><span class="line"> Comment=Pycharm3:The Python IDE</span><br><span class="line"> Exec=bash /opt/pycharm/bin/pycharm.sh</span><br><span class="line"> Icon=/opt/pycharm/bin/pycharm.png</span><br><span class="line"> Terminal=pycharm#设置成False更好</span><br><span class="line"> Categories=Pycharm;</span><br></pre></td></tr></table></figure>
+<p>其中：Exec和Icon是你的pycharm.sh和pycharm.png两个文件的路径。一般情况下这就有图片在桌面了。 但是如果没有要到<code>usr/share/application</code>下找到pycharm图标，然后复制到桌面即可。</p>
+<p>其中:</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">Type：指定桌面入口的类型。在这种情况下，它被设置为“Application”。</span><br><span class="line">Name：指定应用程序的显示名称。</span><br><span class="line">GenericName：为应用程序指定通用名称。</span><br><span class="line">Comment：指定有关应用程序的简要描述或注释。</span><br><span class="line">Exec：指定启动应用程序时要执行的命令。在这种情况下，它使用bash shell启动位于“/opt/pycharm/bin/pycharm.sh”位置的Pycharm可执行文件。</span><br><span class="line">Icon：指定应用程序图标的路径。</span><br><span class="line">Terminal：指定应用程序是否应在终端中运行。在这种情况下，它被设置为“pycharm”，这可能意味着它不应该在终端中运行。</span><br><span class="line">Categories：指定应用程序在应用程序菜单中应列在哪些类别下。在这种情况下，它列在“Pycharm”类别下。</span><br></pre></td></tr></table></figure>
+<h1 id="快捷脚本">快捷脚本</h1>
+<p>实际就是创建一下快捷启动命令,指定一个别名.</p>
+<p>1、进入主目录bashrc</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">vim ~/.bashrc</span><br></pre></td></tr></table></figure>
+<p>2、在配置文件末尾添加</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">alias charm=&quot;bash /opt/pycharm/bin/pycharm.sh&quot;</span><br></pre></td></tr></table></figure>
+<p>可根据实际需求修改：<code>alias 名字=“路径”</code></p>
+<p>3、刷新</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">source ~/.bashrc</span><br></pre></td></tr></table></figure>
 
     </div>
 
@@ -306,23 +264,18 @@
 
     <footer class="post-footer">
           <div class="post-tags">
-              <a href="/tags/job/" rel="tag"># job</a>
-              <a href="/tags/cv/" rel="tag"># cv</a>
-              <a href="/tags/detection/" rel="tag"># detection</a>
+              <a href="/tags/linux/" rel="tag"># linux</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/04/24/%E4%B8%80%E4%BA%9BFAS/" rel="prev" title="一些FAS">
-                  <i class="fa fa-chevron-left"></i> 一些FAS
+                <a href="/2023/05/04/%E8%87%AA%E5%8A%A8%E5%BE%AE%E5%88%86/" rel="prev" title="自动微分">
+                  <i class="fa fa-chevron-left"></i> 自动微分
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/04/28/yolov2/" rel="next" title="yolov2">
-                  yolov2 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
