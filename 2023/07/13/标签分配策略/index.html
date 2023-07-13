@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="简介 介绍一下检测里常见的标签分配策略">
+<meta property="og:type" content="article">
+<meta property="og:title" content="标签分配策略">
+<meta property="og:url" content="http://example.com/2023/07/13/%E6%A0%87%E7%AD%BE%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="简介 介绍一下检测里常见的标签分配策略">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-07-13T11:45:42.000Z">
+<meta property="article:modified_time" content="2023-07-13T12:52:54.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="cv">
+<meta property="article:tag" content="detection">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/07/13/%E6%A0%87%E7%AD%BE%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/07/13/%E6%A0%87%E7%AD%BE%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/","path":"2023/07/13/标签分配策略/","title":"标签分配策略"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>标签分配策略 | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">1.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%84%E5%81%9A%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">常规做法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#maxiou"><span class="nav-number">2.1.</span> <span class="nav-text">maxIoU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#fcos%E9%87%8C%E7%9A%84maxiou"><span class="nav-number">2.2.</span> <span class="nav-text">FCOS里的maxIoU</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#tal"><span class="nav-number">3.</span> <span class="nav-text">TAL</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#anchor-alignment-metric"><span class="nav-number">3.1.</span> <span class="nav-text">Anchor alignment metric</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#training-sample-assignment"><span class="nav-number">3.2.</span> <span class="nav-text">Training sample assignment</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E5%AF%B9%E9%BD%90%E6%8D%9F%E5%A4%B1"><span class="nav-number">3.3.</span> <span class="nav-text">任务对齐损失</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#simota"><span class="nav-number">4.</span> <span class="nav-text">SimOTA</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E5%80%99%E9%80%89%E5%8C%BA%E5%9F%9F"><span class="nav-number">4.1.</span> <span class="nav-text">选候选区域</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97%E5%80%99%E9%80%89%E6%A1%86%E5%92%8Cgt%E7%9A%84iou"><span class="nav-number">4.2.</span> <span class="nav-text">计算候选框和GT的IOU</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97cost%E5%80%BCcost%E5%89%8Dk%E7%9A%84%E4%BD%9C%E4%B8%BA%E6%AD%A3%E6%A0%B7%E6%9C%AC"><span class="nav-number">4.3.</span> <span class="nav-text">计算cost值，cost前k的作为正样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E4%BB%A3%E7%A0%81%E7%9A%84%E6%B3%A8%E9%87%8A"><span class="nav-number">4.4.</span> <span class="nav-text">重要代码的注释</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#atss"><span class="nav-number">5.</span> <span class="nav-text">ATSS</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%80%89%E5%80%99%E9%80%89%E6%A1%86"><span class="nav-number">5.1.</span> <span class="nav-text">选候选框</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%97%E9%98%88%E5%80%BC"><span class="nav-number">5.2.</span> <span class="nav-text">算阈值</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AD%9B%E9%80%89%E6%AD%A3%E6%A0%B7%E6%9C%AC"><span class="nav-number">5.3.</span> <span class="nav-text">筛选正样本</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">5.4.</span> <span class="nav-text">举例</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88"><span class="nav-number">5.5.</span> <span class="nav-text">为什么</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%87%8D%E8%A6%81%E4%BB%A3%E7%A0%81%E7%9A%84%E6%B3%A8%E9%87%8A-1"><span class="nav-number">5.6.</span> <span class="nav-text">重要代码的注释</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">27</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">11</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/07/13/%E6%A0%87%E7%AD%BE%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="标签分配策略 | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          标签分配策略
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-07-13 19:45:42 / 修改时间：20:52:54" itemprop="dateCreated datePublished" datetime="2023-07-13T19:45:42+08:00">2023-07-13</time>
+    </span>
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-folder"></i>
+      </span>
+      <span class="post-meta-item-text">分类于</span>
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/" itemprop="url" rel="index"><span itemprop="name">目标检测</span></a>
+        </span>
+          ，
+        <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+          <a href="/categories/%E7%9B%AE%E6%A0%87%E6%A3%80%E6%B5%8B/%E8%AE%A1%E7%AE%97%E6%9C%BA%E8%A7%86%E8%A7%89%E7%9B%B8%E5%85%B3/" itemprop="url" rel="index"><span itemprop="name">计算机视觉相关</span></a>
+        </span>
+    </span>
+
+  
+    <span id="/2023/07/13/%E6%A0%87%E7%AD%BE%E5%88%86%E9%85%8D%E7%AD%96%E7%95%A5/" class="post-meta-item leancloud_visitors" data-flag-title="标签分配策略" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="简介">简介</h1>
+<p>介绍一下检测里常见的标签分配策略</p>
+<span id="more"></span>
+<h1 id="常规做法">常规做法</h1>
+<p>比较暴力的算法，看GT的位置落在cell的哪个象限，比如第一象限就把当前cell、左边的、上面的作为正样本</p>
+<h2 id="maxiou">maxIoU</h2>
+<p>选中心点在GT里的cell算IoU，选最大的k个</p>
+<p>首先，对于GT box(N个)和anchor(M个)，两两计算彼此的IoU，构建matching matrix； 通过 IoU 的阈值来进行判定正负样本。当 IoU 介于0.4和0.5之间为ignore区间，当 IoU 大于0.5的时候为正样本区间，其他的情况为负样本区间。</p>
+<h2 id="fcos里的maxiou">FCOS里的maxIoU</h2>
+<p>是为了解决重叠问题而提出的：</p>
+<p>作者发现大部分的重叠区域的GT box之间的尺度变化非常大，如一个人和一个苹果，很容易就会形成包含关系，而基于FPN的多尺度检测可以很好地减少这种情况的出现，通过网络结构可以看出，我们在 <span class="math inline">\(P_{3} P_{4} P_{5} P_{6} P_{7}\)</span>进行检测的，又由于众所周知的知识，神经网络的浅层更多的是细节特征，且对小目标检测有利，高层更多的是语义特征，用于检测大目标。</p>
+<p>所以作者为了减少尺度差异大的物体重叠，引入参数 <span class="math inline">\(m_{i}\)</span> 为特征层i 的最大距离，如果一个location（x, y）满足max(l, t, r, b)&gt;<span class="math inline">\(m_{i}\)</span> 或者 max(l, t, r, b)&lt;<span class="math inline">\(m_{i-1}\)</span> ，那么我们在这个特征层就将其视为负样本，不在进行回归。其中 <span class="math inline">\(m_{i}\)</span> 分别设置为0，64,128,256,512和正无穷，正好可以形成5个区间，在5个层上进行限制尺寸以减少重叠区域！</p>
+<h1 id="tal">TAL</h1>
+<p>为了应对 NMS，训练实例的Anchor分配应满足以下规则：</p>
+<p>1、对齐良好的Anchor应该能够预测高分类分数和精确的定位； 2、未对齐的Anchor应该有一个低分类分数并随后被抑制。</p>
+<h2 id="anchor-alignment-metric">Anchor alignment metric</h2>
+<p>考虑到预测边界框和ground truth之间的分类分数和IoU表明了两个任务的预测质量，使用分类分数和IoU的高阶组合来衡量任务对齐的程度。 具体来说设计了以下指标来计算每个实例的anchor level对齐： <span class="math display">\[t = s^{\alpha}*u_{\beta}\]</span> 其中 s 和 u 分别表示分类 Score 和 IoU 值。 α 和 β 用于控制2个任务在anchor对齐度量中的影响。 值得注意的是，t 在2个任务的联合优化中起着关键作用，以实现任务对齐的目标。 它鼓励网络从联合优化的角度动态关注高质量（即任务对齐）Anchor。</p>
+<h2 id="training-sample-assignment">Training sample assignment</h2>
+<p>正如 ATSS 和 FreeAnchor 中所讨论的，训练样本分配对于目标检测器的训练至关重要。 为了提高两个任务的对齐，TOOD专注于任务对齐的anchors，并采用简单的分配规则来选择训练样本：对于每个实例，选择m个t值最大的anchor作为正样本，而使用剩余的anchors为负样本。 同样，训练是通过计算专门为对齐分类和定位任务而设计的新损失函数来执行的。</p>
+<h2 id="任务对齐损失">任务对齐损失</h2>
+<h1 id="simota">SimOTA</h1>
+<p>OTA的简化版</p>
+<h2 id="选候选区域">选候选区域</h2>
+<div data-align="center">
+<img src = "TAL1.png">
+</div>
+<center>
+<font color="AAAAAA">候选区域</font>
+</center>
+<p>如图所示，先进行粗筛选，在中心点落在GT的框里的以及在GT的中心点为中心，5x5的bbox为候选范围 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_in_boxes_info</span>(<span class="params"></span></span><br><span class="line"><span class="params">    self,</span></span><br><span class="line"><span class="params">    gt_bboxes_per_image,</span></span><br><span class="line"><span class="params">    expanded_strides,</span></span><br><span class="line"><span class="params">    x_shifts,</span></span><br><span class="line"><span class="params">    y_shifts,</span></span><br><span class="line"><span class="params">    total_num_anchors,</span></span><br><span class="line"><span class="params">    num_gt,</span></span><br><span class="line"><span class="params"></span>):</span><br><span class="line">    <span class="comment"># 8400个中心点   判断哪些在GT框内</span></span><br><span class="line">    expanded_strides_per_image = expanded_strides[<span class="number">0</span>]     <span class="comment"># 每个stride</span></span><br><span class="line">    x_shifts_per_image = x_shifts[<span class="number">0</span>] * expanded_strides_per_image  <span class="comment"># 真实图片的左上角x</span></span><br><span class="line">    y_shifts_per_image = y_shifts[<span class="number">0</span>] * expanded_strides_per_image</span><br><span class="line">    x_centers_per_image = (         <span class="comment"># 中心点x坐标  增加一个维度 并且 重复gt次    因为8400个 每一个都要和每一个gt的每一个去比较</span></span><br><span class="line">        (x_shifts_per_image + <span class="number">0.5</span> * expanded_strides_per_image)</span><br><span class="line">        .unsqueeze(<span class="number">0</span>)</span><br><span class="line">        .repeat(num_gt, <span class="number">1</span>)</span><br><span class="line">    )  <span class="comment"># [n_anchor] -&gt; [n_gt, n_anchor]</span></span><br><span class="line">    <span class="comment"># 中心点y坐标</span></span><br><span class="line">    y_centers_per_image = (</span><br><span class="line">        (y_shifts_per_image + <span class="number">0.5</span> * expanded_strides_per_image)</span><br><span class="line">        .unsqueeze(<span class="number">0</span>)</span><br><span class="line">        .repeat(num_gt, <span class="number">1</span>)</span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># 计算真实框的四边</span></span><br><span class="line">    <span class="comment"># 左上角的x坐标</span></span><br><span class="line">    gt_bboxes_per_image_l = (</span><br><span class="line">        (gt_bboxes_per_image[:, <span class="number">0</span>] - <span class="number">0.5</span> * gt_bboxes_per_image[:, <span class="number">2</span>])</span><br><span class="line">        .unsqueeze(<span class="number">1</span>)</span><br><span class="line">        .repeat(<span class="number">1</span>, total_num_anchors)</span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># 右上角的x坐标</span></span><br><span class="line">    gt_bboxes_per_image_r = (</span><br><span class="line">        (gt_bboxes_per_image[:, <span class="number">0</span>] + <span class="number">0.5</span> * gt_bboxes_per_image[:, <span class="number">2</span>])</span><br><span class="line">        .unsqueeze(<span class="number">1</span>)</span><br><span class="line">        .repeat(<span class="number">1</span>, total_num_anchors)</span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># 左上角的y坐标</span></span><br><span class="line">    gt_bboxes_per_image_t = (</span><br><span class="line">        (gt_bboxes_per_image[:, <span class="number">1</span>] - <span class="number">0.5</span> * gt_bboxes_per_image[:, <span class="number">3</span>])</span><br><span class="line">        .unsqueeze(<span class="number">1</span>)</span><br><span class="line">        .repeat(<span class="number">1</span>, total_num_anchors)</span><br><span class="line">    )</span><br><span class="line">    <span class="comment"># 右下角的y坐标</span></span><br><span class="line">    gt_bboxes_per_image_b = (</span><br><span class="line">        (gt_bboxes_per_image[:, <span class="number">1</span>] + <span class="number">0.5</span> * gt_bboxes_per_image[:, <span class="number">3</span>])</span><br><span class="line">        .unsqueeze(<span class="number">1</span>)</span><br><span class="line">        .repeat(<span class="number">1</span>, total_num_anchors)</span><br><span class="line">    )</span><br><span class="line"></span><br><span class="line">    b_l = x_centers_per_image - gt_bboxes_per_image_l</span><br><span class="line">    b_r = gt_bboxes_per_image_r - x_centers_per_image</span><br><span class="line">    b_t = y_centers_per_image - gt_bboxes_per_image_t</span><br><span class="line">    b_b = gt_bboxes_per_image_b - y_centers_per_image</span><br><span class="line">    bbox_deltas = torch.stack([b_l, b_t, b_r, b_b], <span class="number">2</span>)  <span class="comment"># 拼接</span></span><br><span class="line">    <span class="comment"># 看最小值是否大于0 其实是判断8400个中心点哪些在目标框内</span></span><br><span class="line">    is_in_boxes = bbox_deltas.<span class="built_in">min</span>(dim=-<span class="number">1</span>).values &gt; <span class="number">0.0</span>   <span class="comment"># 把在目标框内的取出</span></span><br><span class="line">    is_in_boxes_all = is_in_boxes.<span class="built_in">sum</span>(dim=<span class="number">0</span>) &gt; <span class="number">0</span>    <span class="comment"># 在目标框内的 几个数 看有多少个</span></span><br><span class="line">    <span class="comment"># in fixed center</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># 这部分判断中心点在 5*5哪个区域中</span></span><br><span class="line">    center_radius = <span class="number">2.5</span></span><br><span class="line"></span><br><span class="line">    gt_bboxes_per_image_l = (gt_bboxes_per_image[:, <span class="number">0</span>]).unsqueeze(<span class="number">1</span>).repeat(</span><br><span class="line">        <span class="number">1</span>, total_num_anchors</span><br><span class="line">    ) - center_radius * expanded_strides_per_image.unsqueeze(<span class="number">0</span>)</span><br><span class="line">    gt_bboxes_per_image_r = (gt_bboxes_per_image[:, <span class="number">0</span>]).unsqueeze(<span class="number">1</span>).repeat(</span><br><span class="line">        <span class="number">1</span>, total_num_anchors</span><br><span class="line">    ) + center_radius * expanded_strides_per_image.unsqueeze(<span class="number">0</span>)</span><br><span class="line">    gt_bboxes_per_image_t = (gt_bboxes_per_image[:, <span class="number">1</span>]).unsqueeze(<span class="number">1</span>).repeat(</span><br><span class="line">        <span class="number">1</span>, total_num_anchors</span><br><span class="line">    ) - center_radius * expanded_strides_per_image.unsqueeze(<span class="number">0</span>)</span><br><span class="line">    gt_bboxes_per_image_b = (gt_bboxes_per_image[:, <span class="number">1</span>]).unsqueeze(<span class="number">1</span>).repeat(</span><br><span class="line">        <span class="number">1</span>, total_num_anchors</span><br><span class="line">    ) + center_radius * expanded_strides_per_image.unsqueeze(<span class="number">0</span>)</span><br><span class="line"></span><br><span class="line">    c_l = x_centers_per_image - gt_bboxes_per_image_l</span><br><span class="line">    c_r = gt_bboxes_per_image_r - x_centers_per_image</span><br><span class="line">    c_t = y_centers_per_image - gt_bboxes_per_image_t</span><br><span class="line">    c_b = gt_bboxes_per_image_b - y_centers_per_image</span><br><span class="line">    center_deltas = torch.stack([c_l, c_t, c_r, c_b], <span class="number">2</span>)</span><br><span class="line">    is_in_centers = center_deltas.<span class="built_in">min</span>(dim=-<span class="number">1</span>).values &gt; <span class="number">0.0</span></span><br><span class="line">    is_in_centers_all = is_in_centers.<span class="built_in">sum</span>(dim=<span class="number">0</span>) &gt; <span class="number">0</span></span><br><span class="line"></span><br><span class="line">    <span class="comment"># in boxes and in centers  取两者并集 5*5和GT的并集</span></span><br><span class="line">    is_in_boxes_anchor = is_in_boxes_all | is_in_centers_all</span><br><span class="line">    <span class="comment"># 这个取得是GT和5*5的交集    粗筛选完毕</span></span><br><span class="line">    is_in_boxes_and_center = (</span><br><span class="line">        is_in_boxes[:, is_in_boxes_anchor] &amp; is_in_centers[:, is_in_boxes_anchor]</span><br><span class="line">    )</span><br><span class="line">    <span class="keyword">return</span> is_in_boxes_anchor, is_in_boxes_and_center</span><br><span class="line"></span><br></pre></td></tr></table></figure></p>
+<h2 id="计算候选框和gt的iou">计算候选框和GT的IOU</h2>
+<p>计算所有落在候选范围内的候选框和 GT 的 IoU 值，并加起来取整，整数部分k作为分配的正样本数</p>
+<h2 id="计算cost值cost前k的作为正样本">计算cost值，cost前k的作为正样本</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">cost = (</span><br><span class="line">            pair_wise_cls_loss       <span class="comment"># BCE计算的分类损失和目标置信度损失</span></span><br><span class="line">            + <span class="number">3.0</span> * pair_wise_ious_loss     <span class="comment"># IOU定位损失</span></span><br><span class="line">            + <span class="number">100000.0</span> * (~is_in_boxes_and_center)   <span class="comment"># 如果不是正样本那它的损失巨大</span></span><br><span class="line">        )</span><br></pre></td></tr></table></figure>
+<h2 id="重要代码的注释">重要代码的注释</h2>
+<p>2-3总体代码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">dynamic_k_matching</span>(<span class="params">self, cost, pair_wise_ious, gt_classes, num_gt, fg_mask</span>):</span><br><span class="line">    <span class="comment"># 比如经过粗筛选此时正样本的个数为1157个 10个GT</span></span><br><span class="line">    <span class="comment"># cost [10,1157]  计算10GT个和所有正样本的cost</span></span><br><span class="line">    <span class="comment"># pair_wise_ious [10,1157] 要计算这个10个和所有正样本的IOU</span></span><br><span class="line">    <span class="comment"># gt_classes [10]  10个GT的类别</span></span><br><span class="line">    <span class="comment"># num_gt</span></span><br><span class="line">    <span class="comment"># fg_mask [8400] 1157个ture 其余为False</span></span><br><span class="line">    <span class="comment"># Dynamic K</span></span><br><span class="line">    <span class="comment"># ---------------------------------------------------------------</span></span><br><span class="line">    matching_matrix = torch.zeros_like(cost, dtype=torch.uint8)  <span class="comment"># [10,1157]个0 占位</span></span><br><span class="line"></span><br><span class="line">    ious_in_boxes_matrix = pair_wise_ious</span><br><span class="line">    n_candidate_k = <span class="built_in">min</span>(<span class="number">10</span>, ious_in_boxes_matrix.size(<span class="number">1</span>))   <span class="comment"># 就是10</span></span><br><span class="line">    topk_ious, _ = torch.topk(ious_in_boxes_matrix, n_candidate_k, dim=<span class="number">1</span>)  <span class="comment"># 从大到小排序取前10个IOU  [10,10] 10个GT取前十个正样本</span></span><br><span class="line">    dynamic_ks = torch.clamp(topk_ious.<span class="built_in">sum</span>(<span class="number">1</span>).<span class="built_in">int</span>(), <span class="built_in">min</span>=<span class="number">1</span>)  <span class="comment"># torch.clamp 的意思是让它不小于1</span></span><br><span class="line">    <span class="comment"># 得到比如[6,4,5,7,9,8,9,5,8,9] 这10个数是每个GT要选择的正样本个数</span></span><br><span class="line">    dynamic_ks = dynamic_ks.tolist()</span><br><span class="line">    <span class="keyword">for</span> gt_idx <span class="keyword">in</span> <span class="built_in">range</span>(num_gt):  <span class="comment"># num_gt=10，第一个 gt_idx=0，cost[0],k=dynamic_ks[0], 也就是第一个GT会有六个iou最大正样本 这六个从小到大排列</span></span><br><span class="line">        _, pos_idx = torch.topk(          <span class="comment"># pos_idx = ([28,776,40,41,27,766]) 这个6个的索引值</span></span><br><span class="line">            cost[gt_idx], k=dynamic_ks[gt_idx], largest=<span class="literal">False</span></span><br><span class="line">        )</span><br><span class="line">        matching_matrix[gt_idx][pos_idx] = <span class="number">1</span>   <span class="comment"># 将上面6个的占位变为1</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">del</span> topk_ious, dynamic_ks, pos_idx</span><br><span class="line"></span><br><span class="line">    anchor_matching_gt = matching_matrix.<span class="built_in">sum</span>(<span class="number">0</span>)   <span class="comment"># [10,1157] 每一列的数相加   看是否有一个正样本被两个gt共用的情况</span></span><br><span class="line">    <span class="keyword">if</span> (anchor_matching_gt &gt; <span class="number">1</span>).<span class="built_in">sum</span>() &gt; <span class="number">0</span>:</span><br><span class="line">        _, cost_argmin = torch.<span class="built_in">min</span>(cost[:, anchor_matching_gt &gt; <span class="number">1</span>], dim=<span class="number">0</span>)   <span class="comment"># 取cost最小的正样本</span></span><br><span class="line">        matching_matrix[:, anchor_matching_gt &gt; <span class="number">1</span>] *= <span class="number">0</span>                      <span class="comment"># 这一列所有的数先全为0</span></span><br><span class="line">        matching_matrix[cost_argmin, anchor_matching_gt &gt; <span class="number">1</span>] = <span class="number">1</span>             <span class="comment"># cost最小的正样本为1</span></span><br><span class="line">    fg_mask_inboxes = matching_matrix.<span class="built_in">sum</span>(<span class="number">0</span>) &gt; <span class="number">0</span>                             <span class="comment"># 每一列相加 &gt;0 ，是正样本的anchor变为Ture [1,1157]  有70个为true</span></span><br><span class="line">    num_fg = fg_mask_inboxes.<span class="built_in">sum</span>().item()                                    <span class="comment"># 正样本的个数</span></span><br><span class="line"></span><br><span class="line">    fg_mask[fg_mask.clone()] = fg_mask_inboxes    <span class="comment"># 8400中正样本中ture的个数由1157变为70</span></span><br><span class="line"></span><br><span class="line">    matched_gt_inds = matching_matrix[:, fg_mask_inboxes].argmax(<span class="number">0</span>)    <span class="comment"># 每个正样本对应的GT框的索引  [70]</span></span><br><span class="line">    <span class="comment"># fg_mask_inboxes是70个正样本 也就是 每一列中最大的那个数为1 argmax返回最大的那个 就是1对应的GT</span></span><br><span class="line">    gt_matched_classes = gt_classes[matched_gt_inds]                   <span class="comment"># 每个正样本对应的类别</span></span><br><span class="line"></span><br><span class="line">    pred_ious_this_matching = (matching_matrix * pair_wise_ious).<span class="built_in">sum</span>(<span class="number">0</span>)[        <span class="comment"># 每个正样本和真实框对应的iou   matching_matrix就是0 1矩阵 70个1</span></span><br><span class="line">        fg_mask_inboxes</span><br><span class="line">    ]</span><br><span class="line">    <span class="keyword">return</span> num_fg, gt_matched_classes, pred_ious_this_matching, matched_gt_inds</span><br></pre></td></tr></table></figure>
+<h1 id="atss">ATSS</h1>
+<p>这篇论文挺经典的，推荐读读，总体</p>
+<p>论文地址：https://arxiv.org/pdf/1912.02424.pdf</p>
+<p>代码：https://github.com/sfzhang15/ATSS</p>
+<p>主要是做了实验发现Anchor based 和Anchor free的主要区别在于标签的分配机制的插别，所以设置了一个更合理的标签分配策略</p>
+<h2 id="选候选框">选候选框</h2>
+<p>对于每个输出的检测层，选计算每个anchor的中心点和目标的中心点的L2距离，选取K（mmdetection的topK是9）个anchor中心点离目标中心点最近的anchor为候选正样本（candidate positive samples）</p>
+<h2 id="算阈值">算阈值</h2>
+<p>计算每个候选正样本和groundtruth之间的IOU，计算这组IOU的均值和方差</p>
+<p>根据方差和均值，设置选取正样本的阈值：t=m+g ；m为均值，g为方差</p>
+<h2 id="筛选正样本">筛选正样本</h2>
+<p>根据每一层的t从其候选正样本中选出大于t的作为真正需要加入训练的正样本然后进行训练</p>
+<h2 id="举例">举例</h2>
+<p>其简要流程为：</p>
+<ol type="1">
+<li>计算每个 gt bbox 和多尺度输出层的所有 anchor 之间的 IoU</li>
+<li>计算每个 gt bbox 中心坐标和多尺度输出层的所有 anchor 中心坐标的 l2 距离</li>
+<li>遍历每个输出层，遍历每个 gt bbox，找出当前层中 topk (超参，默认是 9 )个最小 l2 距离的 anchor 。假设一共有 l 个输出层，那么对于任何一个 gt bbox，都会挑选出 topk×l 个候选位置</li>
+<li>对于每个 gt bbox，计算所有候选位置 IoU 的均值和标准差，两者相加得到该 gt bbox 的自适应阈值</li>
+<li>遍历每个 gt bbox，选择出候选位置中 IoU 大于阈值的位置，该位置认为是正样本，负责预测该 gt bbox</li>
+<li>如果 topk 参数设置过大，可能会导致某些正样本位置不在 gt bbox 内部，故需要过滤掉这部分正样本，设置为背景样本</li>
+</ol>
+<h2 id="为什么">为什么</h2>
+<p><strong>其基本思路是通过某种手段给输出特征图上每个点计算其适应度值，值越大表示越适合作为正样本；然后计算所有适应度值的统计值得到全局阈值；最后高于阈值才是正样本，其余都是负样本，从而实现自适应分配的目的。 </strong></p>
+<p>其能够实现自适应的原因是均值代表了 anchor 对 gt bbox 的正样本概率适应度值，其值越高，代表候选样本质量普遍越高，而标准差代表哪些输出层适合预测该 gt bbox，标准差越大越能区分层和层之间的 anchor 质量差异。均值和标准差相加就能够很好的反应出哪些层的哪些 anchor 适合作为正样本。<strong>一个好的 anchor 设计，应该是满足高均值、高标准差的设定</strong>。</p>
+<h2 id="重要代码的注释-1">重要代码的注释</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br></pre></td><td class="code"><pre><span class="line">assign_result = self.assigner.assign(anchors, num_level_anchors_inside,</span><br><span class="line">                                             gt_bboxes, gt_bboxes_ignore,</span><br><span class="line">                                             gt_labels)</span><br><span class="line"></span><br><span class="line">        sampling_result = self.sampler.sample(assign_result, anchors,</span><br><span class="line">                                              gt_bboxes)</span><br><span class="line"></span><br><span class="line"><span class="comment">#1.首先计算每个anchor的中心点和目标的中心点的L2距离（compute center distance between all bbox and gt）    </span></span><br><span class="line"></span><br><span class="line">     <span class="comment"># compute center distance between all bbox and gt</span></span><br><span class="line">        gt_cx = (gt_bboxes[:, <span class="number">0</span>] + gt_bboxes[:, <span class="number">2</span>]) / <span class="number">2.0</span></span><br><span class="line">        gt_cy = (gt_bboxes[:, <span class="number">1</span>] + gt_bboxes[:, <span class="number">3</span>]) / <span class="number">2.0</span></span><br><span class="line">        gt_points = torch.stack((gt_cx, gt_cy), dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        bboxes_cx = (bboxes[:, <span class="number">0</span>] + bboxes[:, <span class="number">2</span>]) / <span class="number">2.0</span></span><br><span class="line">        bboxes_cy = (bboxes[:, <span class="number">1</span>] + bboxes[:, <span class="number">3</span>]) / <span class="number">2.0</span></span><br><span class="line">        bboxes_points = torch.stack((bboxes_cx, bboxes_cy), dim=<span class="number">1</span>)</span><br><span class="line"></span><br><span class="line">        distances = (bboxes_points[:, <span class="literal">None</span>, :] -</span><br><span class="line">                     gt_points[<span class="literal">None</span>, :, :]).<span class="built_in">pow</span>(<span class="number">2</span>).<span class="built_in">sum</span>(-<span class="number">1</span>).sqrt()</span><br><span class="line"><span class="comment"># 2.计算每个候选正样本和groundtruth之间的IOU:注意这里直接调的IOU计算函数self.iou_calculator</span></span><br><span class="line"><span class="comment"># compute iou between all bbox and gt</span></span><br><span class="line">        overlaps = self.iou_calculator(bboxes, gt_bboxes)</span><br><span class="line"> <span class="comment"># 3 计算均值方差</span></span><br><span class="line"><span class="comment"># get corresponding iou for the these candidates, and compute the</span></span><br><span class="line">        <span class="comment"># mean and std, set mean + std as the iou threshold</span></span><br><span class="line">        candidate_overlaps = overlaps[candidate_idxs, torch.arange(num_gt)]</span><br><span class="line">        overlaps_mean_per_gt = candidate_overlaps.mean(<span class="number">0</span>)</span><br><span class="line">        overlaps_std_per_gt = candidate_overlaps.std(<span class="number">0</span>)</span><br><span class="line">        overlaps_thr_per_gt = overlaps_mean_per_gt + overlaps_std_per_gt</span><br><span class="line"></span><br><span class="line">        is_pos = candidate_overlaps &gt;= overlaps_thr_per_gt[<span class="literal">None</span>, :]</span><br><span class="line"><span class="comment"># 选框</span></span><br><span class="line"><span class="comment"># calculate the left, top, right, bottom distance between positive</span></span><br><span class="line">        <span class="comment"># bbox center and gt side</span></span><br><span class="line">        l_ = ep_bboxes_cx[candidate_idxs].view(-<span class="number">1</span>, num_gt) - gt_bboxes[:, <span class="number">0</span>]</span><br><span class="line">        t_ = ep_bboxes_cy[candidate_idxs].view(-<span class="number">1</span>, num_gt) - gt_bboxes[:, <span class="number">1</span>]</span><br><span class="line">        r_ = gt_bboxes[:, <span class="number">2</span>] - ep_bboxes_cx[candidate_idxs].view(-<span class="number">1</span>, num_gt)</span><br><span class="line">        b_ = gt_bboxes[:, <span class="number">3</span>] - ep_bboxes_cy[candidate_idxs].view(-<span class="number">1</span>, num_gt)</span><br><span class="line">        is_in_gts = torch.stack([l_, t_, r_, b_], dim=<span class="number">1</span>).<span class="built_in">min</span>(dim=<span class="number">1</span>)[<span class="number">0</span>] &gt; <span class="number">0.01</span></span><br><span class="line">        is_pos = is_pos &amp; is_in_gts</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cv/" rel="tag"># cv</a>
+              <a href="/tags/detection/" rel="tag"># detection</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/06/20/linux-opencv-cpp/" rel="prev" title="linux下opencv无法正确打开视频文件">
+                  <i class="fa fa-chevron-left"></i> linux下opencv无法正确打开视频文件
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/07/13/repulsion/" rel="next" title="repulsion">
+                  repulsion <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
