@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言 本文简单的介绍一下卡尔曼滤波的原理以及应用以及记录一下相关代码和文档，填一下坑 需要注意的是，阅读本文会提到一些deepsort的东西，但不懂也没关系，跳着也能理解，推荐阅读顺序为：卡尔曼-deepsort-卡尔曼，可以帮助理解">
+<meta property="og:type" content="article">
+<meta property="og:title" content="卡尔曼滤波">
+<meta property="og:url" content="http://example.com/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="前言 本文简单的介绍一下卡尔曼滤波的原理以及应用以及记录一下相关代码和文档，填一下坑 需要注意的是，阅读本文会提到一些deepsort的东西，但不懂也没关系，跳着也能理解，推荐阅读顺序为：卡尔曼-deepsort-卡尔曼，可以帮助理解">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/car.jpg">
+<meta property="og:image" content="http://example.com/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/distri.jpg">
+<meta property="article:published_time" content="2023-08-02T12:08:42.000Z">
+<meta property="article:modified_time" content="2023-08-02T12:09:48.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="job">
+<meta property="article:tag" content="tracking">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/car.jpg">
+
+
+<link rel="canonical" href="http://example.com/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/","path":"2023/08/02/卡尔曼滤波/","title":"卡尔曼滤波"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>卡尔曼滤波 | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%A1%E7%AE%97"><span class="nav-number">3.</span> <span class="nav-text">计算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%A2%84%E6%B5%8B"><span class="nav-number">3.1.</span> <span class="nav-text">预测</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9B%B4%E6%96%B0"><span class="nav-number">3.2.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%80%A7%E8%B4%A8"><span class="nav-number">3.3.</span> <span class="nav-text">性质</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%A3%E7%A0%81"><span class="nav-number">4.</span> <span class="nav-text">代码</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%80%E4%BA%9B%E8%BF%9B%E9%98%B6%E7%9A%84%E8%B5%84%E6%96%99"><span class="nav-number">5.</span> <span class="nav-text">一些进阶的资料</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">32</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="卡尔曼滤波 | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          卡尔曼滤波
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-08-02 20:08:42 / 修改时间：20:09:48" itemprop="dateCreated datePublished" datetime="2023-08-02T20:08:42+08:00">2023-08-02</time>
+    </span>
+
+  
+    <span id="/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" class="post-meta-item leancloud_visitors" data-flag-title="卡尔曼滤波" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言">前言</h1>
+<p>本文简单的介绍一下卡尔曼滤波的原理以及应用以及记录一下相关代码和文档，填一下坑</p>
+<p>需要注意的是，阅读本文会提到一些deepsort的东西，但不懂也没关系，跳着也能理解，推荐阅读顺序为：卡尔曼-deepsort-卡尔曼，可以帮助理解 <span id="more"></span></p>
+<h1 id="简介">简介</h1>
+<figure>
+<img src="car.jpg" alt="car" /><figcaption aria-hidden="true">car</figcaption>
+</figure>
+<p>假设现在有一辆运行的小车以及观测他位置的传感器,小车的以X(x_{t}, v_{t})代表小车的状态，xt为小车的位置，vt为小车的速度，根据初中物理知识，小车的状态更新方程为： <span class="math display">\[x_{t} = x_{t-1}+v_{t-1}\Delta t+\frac{1}{2}\frac{f_{t}}{m}\Delta t^{2}\\
+v_{t} = v_{t-1}+\frac{f_{t}}{m}\Delta t\]</span></p>
+<p>即： <span class="math display">\[
+\begin{bmatrix} x_{t} \\ v_{t} \end{bmatrix} = \begin{bmatrix} 1&amp;\Delta t \\ &amp;1 \end{bmatrix} \cdot \begin{bmatrix} x_{t-1} \\ v_{t-1} \end{bmatrix}+
+\begin{bmatrix} \frac{\Delta t^{2}}{2} \\ \Delta t \end{bmatrix}\cdot \frac{f_{t}}{m}
+\]</span> 可写为： <span class="math display">\[
+X_{t} = F\cdot X_{t-1} +B\cdot \mu _{t}
+\]</span> 其中ft/m就是加速度</p>
+<p>但传感器观测值本身是会受到外在因素的影响（撞车了、传感器出现误差等）假设影响呈正态分布,所以实际上对于传感器上式可表示为： <span class="math display">\[
+x_{k} = A x{k-1} + B\mu _{k}+w_{k}\\
+y_{k} = C x_{k} + v_{k}
+\]</span> 其中<span class="math inline">\(w_{k}\)</span>为误差 而根据<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36745755">推倒</a>，如图所示，真值大概率是会在传感器的值和我们运动模型出来的值之间的 <img src="distri.jpg" alt="predict" /> 所以卡尔曼滤波实际要干的就是在测量值和模型预测值之间取一个权衡： <span class="math display">\[\hat x_{k} = A\hat x_{k-1}+B\mu _{k}+K_{k}(y_{k}-C(A\hat x_{k-1}+B\mu _{k}))\]</span></p>
+<ul>
+<li><p>先验估计：<span class="math inline">\(A\hat x_{k-1}+B\mu _{k}\)</span></p></li>
+<li><p>后验估计：<span class="math inline">\(\hat x_{k}\)</span>是先验估计经过传感器修正的值</p></li>
+<li><p><span class="math inline">\(y_{k}\)</span>是传感器的值</p></li>
+<li><p><span class="math inline">\(K_{k}\)</span>是卡尔曼增益，也是卡尔曼滤波的核心</p></li>
+</ul>
+<p>这里有个要注意的是，假如不是用观测值进行修正，模型的不确定性会越来越大，即分布会越来越分散</p>
+<h1 id="计算">计算</h1>
+<p>总体来说计算分成两个步骤:预测和更新</p>
+<h2 id="预测">预测</h2>
+<p>就是预测卡尔曼模型的先验估计： <span class="math display">\[
+\hat x^{-}_{k} = A\hat x_{k-1}+B\mu _{k}\\
+P_{k}^{-} = AP_{k-1}A^{T}+Q
+\]</span> 其中Q是运动过程的噪音矩阵，在deepsort中是对8*8的对角矩阵，用h来初始化公式推倒不展开，详情参考<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/36745755">这里</a> <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line">self._std_weight_position = <span class="number">1.</span> / <span class="number">20</span></span><br><span class="line">self._std_weight_velocity = <span class="number">1.</span> / <span class="number">160</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, mean, covariance</span>):</span><br><span class="line">    <span class="comment"># 相当于得到t时刻估计值</span></span><br><span class="line">    <span class="comment"># Q 预测过程中噪声协方差</span></span><br><span class="line">    std_pos = [</span><br><span class="line">        self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">        self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">        <span class="number">1e-2</span>,</span><br><span class="line">        self._std_weight_position * mean[<span class="number">3</span>]]</span><br><span class="line"></span><br><span class="line">    std_vel = [</span><br><span class="line">        self._std_weight_velocity * mean[<span class="number">3</span>],</span><br><span class="line">        self._std_weight_velocity * mean[<span class="number">3</span>],</span><br><span class="line">        <span class="number">1e-5</span>,</span><br><span class="line">        self._std_weight_velocity * mean[<span class="number">3</span>]]</span><br><span class="line"></span><br><span class="line">    <span class="comment"># np.r_ 按列连接两个矩阵</span></span><br><span class="line">    <span class="comment"># 初始化噪声矩阵Q</span></span><br><span class="line">    motion_cov = np.diag(np.square(np.r_[std_pos, std_vel]))</span><br><span class="line"></span><br><span class="line">    <span class="comment"># x&#x27; = Fx</span></span><br><span class="line">    mean = np.dot(self._motion_mat, mean)</span><br><span class="line"></span><br><span class="line">    <span class="comment"># P&#x27; = FPF^T+Q</span></span><br><span class="line">    covariance = np.linalg.multi_dot((</span><br><span class="line">        self._motion_mat, covariance, self._motion_mat.T)) + motion_cov</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> mean, covariance</span><br></pre></td></tr></table></figure> <span class="math inline">\(P_{k}\)</span>就是协方差矩阵，即单状态的时候就是方差，协方差用来度量变量之间的不确定性</p>
+<h2 id="更新">更新</h2>
+<p><span class="math display">\[K_{k} = \frac{P^{-}C^{T}}{CP^{-}_{k}C^{T}+R}\\
+\hat x_{k} = K_{k}(y-C\hat x_{k}^{-})+\hat x_{k}^{-}\\
+P_{K} = (1-K_{k}C)P_{k}^{-}\]</span></p>
+<ul>
+<li><p>C是测量矩阵，用来进行空间映射，初始化为：<code>np.eye(ndim, 2 * ndim)</code> 即只取前面4维</p></li>
+<li><p>R为传感器的噪声矩阵，它是一个4x4的对角矩阵，对角线上的值分别为中心点两个坐标以及宽高的噪声，以任意值初始化，一般设置宽高的噪声大于中心点的噪声，该公式先将协方差矩阵P'映射到检测空间，然后再加上噪声矩阵R <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">self._std_weight_position = <span class="number">1.</span> / <span class="number">20</span></span><br><span class="line">self._std_weight_velocity = <span class="number">1.</span> / <span class="number">160</span></span><br><span class="line">std = [</span><br><span class="line">        self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">        self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">        <span class="number">1e-1</span>,</span><br><span class="line">        self._std_weight_position * mean[<span class="number">3</span>]]</span><br><span class="line">innovation_cov = np.diag(np.square(std))</span><br></pre></td></tr></table></figure></p></li>
+</ul>
+<p>需要注意的是，实际追踪的时候，假如一直没有命中，预测的先验值是在一直算的，只是没有实际观测值去修正他</p>
+<h2 id="性质">性质</h2>
+<p>1、传感器无噪音时 <span class="math display">\[K_{k} = \frac{P^{-}C^{T}}{CP^{-}_{k}C^{T}+R}\\\]</span> R趋近于0，此时K = <span class="math inline">\(C^{-1}\)</span>,后验值为： <span class="math display">\[
+\hat x_{k} = K_{k}(y-C\hat x_{k}^{-})+\hat x_{k}^{-} = C^{-1}y\\\]</span> 即此时全由传感器决定</p>
+<p>2、状态估计无噪声时</p>
+<p>即协方差矩阵区域0（不是很懂，难道Q区域0会导致P区域0？但直观上理解，估计无噪声，即不确定性为0，即方差为0也是可以理解），此时<span class="math inline">\(K_{k}\)</span>趋于0，后验估计全由模型估计预测</p>
+<h1 id="代码">代码</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br><span class="line">186</span><br><span class="line">187</span><br><span class="line">188</span><br><span class="line">189</span><br><span class="line">190</span><br><span class="line">191</span><br><span class="line">192</span><br><span class="line">193</span><br><span class="line">194</span><br><span class="line">195</span><br><span class="line">196</span><br><span class="line">197</span><br><span class="line">198</span><br><span class="line">199</span><br><span class="line">200</span><br><span class="line">201</span><br><span class="line">202</span><br><span class="line">203</span><br><span class="line">204</span><br><span class="line">205</span><br><span class="line">206</span><br><span class="line">207</span><br><span class="line">208</span><br><span class="line">209</span><br><span class="line">210</span><br><span class="line">211</span><br><span class="line">212</span><br><span class="line">213</span><br><span class="line">214</span><br><span class="line">215</span><br><span class="line">216</span><br><span class="line">217</span><br><span class="line">218</span><br><span class="line">219</span><br><span class="line">220</span><br><span class="line">221</span><br><span class="line">222</span><br><span class="line">223</span><br><span class="line">224</span><br><span class="line">225</span><br><span class="line">226</span><br><span class="line">227</span><br><span class="line">228</span><br><span class="line">229</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># vim: expandtab:ts=4:sw=4</span></span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> scipy.linalg</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">Table for the 0.95 quantile of the chi-square distribution with N degrees of</span></span><br><span class="line"><span class="string">freedom (contains values for N=1, ..., 9). Taken from MATLAB/Octave&#x27;s chi2inv</span></span><br><span class="line"><span class="string">function and used as Mahalanobis gating threshold.</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">chi2inv95 = &#123;</span><br><span class="line">    <span class="number">1</span>: <span class="number">3.8415</span>,</span><br><span class="line">    <span class="number">2</span>: <span class="number">5.9915</span>,</span><br><span class="line">    <span class="number">3</span>: <span class="number">7.8147</span>,</span><br><span class="line">    <span class="number">4</span>: <span class="number">9.4877</span>,</span><br><span class="line">    <span class="number">5</span>: <span class="number">11.070</span>,</span><br><span class="line">    <span class="number">6</span>: <span class="number">12.592</span>,</span><br><span class="line">    <span class="number">7</span>: <span class="number">14.067</span>,</span><br><span class="line">    <span class="number">8</span>: <span class="number">15.507</span>,</span><br><span class="line">    <span class="number">9</span>: <span class="number">16.919</span>&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">KalmanFilter</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">    A simple Kalman filter for tracking bounding boxes in image space.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    The 8-dimensional state space</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        x, y, a, h, vx, vy, va, vh</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    contains the bounding box center position (x, y), aspect ratio a, height h,</span></span><br><span class="line"><span class="string">    and their respective velocities.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    Object motion follows a constant velocity model. The bounding box location</span></span><br><span class="line"><span class="string">    (x, y, a, h) is taken as direct observation of the state space (linear</span></span><br><span class="line"><span class="string">    observation model).</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">    &quot;&quot;&quot;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self</span>):</span><br><span class="line">        ndim, dt = <span class="number">4</span>, <span class="number">1.</span></span><br><span class="line"></span><br><span class="line">        <span class="comment"># Create Kalman filter model matrices.</span></span><br><span class="line">        self._motion_mat = np.eye(<span class="number">2</span> * ndim, <span class="number">2</span> * ndim)</span><br><span class="line">        <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(ndim):</span><br><span class="line">            self._motion_mat[i, ndim + i] = dt</span><br><span class="line">        self._update_mat = np.eye(ndim, <span class="number">2</span> * ndim)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># Motion and observation uncertainty are chosen relative to the current</span></span><br><span class="line">        <span class="comment"># state estimate. These weights control the amount of uncertainty in</span></span><br><span class="line">        <span class="comment"># the model. This is a bit hacky.</span></span><br><span class="line">        self._std_weight_position = <span class="number">1.</span> / <span class="number">20</span></span><br><span class="line">        self._std_weight_velocity = <span class="number">1.</span> / <span class="number">160</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">initiate</span>(<span class="params">self, measurement</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Create track from unassociated measurement.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Parameters</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        measurement : ndarray</span></span><br><span class="line"><span class="string">            Bounding box coordinates (x, y, a, h) with center position (x, y),</span></span><br><span class="line"><span class="string">            aspect ratio a, and height h.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns</span></span><br><span class="line"><span class="string">        -------</span></span><br><span class="line"><span class="string">        (ndarray, ndarray)</span></span><br><span class="line"><span class="string">            Returns the mean vector (8 dimensional) and covariance matrix (8x8</span></span><br><span class="line"><span class="string">            dimensional) of the new track. Unobserved velocities are initialized</span></span><br><span class="line"><span class="string">            to 0 mean.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        mean_pos = measurement</span><br><span class="line">        mean_vel = np.zeros_like(mean_pos)</span><br><span class="line">        mean = np.r_[mean_pos, mean_vel]</span><br><span class="line"></span><br><span class="line">        std = [</span><br><span class="line">            <span class="number">2</span> * self._std_weight_position * measurement[<span class="number">3</span>],</span><br><span class="line">            <span class="number">2</span> * self._std_weight_position * measurement[<span class="number">3</span>],</span><br><span class="line">            <span class="number">1e-2</span>,</span><br><span class="line">            <span class="number">2</span> * self._std_weight_position * measurement[<span class="number">3</span>],</span><br><span class="line">            <span class="number">10</span> * self._std_weight_velocity * measurement[<span class="number">3</span>],</span><br><span class="line">            <span class="number">10</span> * self._std_weight_velocity * measurement[<span class="number">3</span>],</span><br><span class="line">            <span class="number">1e-5</span>,</span><br><span class="line">            <span class="number">10</span> * self._std_weight_velocity * measurement[<span class="number">3</span>]]</span><br><span class="line">        covariance = np.diag(np.square(std))</span><br><span class="line">        <span class="keyword">return</span> mean, covariance</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">predict</span>(<span class="params">self, mean, covariance</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Run Kalman filter prediction step.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Parameters</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        mean : ndarray</span></span><br><span class="line"><span class="string">            The 8 dimensional mean vector of the object state at the previous</span></span><br><span class="line"><span class="string">            time step.</span></span><br><span class="line"><span class="string">        covariance : ndarray</span></span><br><span class="line"><span class="string">            The 8x8 dimensional covariance matrix of the object state at the</span></span><br><span class="line"><span class="string">            previous time step.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns</span></span><br><span class="line"><span class="string">        -------</span></span><br><span class="line"><span class="string">        (ndarray, ndarray)</span></span><br><span class="line"><span class="string">            Returns the mean vector and covariance matrix of the predicted</span></span><br><span class="line"><span class="string">            state. Unobserved velocities are initialized to 0 mean.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        std_pos = [</span><br><span class="line">            self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">            self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">            <span class="number">1e-2</span>,</span><br><span class="line">            self._std_weight_position * mean[<span class="number">3</span>]]</span><br><span class="line">        std_vel = [</span><br><span class="line">            self._std_weight_velocity * mean[<span class="number">3</span>],</span><br><span class="line">            self._std_weight_velocity * mean[<span class="number">3</span>],</span><br><span class="line">            <span class="number">1e-5</span>,</span><br><span class="line">            self._std_weight_velocity * mean[<span class="number">3</span>]]</span><br><span class="line">        motion_cov = np.diag(np.square(np.r_[std_pos, std_vel]))</span><br><span class="line"></span><br><span class="line">        mean = np.dot(self._motion_mat, mean)</span><br><span class="line">        covariance = np.linalg.multi_dot((</span><br><span class="line">            self._motion_mat, covariance, self._motion_mat.T)) + motion_cov</span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> mean, covariance</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">project</span>(<span class="params">self, mean, covariance</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Project state distribution to measurement space.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Parameters</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        mean : ndarray</span></span><br><span class="line"><span class="string">            The state&#x27;s mean vector (8 dimensional array).</span></span><br><span class="line"><span class="string">        covariance : ndarray</span></span><br><span class="line"><span class="string">            The state&#x27;s covariance matrix (8x8 dimensional).</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns</span></span><br><span class="line"><span class="string">        -------</span></span><br><span class="line"><span class="string">        (ndarray, ndarray)</span></span><br><span class="line"><span class="string">            Returns the projected mean and covariance matrix of the given state</span></span><br><span class="line"><span class="string">            estimate.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        std = [</span><br><span class="line">            self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">            self._std_weight_position * mean[<span class="number">3</span>],</span><br><span class="line">            <span class="number">1e-1</span>,</span><br><span class="line">            self._std_weight_position * mean[<span class="number">3</span>]]</span><br><span class="line">        innovation_cov = np.diag(np.square(std))</span><br><span class="line"></span><br><span class="line">        mean = np.dot(self._update_mat, mean)</span><br><span class="line">        covariance = np.linalg.multi_dot((</span><br><span class="line">            self._update_mat, covariance, self._update_mat.T))</span><br><span class="line">        <span class="keyword">return</span> mean, covariance + innovation_cov</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">update</span>(<span class="params">self, mean, covariance, measurement</span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Run Kalman filter correction step.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Parameters</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        mean : ndarray</span></span><br><span class="line"><span class="string">            The predicted state&#x27;s mean vector (8 dimensional).</span></span><br><span class="line"><span class="string">        covariance : ndarray</span></span><br><span class="line"><span class="string">            The state&#x27;s covariance matrix (8x8 dimensional).</span></span><br><span class="line"><span class="string">        measurement : ndarray</span></span><br><span class="line"><span class="string">            The 4 dimensional measurement vector (x, y, a, h), where (x, y)</span></span><br><span class="line"><span class="string">            is the center position, a the aspect ratio, and h the height of the</span></span><br><span class="line"><span class="string">            bounding box.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns</span></span><br><span class="line"><span class="string">        -------</span></span><br><span class="line"><span class="string">        (ndarray, ndarray)</span></span><br><span class="line"><span class="string">            Returns the measurement-corrected state distribution.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        projected_mean, projected_cov = self.project(mean, covariance)</span><br><span class="line"></span><br><span class="line">        chol_factor, lower = scipy.linalg.cho_factor(</span><br><span class="line">            projected_cov, lower=<span class="literal">True</span>, check_finite=<span class="literal">False</span>)</span><br><span class="line">        kalman_gain = scipy.linalg.cho_solve(</span><br><span class="line">            (chol_factor, lower), np.dot(covariance, self._update_mat.T).T,</span><br><span class="line">            check_finite=<span class="literal">False</span>).T</span><br><span class="line">        innovation = measurement - projected_mean</span><br><span class="line"></span><br><span class="line">        new_mean = mean + np.dot(innovation, kalman_gain.T)</span><br><span class="line">        new_covariance = covariance - np.linalg.multi_dot((</span><br><span class="line">            kalman_gain, projected_cov, kalman_gain.T))</span><br><span class="line">        <span class="keyword">return</span> new_mean, new_covariance</span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">gating_distance</span>(<span class="params">self, mean, covariance, measurements,</span></span><br><span class="line"><span class="params">                        only_position=<span class="literal">False</span></span>):</span><br><span class="line">        <span class="string">&quot;&quot;&quot;Compute gating distance between state distribution and measurements.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        A suitable distance threshold can be obtained from `chi2inv95`. If</span></span><br><span class="line"><span class="string">        `only_position` is False, the chi-square distribution has 4 degrees of</span></span><br><span class="line"><span class="string">        freedom, otherwise 2.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Parameters</span></span><br><span class="line"><span class="string">        ----------</span></span><br><span class="line"><span class="string">        mean : ndarray</span></span><br><span class="line"><span class="string">            Mean vector over the state distribution (8 dimensional).</span></span><br><span class="line"><span class="string">        covariance : ndarray</span></span><br><span class="line"><span class="string">            Covariance of the state distribution (8x8 dimensional).</span></span><br><span class="line"><span class="string">        measurements : ndarray</span></span><br><span class="line"><span class="string">            An Nx4 dimensional matrix of N measurements, each in</span></span><br><span class="line"><span class="string">            format (x, y, a, h) where (x, y) is the bounding box center</span></span><br><span class="line"><span class="string">            position, a the aspect ratio, and h the height.</span></span><br><span class="line"><span class="string">        only_position : Optional[bool]</span></span><br><span class="line"><span class="string">            If True, distance computation is done with respect to the bounding</span></span><br><span class="line"><span class="string">            box center position only.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        Returns</span></span><br><span class="line"><span class="string">        -------</span></span><br><span class="line"><span class="string">        ndarray</span></span><br><span class="line"><span class="string">            Returns an array of length N, where the i-th element contains the</span></span><br><span class="line"><span class="string">            squared Mahalanobis distance between (mean, covariance) and</span></span><br><span class="line"><span class="string">            `measurements[i]`.</span></span><br><span class="line"><span class="string"></span></span><br><span class="line"><span class="string">        &quot;&quot;&quot;</span></span><br><span class="line">        mean, covariance = self.project(mean, covariance)</span><br><span class="line">        <span class="keyword">if</span> only_position:</span><br><span class="line">            mean, covariance = mean[:<span class="number">2</span>], covariance[:<span class="number">2</span>, :<span class="number">2</span>]</span><br><span class="line">            measurements = measurements[:, :<span class="number">2</span>]</span><br><span class="line"></span><br><span class="line">        cholesky_factor = np.linalg.cholesky(covariance)</span><br><span class="line">        d = measurements - mean</span><br><span class="line">        z = scipy.linalg.solve_triangular(</span><br><span class="line">            cholesky_factor, d.T, lower=<span class="literal">True</span>, check_finite=<span class="literal">False</span>,</span><br><span class="line">            overwrite_b=<span class="literal">True</span>)</span><br><span class="line">        squared_maha = np.<span class="built_in">sum</span>(z * z, axis=<span class="number">0</span>)</span><br><span class="line">        <span class="keyword">return</span> squared_maha</span><br></pre></td></tr></table></figure>
+<h1 id="一些进阶的资料">一些进阶的资料</h1>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pprp/articles/12736831.html">deepsort</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/pprp/articles/12736831.html">cnblog一篇讲解deepsort很详细的blog</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/90835266">知乎某文</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/job/" rel="tag"># job</a>
+              <a href="/tags/tracking/" rel="tag"># tracking</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/02/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" rel="prev" title="linux常用指令">
+                  <i class="fa fa-chevron-left"></i> linux常用指令
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
