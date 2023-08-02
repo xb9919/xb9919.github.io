@@ -27,7 +27,7 @@
 <meta property="og:description" content="前言 经常在python代码里会看到yield关键字，但是一直一知半解，现在记录一下相关东西">
 <meta property="og:locale" content="zh_CN">
 <meta property="article:published_time" content="2023-08-02T12:11:14.000Z">
-<meta property="article:modified_time" content="2023-08-02T12:11:34.000Z">
+<meta property="article:modified_time" content="2023-08-02T12:16:52.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="job">
 <meta property="article:tag" content="python">
@@ -113,7 +113,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E5%AD%901"><span class="nav-number">2.1.</span> <span class="nav-text">例子1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">2.2.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#send%E5%87%BD%E6%95%B0"><span class="nav-number">2.3.</span> <span class="nav-text">send函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">问题</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E5%AD%901"><span class="nav-number">2.1.</span> <span class="nav-text">例子1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%90%E8%A1%8C%E6%AD%A5%E9%AA%A4"><span class="nav-number">2.2.</span> <span class="nav-text">运行步骤</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B0%8F%E7%BB%93"><span class="nav-number">2.3.</span> <span class="nav-text">小结</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#send%E5%87%BD%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">send函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%97%AE%E9%A2%98"><span class="nav-number">3.</span> <span class="nav-text">问题</span></a></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -196,7 +196,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-08-02 20:11:14 / 修改时间：20:11:34" itemprop="dateCreated datePublished" datetime="2023-08-02T20:11:14+08:00">2023-08-02</time>
+      <time title="创建时间：2023-08-02 20:11:14 / 修改时间：20:16:52" itemprop="dateCreated datePublished" datetime="2023-08-02T20:11:14+08:00">2023-08-02</time>
     </span>
 
   
@@ -222,26 +222,28 @@
 <h1 id="简介">简介</h1>
 <p>先把yield看做“return”，这个是直观的，它首先是个return，就是在程序中返回某个值，返回之后程序就不再往下运行了。看做return之后再把它看做一个是生成器（generator）的一部分（带yield的函数才是真正的迭代器）</p>
 <h2 id="例子1">例子1</h2>
-<p>看看下面的例子: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;starting...&quot;</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        res = <span class="keyword">yield</span> <span class="number">4</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;res:&quot;</span>,res)</span><br><span class="line">g = foo()</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">next</span>(g))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;*&quot;</span>*<span class="number">20</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">next</span>(g))</span><br></pre></td></tr></table></figure> 输出的结果是： <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">starting...</span><br><span class="line">4</span><br><span class="line">********************</span><br><span class="line">res: None</span><br><span class="line">4</span><br></pre></td></tr></table></figure> ## 运行步骤</p>
+<p>看看下面的例子: <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;starting...&quot;</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        res = <span class="keyword">yield</span> <span class="number">4</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;res:&quot;</span>,res)</span><br><span class="line">g = foo()</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">next</span>(g))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;*&quot;</span>*<span class="number">20</span>)</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">next</span>(g))</span><br></pre></td></tr></table></figure> 输出的结果是： <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">starting...</span><br><span class="line">4</span><br><span class="line">********************</span><br><span class="line">res: None</span><br><span class="line">4</span><br></pre></td></tr></table></figure></p>
+<h2 id="运行步骤">运行步骤</h2>
 <p>1.程序开始执行以后，因为foo函数中有yield关键字，所以foo函数并不会真的执行，而是先得到一个生成器g(相当于一个对象)</p>
 <p>2.直到调用next方法，foo函数正式开始执行，先执行foo函数中的print方法，然后进入while循环</p>
 <p>3.程序遇到yield关键字，然后把yield想想成return,return了一个4之后，程序停止，并没有执行赋值给res操作，此时next(g)语句执行完成，所以输出的前两行（第一个是while上面的print的结果,第二个是return出的结果）是执行print(next(g))的结果，</p>
-<p>4.程序执行print("<em>"</em>20)，输出20个*</p>
-<p>5.又开始执行下面的print(next(g)),这个时候和上面那个差不多，不过不同的是，这个时候是从刚才那个next程序停止的地方开始执行的，也就是要执行res的赋值操作，这时候要注意，这个时候赋值操作的右边是没有值的（因为刚才那个是return出去了，并没有给赋值操作的左边传参数），所以这个时候res赋值是None,所以接着下面的输出就是res:None,</p>
-<p>6.程序会继续在while里执行，又一次碰到yield,这个时候同样return 出4，然后程序停止，print函数输出的4就是这次return出的4.</p>
+<p>4.程序执行print("*"*20)，输出20个*</p>
+<p>5.又开始执行下面的<code>print(next(g))</code>,这个时候和上面那个差不多，不过不同的是，这个时候是从刚才那个<code>next</code>程序停止的地方开始执行的，也就是要执行<code>res</code>的赋值操作，这时候要注意，这个时候赋值操作的右边是没有值的（因为刚才那个是return出去了，并没有给赋值操作的左边传参数），所以这个时候<code>res</code>赋值是<code>None</code>,所以接着下面的输出就是<code>res:None</code>,</p>
+<p>6.程序会继续在while里执行，又一次碰到yield,这个时候同样<code>return</code>出4，然后程序停止，<code>print</code>函数输出的4就是这次<code>return</code>出的4.</p>
 <h2 id="小结">小结</h2>
-<p>带yield的函数是一个生成器，而不是一个函数了，这个生成器有一个函数就是next函数，next就相当于“下一步”生成哪个数，这一次的next开始的地方是接着上一次的next停止的地方执行的，所以调用next的时候，生成器并不会从foo函数的开始执行，只是接着上一步停止的地方开始，然后遇到yield后，return出要生成的数，此步就结束。</p>
+<p>带<code>yield</code>的函数是一个生成器，而不是一个函数了，这个生成器有一个函数就是<code>next</code>函数，<code>next</code>就相当于“下一步”生成哪个数，这一次的<code>next</code>开始的地方是接着上一次的<code>next</code>停止的地方执行的，所以调用<code>next</code>的时候，生成器并不会从<code>foo</code>函数的开始执行，只是接着上一步停止的地方开始，然后遇到<code>yield</code>后，<code>return</code>出要生成的数，此步就结束。</p>
 <h2 id="send函数">send函数</h2>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">foo</span>():</span><br><span class="line">    <span class="built_in">print</span>(<span class="string">&quot;starting...&quot;</span>)</span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        res = <span class="keyword">yield</span> <span class="number">4</span></span><br><span class="line">        <span class="built_in">print</span>(<span class="string">&quot;res:&quot;</span>,res)</span><br><span class="line">g = foo()</span><br><span class="line"><span class="built_in">print</span>(<span class="built_in">next</span>(g))</span><br><span class="line"><span class="built_in">print</span>(<span class="string">&quot;*&quot;</span>*<span class="number">20</span>)</span><br><span class="line"><span class="built_in">print</span>(g.send(<span class="number">7</span>))</span><br></pre></td></tr></table></figure>
-<p>输出应该是 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;starting...&quot;</span><br><span class="line">********************</span><br><span class="line">res: 7</span><br><span class="line">4</span><br></pre></td></tr></table></figure> * send是发送一个参数给res的，因为上面讲到，return的时候，并没有把4赋值给res，下次执行的时候只好继续执行赋值操作，只好赋值为None了，而如果用send的话，开始执行的时候，先接着上一次（return 4之后）执行，先把7赋值给了res,然后执行next的作用，遇见下一回的yield，return出结果后结束。</p>
+<p>输出应该是 <figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&quot;starting...&quot;</span><br><span class="line">********************</span><br><span class="line">res: 7</span><br><span class="line">4</span><br></pre></td></tr></table></figure></p>
 <ul>
-<li><p>程序执行g.send(7)，程序会从yield关键字那一行继续向下运行，send会把7这个值赋值给res变量</p></li>
-<li><p>由于send方法中包含next()方法，所以程序会继续向下运行执行print方法，然后再次进入while循环</p></li>
-<li><p>程序执行再次遇到yield关键字，yield会返回后面的值后，程序再次暂停，直到再次调用next方法或send方法。</p></li>
+<li><p><code>send</code>是发送一个参数给<code>res</code>的，因为上面讲到，<code>return</code>的时候，并没有把4赋值给<code>res</code>，下次执行的时候只好继续执行赋值操作，只好赋值为<code>None</code>了，而如果用<code>send</code>的话，开始执行的时候，先接着上一次（<code>return 4</code>之后）执行，先把7赋值给了<code>res</code>,然后执行<code>next</code>的作用，遇见下一回的<code>yield</code>，<code>return</code>出结果后结束。</p></li>
+<li><p>程序执行<code>g.send(7)</code>，程序会从<code>yield</code>关键字那一行继续向下运行，<code>send</code>会把7这个值赋值给<code>res</code>变量</p></li>
+<li><p>由于<code>send</code>方法中包含<code>next()</code>方法，所以程序会继续向下运行执行<code>print</code>方法，然后再次进入<code>while</code>循环</p></li>
+<li><p>程序执行再次遇到<code>yield</code>关键字，<code>yield</code>会返回后面的值后，程序再次暂停，直到再次调用<code>next</code>方法或<code>send</code>方法。</p></li>
 </ul>
 <h1 id="问题">问题</h1>
-<p>生成器的用法其实用list都可以实现，那为什么不用list呢？</p>
-<p>我认为应该是使用list的话，数据都得保存在内存里，用生成器的话则可以直接生成，节省空间，理论上数据量小肯定是list快的</p>
+<p>生成器的用法其实用<code>list</code>都可以实现，那为什么不用<code>list</code>呢？</p>
+<p>我认为应该是使用<code>list</code>的话，数据都得保存在内存里，用生成器的话则可以直接生成，节省空间，理论上数据量小肯定是<code>list</code>快的</p>
 
     </div>
 
