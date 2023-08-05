@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言 最近在回顾Transformer，顺便回顾一下面试高频的multi-head self-attention的两种实现方式">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Multi-headSelfAttention">
+<meta property="og:url" content="http://example.com/2023/08/05/Multi-headSelfAttention/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="前言 最近在回顾Transformer，顺便回顾一下面试高频的multi-head self-attention的两种实现方式">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-08-05T08:07:27.000Z">
+<meta property="article:modified_time" content="2023-08-05T08:08:24.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="job">
+<meta property="article:tag" content="cv">
+<meta property="article:tag" content="detection">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/08/05/Multi-headSelfAttention/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/08/05/Multi-headSelfAttention/","path":"2023/08/05/Multi-headSelfAttention/","title":"Multi-headSelfAttention"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>Multi-headSelfAttention | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%80%E4%BB%8B"><span class="nav-number">2.</span> <span class="nav-text">简介</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%B9%E5%BC%8F%E4%B8%80"><span class="nav-number">3.</span> <span class="nav-text">方式一</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">35</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">13</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/05/Multi-headSelfAttention/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="Multi-headSelfAttention | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          Multi-headSelfAttention
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-08-05 16:07:27 / 修改时间：16:08:24" itemprop="dateCreated datePublished" datetime="2023-08-05T16:07:27+08:00">2023-08-05</time>
+    </span>
+
+  
+    <span id="/2023/08/05/Multi-headSelfAttention/" class="post-meta-item leancloud_visitors" data-flag-title="Multi-headSelfAttention" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言">前言</h1>
+<p>最近在回顾Transformer，顺便回顾一下面试高频的multi-head self-attention的两种实现方式</p>
+<span id="more"></span>
+<h1 id="简介">简介</h1>
+<p>简单的描述一下multi_head self-attention的里流程吧</p>
+<p>输入是query、key、mask三个向量，</p>
+<p>公式是: <span class="math display">\[
+Attention(Q,K,V) = softmax(\frac{QK^{T}}{\sqrt{d_{k}}})V
+\]</span> 拆解就是做以下步骤：</p>
+<ul>
+<li><p>初始化multiheadattention，有4个参数，<code>query_dim</code>, <code>key_dim</code>, <code>embed_dim</code>, <code>num_heads</code></p>
+<ul>
+<li>其中 <code>query_dim</code>是q矩阵的维度，<code>key_dim</code>是k矩阵的维度，<code>embed_dim</code>是要把qk映射到的统一维度（要进行矩阵乘法）,<code>num_heads</code>是头数</li>
+</ul></li>
+<li><p>初始化3个线性层,W_q, W_k, W_v，把qkv都映射到<code>embed_dim</code>维，这里不用偏置项,一般来说kv矩阵是一样的</p></li>
+<li><p>输入query[N, T_q, query_dim], key[N, T_k, key_dim], mask[N, T_k],这里T_q 相当于是图像中的 H*W， N 是 batch</p></li>
+<li><p>先对q,k,v进行特征映射，对于输入的query[N, T_q, query_dim], key[N, T_k, key_dim]分别经过W_q, W_k, W_v， 映射得到query[N, T_q, embed_dim],key[N, T_k, embed_dim],value[N, T_k, embed_dim]</p></li>
+<li><p>使用torch.split将query、key、value，按第三维进行拆分，分别变成h*[N, T_q, embed_dim/h]再按第0维stack，得到[h, N, T_q, embed_dim/h]</p></li>
+<li><p>按公式计算attention，先进行q,k矩阵乘法，除以<span class="math inline">\(\sqrt{embed\_dim}\)</span>得到score[h, N, T_q, T_k]</p></li>
+<li><p>如果mask不为空，就把转换mask的维度[N, T_k] --&gt; [h, N, T_q, T_k]，然后把score和mask对应为True的位置转为-inf表示不计算attention</p>
+<ul>
+<li>这里的mask实际上是调nn.MultiHeadAttention的时候会传入key_padding_mask，这个实际上是每个batch内部的mask(detr有的图片是会经过padding的)，实际上 库还有个attn_mask，应该就是mask掉后面的token的意思，做mask self-attention用的（详情参考<a target="_blank" rel="noopener" href="https://www.zhihu.com/question/455164736">这里</a>）</li>
+<li>具体是这么做的，先把mask在第1维度和第0维度unsequeeze,变成[1, N, 1, T_k],然后repeate(head, 1, T_q, 1),
+<ul>
+<li>为什么这样可行呢？理论上是attention算矩阵乘法嘛，先看后面两个维度，算的是[Tq, dim]@[dim, Tk],T_k是某个图像的像素flatten得到的，矩阵的每一列是像素，其中某些是padding的，即理论上此时的mask是某些列全是True，某些全是False，而矩阵乘法后，和True列相乘得到的位置是列idx和原True列idx一致的元素，而我们进行repeate的时候True列的位置是可以对应的上的（可以简单理解为Tq都是最后一维，对应上了），所以这样做是可行的</li>
+</ul></li>
+</ul></li>
+<li><p>对score的结果进行softmax计算得分，并和value相乘得到[h, N, T_q, embed_dim/h]</p></li>
+<li><p>按head维把score分成head分，得到h*[1, N, T_q, embed_dim/h],再按最后一维concat变成[1, N, T_q, h*T_k]并unsequeeze(0)</p></li>
+</ul>
+<h1 id="方式一">方式一</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">MultiHeadAttention</span>(nn.Module):</span><br><span class="line">    <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">    input: query --- [N, T_q, query_dim]</span></span><br><span class="line"><span class="string">    key --- [N, T_k, key_dim]</span></span><br><span class="line"><span class="string">    mask --- [N, T_k] T_q 相当于是图像中的 H*W</span></span><br><span class="line"><span class="string">    output: out --- [N, T_q, embed_dim]</span></span><br><span class="line"><span class="string">    scores -- [h, N, T_q, T_k]</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__init__</span>(<span class="params">self, query_dim, key_dim, embed_dim, num_heads</span>):</span><br><span class="line">        <span class="built_in">super</span>().__init__()</span><br><span class="line">        self.embed_dim = embed_dim</span><br><span class="line">        self.num_heads = num_heads</span><br><span class="line">        self.key_dim = key_dim</span><br><span class="line"></span><br><span class="line">        self.W_query = nn.Linear(in_features=query_dim, out_features=embed_dim, bias=<span class="literal">False</span>)</span><br><span class="line">        self.W_key = nn.Linear(in_features=key_dim, out_features=embed_dim, bias=<span class="literal">False</span>)</span><br><span class="line">        self.W_value = nn.Linear(in_features=key_dim, out_features=embed_dim, bias=<span class="literal">False</span>)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">forward</span>(<span class="params">self, query, key, mask=<span class="literal">None</span></span>):</span><br><span class="line">        querys = self.W_query(query)  <span class="comment"># [N, T_q, embed_dim]</span></span><br><span class="line">        keys = self.W_key(key)  <span class="comment"># [N, T_k, embed_dim]</span></span><br><span class="line">        values = self.W_value(key)</span><br><span class="line"></span><br><span class="line">        <span class="keyword">assert</span> self.embed_dim % self.num_heads == <span class="number">0</span></span><br><span class="line">        split_size = self.embed_dim // self.num_heads</span><br><span class="line">        querys = torch.stack(torch.split(querys, split_size, dim=<span class="number">2</span>),</span><br><span class="line">                             dim=<span class="number">0</span>)  <span class="comment"># [h, N, T_q, embed_dim/h]</span></span><br><span class="line">        keys = torch.stack(torch.split(keys, split_size, dim=<span class="number">2</span>), dim=<span class="number">0</span>)  <span class="comment"># [h, N, T_k, embed_dim/h]</span></span><br><span class="line">        values = torch.stack(torch.split(values, split_size, dim=<span class="number">2</span>), dim=<span class="number">0</span>)  <span class="comment"># [h, N, T_k, embed_dim/h]</span></span><br><span class="line">        <span class="comment"># score = softmax(QK^T / (d_k ** 0.5))</span></span><br><span class="line">        scores = torch.matmul(querys, keys.transpose(<span class="number">2</span>, <span class="number">3</span>))  <span class="comment"># [h, N, T_q, T_k]</span></span><br><span class="line">        scores = scores / (self.key_dim ** <span class="number">0.5</span>)</span><br><span class="line"></span><br><span class="line">        <span class="comment"># mask</span></span><br><span class="line">        <span class="keyword">if</span> mask <span class="keyword">is</span> <span class="keyword">not</span> <span class="literal">None</span>:  <span class="comment">## mask: [N, T_k] --&gt; [h, N, T_q, T_k]</span></span><br><span class="line">            mask = mask.unsqueeze(<span class="number">1</span>).unsqueeze(<span class="number">0</span>).repeat(self.num_heads, <span class="number">1</span>, querys.shape[<span class="number">2</span>], <span class="number">1</span>)</span><br><span class="line">        <span class="comment"># 将 mask 中为 1 的元素所在的索引在 score 中替换成 -np.inf，经过 softmax 之后这部分的值会变成 0</span></span><br><span class="line">        <span class="comment"># 相当于这部分就不进行 attention 的计算 （ np.exp(-np.inf) = 0 ）</span></span><br><span class="line">        scores = scores.masked_fill(mask, -np.inf)</span><br><span class="line">        scores = F.softmax(scores, dim=<span class="number">3</span>)</span><br><span class="line">        <span class="comment">## out = score * V</span></span><br><span class="line">                scores = F.softmax(scores, dim=<span class="number">3</span>)</span><br><span class="line">        <span class="comment">## out = score * V</span></span><br><span class="line">        out = torch.matmul(scores, values)  <span class="comment"># [h, N, T_q, embed_dim/h]</span></span><br><span class="line">        out = torch.cat(torch.split(out, <span class="number">1</span>, dim=<span class="number">0</span>), dim=<span class="number">3</span>).squeeze(<span class="number">0</span>)  <span class="comment"># [N, T_q, embed_dim]</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">return</span> out,scores</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/job/" rel="tag"># job</a>
+              <a href="/tags/cv/" rel="tag"># cv</a>
+              <a href="/tags/detection/" rel="tag"># detection</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/02/yield%E7%94%A8%E6%B3%95/" rel="prev" title="yield用法">
+                  <i class="fa fa-chevron-left"></i> yield用法
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/08/05/transformer%E5%90%84%E6%88%90%E5%88%86%E7%90%86%E8%A7%A3/" rel="next" title="transformer各成分理解">
+                  transformer各成分理解 <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
