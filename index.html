@@ -369,7 +369,7 @@
       <span class="post-meta-item-text">发表于</span>
       
 
-      <time title="创建时间：2023-08-10 21:56:03 / 修改时间：23:14:46" itemprop="dateCreated datePublished" datetime="2023-08-10T21:56:03+08:00">2023-08-10</time>
+      <time title="创建时间：2023-08-10 21:56:03 / 修改时间：23:15:54" itemprop="dateCreated datePublished" datetime="2023-08-10T21:56:03+08:00">2023-08-10</time>
     </span>
 
   
@@ -392,64 +392,15 @@
           <h1 id="前言">前言</h1>
 <p>算是填坑，之前提到的YOLOv6里边用到了重参数的技巧，这里补充一下</p>
 <p>论文地址：https://arxiv.org/abs/2205.15242</p>
-<p>代码地址：https://github.com/DingXiaoH/RepOptimizers</p>
-<h1 id="概述">概述</h1>
-<p>一般的RepVGG、MobileOne系列的重参是不利于量化的（学出的参数分布不集中，重参的实好也会有舍入误差），本文提供了一个方法可以直接在训练的时候直接使用直筒型，但是享受到重参的效果，主要是在梯度上动了手脚</p>
-<p>先看看网络图</p>
-<p><img src=overall.png alt="network" style="zoom:80%;" /></p>
-<p>正常的RepConv是如图b一样，3x3卷积+1x1卷积+shortcut，分别BN后相加再relu，重参数的时候把BN参数融合，把1x1Conv padding到3x3再融合，short cut其实就是一个权重为1的1x1卷积</p>
-<p><strong>结构化模型重参化训练效率和资源消耗方面表现都比较弱，而且网络进行变换后对模型量化不友好</strong>，这限制了结构化模型重参化技术的应用与推广</p>
-<h1 id="方法">方法</h1>
-<p><img src=pipeline.png alt="pipeline" style="zoom:80%;" /></p>
-<p>RepOptimizer的基本流程如Figure2所示，基本包括了4个步骤：</p>
-<ul>
-<li><strong>先验知识</strong>，比如多分支网络往往比单分支网络精度更高，如RestNet，RepVGG等；</li>
-<li><strong>假想</strong>先验知识中的网络结构，如图中的CSLA模块；</li>
-<li>通过<strong>超参数搜索</strong>数据集，获得CSLA中的常量；</li>
-<li>模拟CLSA中的梯度重参化梯度。</li>
-</ul>
-<h3 id="csla">CSLA</h3>
-<p><span class="math display">\[BN(y) = \alpha \frac{y-\hat y}{\sigma}+\beta\]</span></p>
-<p>在一个多分支结构中，每一个分支只包含一个线性可训练操作或线性可训练操作后接一个常数用以缩放，假设正常的重参模块CSLA有两个卷积核<span class="math inline">\(W_{A}\)</span>和<span class="math inline">\(W_{B}\)</span>，X为输入，输出就为：</p>
-<p><span class="math display">\[Y_{CSLA} = \alpha_{A}(X*W_{A})+\alpha_{B}(X*W_{B})\]</span></p>
-<p>其中*为卷积操作，<span class="math inline">\(\alpha_{A/B}\)</span>可以理解为BN，但是BN其实在训练中是非线性的，不利于后续的推理，所以先设置成了一些可学习的参数，这些常数的作用类似于BN的作用，常数的目标其实就是想搜出<span class="math inline">\(\frac{\alpha}{\sigma}\)</span>和<span class="math inline">\(\frac{\alpha\hat y}{\sigma}+\beta\)</span>。</p>
-<p>CSLA使用SGD进行梯度更新的时候是：</p>
-<p><span class="math display">\[\alpha_{A} W^{i+1}_{A} + \alpha_{B} W^{i+1}_{B} =\alpha_{A} W^{i}_{A} + \alpha_{B} W^{i}_{B}-\gamma(\alpha_{A}\frac{d L}{d_{W^{i}_{A}}}+\alpha_{B}\frac{d L}{d_{W^{i}_{B}}})\]</span></p>
-<h3 id="gr">GR</h3>
-<p>我们的目标是找到梯度的变换，让我们可以使用直筒的训练结构得到重参数的效果，所以网络结构是GR，使用<span class="math inline">\(W^{&#39;}\)</span>表示卷积核参数（这里用了‘搞得我一开始以为是梯度..）那么有</p>
-<p><span class="math display">\[Y_{GR} = X*W^{&#39;}\]</span></p>
-<p>所以目标是找到优化算法F，使得<span class="math inline">\(Y_{GR}\)</span>一直等效于<span class="math inline">\(Y_{CSLA}\)</span>，也就是：</p>
-<p><span class="math display">\[W^{&#39;(i+1)} = W^{&#39;(i)}-\gamma F(\frac{d L}{dW^{&#39;(i)}})\]</span></p>
-<p>证明比较简单用到的数学归纳法：</p>
-<figure>
-<img src="prove.png" alt="Prove" /><figcaption aria-hidden="true">Prove</figcaption>
-</figure>
-<p>所以只要满足初始化条件(7)，优化器为(14)的形式就可以了，看不懂这里证明的也可以看<a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/594937862">中文版</a>的</p>
-<h3 id="grad-mask">Grad Mask</h3>
-<p>实际算梯度的时候会初始化一个grad mask<span class="math inline">\(M_{c,d,p,q}\in R^{C\times C\times 3\times 3}\)</span>，形式是这样的: <span class="math display">\[
-\begin{equation}
-M_{c,d,p,q} = \left\{
-\begin{aligned}
-1+s_{c}^{2}+t_{c}^{2},   &amp;&amp; if c=d,p=2, q=2 \\
-s_{c}^{2}+t_{c}^{2},   &amp;&amp; if c\neq d,p=2, q=2 \\
-s_{c}^{2},     &amp;&amp;otherwise
-\end{aligned}
-\right .
-\end{equation}
-\]</span></p>
-<p>其中3x3是卷积核大小，p和q是卷积核参数的行列index，CxC是输入输出的通道数，<span class="math inline">\(s_{c}^{2}\)</span>和<span class="math inline">\(t_{c}^{2}\)</span>分别是3x3Conv和1x1Conv搜出的参数，按上面说的，对于CSLA重参的时候对于shortcut，和1x1卷积在融合的时候是进行padding的，那其实对于梯度的影响只会发生在卷积核中间，即p=q=2的时候，只有在对应的通道下(c=d的时候)shortcut的梯度才会有影响，通道不对应的时候，在卷积核中间以外就只有本身的参数会有影响了，而此时梯度就是<span class="math inline">\(s_{c}^{2}\)</span>,对于卷积核中间就是<span class="math inline">\(s_{c}^{2}+t_{c}^{2}\)</span></p>
-<p>这里是因为这些搜出来的参数都是常数，<strong>实际上就是对卷积结果做了个线性变换，所以梯度就是常数的值</strong></p>
-<h1 id="一些相关代码">一些相关代码</h1>
-<p>参数初始化:</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">def</span> <span class="title function_">get_equivalent_kernel</span>(<span class="params">model</span>):</span><br><span class="line">    <span class="keyword">return</span> model.conv1.weight * test_scales[<span class="number">0</span>] + F.pad(model.conv2.weight * test_scales[<span class="number">1</span>], [<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>,<span class="number">1</span>])</span><br><span class="line"><span class="comment">#获取RepVGG初始化参数</span></span><br><span class="line">init_weights = get_equivalent_kernel(model)</span><br><span class="line"><span class="comment">#定义Figure3中的GR模块</span></span><br><span class="line">eq_model = nn.Conv2d(in_channels, out_channels, <span class="number">3</span>, <span class="number">1</span>, padding=<span class="number">1</span>, bias=<span class="literal">False</span>)</span><br><span class="line"><span class="comment">#给GR模块的参数进行初始化，使用的是RepVGG模块的初始化参数进行初始化</span></span><br><span class="line">eq_model.weight.data = init_weights</span><br></pre></td></tr></table></figure>
-<p>梯度重参化：</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#生成梯度重参化变换尺度</span></span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">generate_grad_mults</span>(<span class="params">self</span>):</span><br><span class="line">        mask = torch.ones_like(self.model.weight) * self.scales[<span class="number">0</span>] ** <span class="number">2</span> <span class="comment">#这个相当于3x3卷积的梯度</span></span><br><span class="line">        mask[:, :, <span class="number">1</span>, <span class="number">1</span>] += self.scales[<span class="number">1</span>] ** <span class="number">2</span> <span class="comment">#这个相当于1x1卷积的梯度</span></span><br><span class="line">        <span class="keyword">return</span> &#123;self.model.weight: mask&#125;<span class="comment">#梯度重参化就是mask</span></span><br><span class="line"></span><br><span class="line">    <span class="comment">#这里仅获取梯度重置的代码</span></span><br><span class="line">    <span class="keyword">if</span> p <span class="keyword">in</span> self.grad_mult_map: <span class="comment">#grad_mult_map的key为权重，value为重参化梯度变换尺度</span></span><br><span class="line">        d_p = p.grad.data * self.grad_mult_map[p]   <span class="comment"># 这就重置了p的梯度</span></span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        d_p = p.grad.data</span><br></pre></td></tr></table></figure>
-<h1 id="结果">结果</h1>
-<p><img src=result.png alt="result" style="zoom:80%;" /></p>
-<p>Table2可以看出RepVGG与RepOptimizer的top-1 accuracy差不多，但RepOptimizer的训练速度比较快。</p>
-<p><img src=serach.png alt="search" style="zoom:80%;" /></p>
-<p>在不同的数据集上进行超参数搜索，RepOptimizer的Top-1 accuracy相近。由此可见，可以在小型数据集上进行超参数搜索，然后用到大型训练数据集中。</p>
-
+<p>代码地址：https://github.com/DingXiaoH/RepOptimizers
+          <!--noindex-->
+            <div class="post-button">
+              <a class="btn" href="/2023/08/10/RepOptimizer/#more" rel="contents">
+                阅读全文 &raquo;
+              </a>
+            </div>
+          <!--/noindex-->
+        
       
     </div>
 
