@@ -19,29 +19,29 @@
 
 <script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
 
-    <meta name="description" content="前言 记录一下常见的linux指令，用到的时候不用老是百度搜">
+    <meta name="description" content="前言 最近在看多模态的东西，但是发现对NLP的理解不够透彻，有些也忘记了，这里回顾一下，记录一下问题">
 <meta property="og:type" content="article">
-<meta property="og:title" content="linux常用指令">
-<meta property="og:url" content="http://example.com/2023/08/02/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/index.html">
+<meta property="og:title" content="AttentionIsAllYouNeed">
+<meta property="og:url" content="http://example.com/2023/08/13/AttentionIsAllYouNeed/index.html">
 <meta property="og:site_name" content="XBlog">
-<meta property="og:description" content="前言 记录一下常见的linux指令，用到的时候不用老是百度搜">
+<meta property="og:description" content="前言 最近在看多模态的东西，但是发现对NLP的理解不够透彻，有些也忘记了，这里回顾一下，记录一下问题">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:published_time" content="2023-08-02T12:07:18.000Z">
-<meta property="article:modified_time" content="2023-08-05T08:11:58.000Z">
+<meta property="article:published_time" content="2023-08-13T13:20:13.000Z">
+<meta property="article:modified_time" content="2023-08-13T13:53:44.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="job">
-<meta property="article:tag" content="linux">
+<meta property="article:tag" content="nlp">
 <meta name="twitter:card" content="summary">
 
 
-<link rel="canonical" href="http://example.com/2023/08/02/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/">
+<link rel="canonical" href="http://example.com/2023/08/13/AttentionIsAllYouNeed/">
 
 
 
-<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/08/02/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/","path":"2023/08/02/linux常用指令/","title":"linux常用指令"}</script>
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/08/13/AttentionIsAllYouNeed/","path":"2023/08/13/AttentionIsAllYouNeed/","title":"AttentionIsAllYouNeed"}</script>
 
 <script class="next-config" data-name="calendar" type="application/json">""</script>
-<title>linux常用指令 | XBlog</title>
+<title>AttentionIsAllYouNeed | XBlog</title>
   
 
 
@@ -113,7 +113,7 @@
       <div class="sidebar-panel-container">
         <!--noindex-->
         <div class="post-toc-wrap sidebar-panel">
-            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E7%B3%BB%E7%BB%9F%E7%9B%B8%E5%85%B3"><span class="nav-number">2.</span> <span class="nav-text">文件系统相关</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BB%9F%E8%AE%A1%E6%96%87%E4%BB%B6"><span class="nav-number">3.</span> <span class="nav-text">统计文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gpu%E7%9B%B8%E5%85%B3"><span class="nav-number">4.</span> <span class="nav-text">GPU相关</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A4%84%E7%90%86%E5%83%B5%E5%B0%B8%E8%BF%9B%E7%A8%8B"><span class="nav-number">4.1.</span> <span class="nav-text">处理僵尸进程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%8E%AF%E5%A2%83%E5%8F%98%E9%87%8F"><span class="nav-number">5.</span> <span class="nav-text">环境变量</span></a></li></ol></div>
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#masked-self-attention"><span class="nav-number">2.</span> <span class="nav-text">Masked self-attention</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E8%B5%84%E6%96%99"><span class="nav-number">2.1.</span> <span class="nav-text">参考资料</span></a></li></ol></li></ol></div>
         </div>
         <!--/noindex-->
 
@@ -166,7 +166,7 @@
   
 
   <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
-    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/02/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/13/AttentionIsAllYouNeed/">
 
     <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
       <meta itemprop="image" content="/images/xb9919.jpg">
@@ -179,12 +179,12 @@
     </span>
 
     <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
-      <meta itemprop="name" content="linux常用指令 | XBlog">
+      <meta itemprop="name" content="AttentionIsAllYouNeed | XBlog">
       <meta itemprop="description" content="">
     </span>
       <header class="post-header">
         <h1 class="post-title" itemprop="name headline">
-          linux常用指令
+          AttentionIsAllYouNeed
         </h1>
 
         <div class="post-meta-container">
@@ -194,19 +194,13 @@
         <i class="far fa-calendar"></i>
       </span>
       <span class="post-meta-item-text">发表于</span>
+      
 
-      <time title="创建时间：2023-08-02 20:07:18" itemprop="dateCreated datePublished" datetime="2023-08-02T20:07:18+08:00">2023-08-02</time>
-    </span>
-    <span class="post-meta-item">
-      <span class="post-meta-item-icon">
-        <i class="far fa-calendar-check"></i>
-      </span>
-      <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-08-05 16:11:58" itemprop="dateModified" datetime="2023-08-05T16:11:58+08:00">2023-08-05</time>
+      <time title="创建时间：2023-08-13 21:20:13 / 修改时间：21:53:44" itemprop="dateCreated datePublished" datetime="2023-08-13T21:20:13+08:00">2023-08-13</time>
     </span>
 
   
-    <span id="/2023/08/02/linux%E5%B8%B8%E7%94%A8%E6%8C%87%E4%BB%A4/" class="post-meta-item leancloud_visitors" data-flag-title="linux常用指令" title="阅读次数">
+    <span id="/2023/08/13/AttentionIsAllYouNeed/" class="post-meta-item leancloud_visitors" data-flag-title="AttentionIsAllYouNeed" title="阅读次数">
       <span class="post-meta-item-icon">
         <i class="far fa-eye"></i>
       </span>
@@ -223,27 +217,24 @@
     
     <div class="post-body" itemprop="articleBody">
         <h1 id="前言">前言</h1>
-<p>记录一下常见的linux指令，用到的时候不用老是百度搜 <span id="more"></span></p>
-<h1 id="文件系统相关">文件系统相关</h1>
-<h1 id="统计文件">统计文件</h1>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看当前目录下有什么文件</span></span><br><span class="line">ls </span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">统计当前目录下文件的个数（不包括目录）</span></span><br><span class="line">ls -l | grep &quot;^-&quot; | wc -l</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">统计当前目录下文件的个数（包括子目录）</span></span><br><span class="line">ls -lR| grep &quot;^-&quot; | wc -l</span><br><span class="line"><span class="meta prompt_"># </span><span class="language-bash">查看某目录下文件夹(目录)的个数（包括子目录）</span></span><br><span class="line">ls -lR | grep &quot;^d&quot; | wc -l</span><br></pre></td></tr></table></figure>
-<p>其中包含三个模块 * ls -l 长列表输出该目录下文件信息(注意这里的文件是指目录、链接、设备文件等)，每一行对应一个文件或目录，ls -lR是列出所有文件，包括子目录。</p>
+<p>最近在看多模态的东西，但是发现对NLP的理解不够透彻，有些也忘记了，这里回顾一下，记录一下问题</p>
+<span id="more"></span>
+<h1 id="masked-self-attention">Masked self-attention</h1>
+<p>这里之前以为是对Encoder的embedding做mask，实际上不是的，原文是做机器翻译的，训练的时候直接把答案输入了，比如</p>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&lt;start&gt;This is a cat&lt;end&gt;  ----&gt; &lt;start&gt;这 是 一只 猫&lt;end&gt;</span><br></pre></td></tr></table></figure>
+<p>实际上训练的时候是会给Decoder输入<code>&lt;start&gt;这是一只猫&lt;end&gt;</code>的embedding（这实际上是为了方便 Teacher Forcing），但是网络又不想要预测<code>是</code>的时候看到<code>一只 猫</code>，所以需要对后面的做mask，实际上对应于代码就是一个<code>n, seq_len, seq_len</code>的下三角矩阵</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># torch.triu(tensor, diagonal=0) 求上三角矩阵，diagonal默认为0表示主对角线的上三角矩阵</span></span><br><span class="line"><span class="comment"># diagonal&gt;0，则主对角上面的第|diagonal|条次对角线的上三角矩阵</span></span><br><span class="line"><span class="comment"># diagonal&lt;0，则主对角下面的第|diagonal|条次对角线的上三角矩阵</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">create_look_ahead_mask</span>(<span class="params">size</span>):  <span class="comment"># seq_len</span></span><br><span class="line">    mask = torch.triu(torch.ones((size, size)), diagonal=<span class="number">1</span>)</span><br><span class="line">    <span class="comment"># mask = mask.device() #</span></span><br><span class="line">    <span class="keyword">return</span> mask  <span class="comment"># [seq_len, seq_len]</span></span><br></pre></td></tr></table></figure>
+<p>实际上做推理的时候是一个一个输入的，最开始的时候是<code>&lt;start&gt;</code>从解码器得到了<code>这</code>的token，然后把他们cat一下得到<code>[&lt;start&gt; 这]</code>再输入给网络，具体怎么得到的呢？其实就是把decoder得到的最后一个词并计算它的 argmax(意思是最后一层做的其实是一个分类的任务)</p>
+<p>训练的时候，解码器输入的是答案(<code>&lt;start&gt;这 是 一只 猫</code>)，解码器的每一行预测的结果是答案的下一行<code>这 是 一只 猫&lt;end&gt;</code>所以需要做mask，让解码器做自回归的时候每一行的输出看到的是有限制的，而不是全部的答案。</p>
+<p>总之就是：</p>
 <ul>
-<li><p>grep "^-" 过滤ls的输出信息，只保留一般文件，只保留目录是grep "^d"。</p></li>
-<li><p>wc -l 统计输出信息的行数，统计结果就是输出信息的行数，一行信息对应一个文件，所以就是文件的个数。</p></li>
+<li><p>原因1：预测阶段要保持重复的单词预测结果是一样的，这样不仅合理，而且可以增量更新（我们在预测是会选择性忽略重复的预测的词，只摘取最新预测的单词拼接到输入序列中） 如果我在代码中关掉了dropout，那么当预测序列是<code>x_&#123;1&#125;,x_&#123;2&#125;,x_&#123;3&#125;</code>′时的输出结果，应该是和预测序列时<code>x_&#123;1&#125;, x_&#123;2&#125;, x_&#123;3&#125;, x_&#123;4&#125;</code>的前3个位置结果是一样的（增量更新）</p></li>
+<li><p>原因2：恰好也可以与训练时的模型架构保持一致，前向传播的方式是一致的</p></li>
 </ul>
-<h1 id="gpu相关">GPU相关</h1>
-<h2 id="处理僵尸进程">处理僵尸进程</h2>
-<p>由于训练时用了多线程，程序出现了中断，导致了在某些时候主线程结束了但是子线程还在运行，占用了gpu的空间，要解决这个问题有两种方法：</p>
-<p>1、只用一个线程，这个可以从根本上解决，但是单线程训练太慢了</p>
-<p>2、出现僵尸进程的时候手动 kill 掉，但是一般僵尸进程通过 nvidia-smi 命令是看不出来的，只能通过 top/htop 或者是 fuser 指令查看</p>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fuser -v /dev/nvidia3 | awk &quot;&#123;print $2&#125;&quot; | xargs kill -9 (nvidia3指定卡id）</span><br></pre></td></tr></table></figure>
-<ul>
-<li>需要注意的是，使用这个命令需要注意权限问题，谁的僵尸进程就谁输入，如果是 root 账户容易影响其他卡（本质上这个指令是清空所有在 nvidia3 卡运行的程序，如果别的程序也有在这会导致子线程被 kill 影响主线程）</li>
-</ul>
-<h1 id="环境变量">环境变量</h1>
-<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">export PATH=&quot;/usr/local/cuda-11.0/bin:$PATH&quot;</span><br><span class="line"></span><br><span class="line">export LD_LIBRARY_PATH=&quot;/usr/local/cuda-11.0/lib64:$LD_LIBRARY_PATH&quot;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<p>切换cuda 版本</p>
+<h2 id="参考资料">参考资料</h2>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/419748171">知乎：从训练和预测角度来理解Transformer中Masked Self-Attention的原理</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010366748/article/details/111183674">transformer（上）论文解读+pytorch实现</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/u010366748/article/details/111269231">transformer（下）机器翻译+pytorch实现</a></p>
 
     </div>
 
@@ -254,21 +245,18 @@
     <footer class="post-footer">
           <div class="post-tags">
               <a href="/tags/job/" rel="tag"># job</a>
-              <a href="/tags/linux/" rel="tag"># linux</a>
+              <a href="/tags/nlp/" rel="tag"># nlp</a>
           </div>
 
         
 
           <div class="post-nav">
             <div class="post-nav-item">
-                <a href="/2023/08/02/%E5%8C%88%E7%89%99%E5%88%A9%E5%8C%B9%E9%85%8D/" rel="prev" title="匈牙利匹配">
-                  <i class="fa fa-chevron-left"></i> 匈牙利匹配
+                <a href="/2023/08/12/yolov6%E8%AF%A6%E8%A7%A3/" rel="prev" title="yolov6详解">
+                  <i class="fa fa-chevron-left"></i> yolov6详解
                 </a>
             </div>
             <div class="post-nav-item">
-                <a href="/2023/08/02/%E5%8D%A1%E5%B0%94%E6%9B%BC%E6%BB%A4%E6%B3%A2/" rel="next" title="卡尔曼滤波">
-                  卡尔曼滤波 <i class="fa fa-chevron-right"></i>
-                </a>
             </div>
           </div>
     </footer>
