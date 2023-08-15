@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言 一直只知道klloss的作用是让两个分布尽可能像，但是实际怎么做到的，不太理解，这里记录一下">
+<meta property="og:type" content="article">
+<meta property="og:title" content="kl散度理解">
+<meta property="og:url" content="http://example.com/2023/08/15/kl%E6%95%A3%E5%BA%A6%E7%90%86%E8%A7%A3/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="前言 一直只知道klloss的作用是让两个分布尽可能像，但是实际怎么做到的，不太理解，这里记录一下">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/08/15/kl%E6%95%A3%E5%BA%A6%E7%90%86%E8%A7%A3/kl_curve.jpg">
+<meta property="article:published_time" content="2023-08-15T12:02:37.000Z">
+<meta property="article:modified_time" content="2023-08-15T12:45:00.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="cv">
+<meta property="article:tag" content="GAN">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/08/15/kl%E6%95%A3%E5%BA%A6%E7%90%86%E8%A7%A3/kl_curve.jpg">
+
+
+<link rel="canonical" href="http://example.com/2023/08/15/kl%E6%95%A3%E5%BA%A6%E7%90%86%E8%A7%A3/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/08/15/kl%E6%95%A3%E5%BA%A6%E7%90%86%E8%A7%A3/","path":"2023/08/15/kl散度理解/","title":"kl散度理解"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>kl散度理解 | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%A6%82%E8%BF%B0"><span class="nav-number">2.</span> <span class="nav-text">概述</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B"><span class="nav-number">3.</span> <span class="nav-text">举例</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%A5%BD%E5%A4%84"><span class="nav-number">4.</span> <span class="nav-text">好处</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#pytorch%E7%9A%84kl%E6%95%A3%E5%BA%A6%E8%AE%A1%E7%AE%97"><span class="nav-number">5.</span> <span class="nav-text">PyTorch的KL散度计算</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%BE%E4%BE%8B-1"><span class="nav-number">5.1.</span> <span class="nav-text">举例</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%92%8C%E4%BA%A4%E5%8F%89%E7%86%B5%E7%9A%84%E5%AF%B9%E6%AF%94"><span class="nav-number">6.</span> <span class="nav-text">和交叉熵的对比</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%9F%E6%88%90%E4%B8%AD%E7%9A%84kl%E6%95%A3%E5%BA%A6"><span class="nav-number">7.</span> <span class="nav-text">生成中的KL散度</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83"><span class="nav-number">8.</span> <span class="nav-text">参考</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">40</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/08/15/kl%E6%95%A3%E5%BA%A6%E7%90%86%E8%A7%A3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="kl散度理解 | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          kl散度理解
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-08-15 20:02:37 / 修改时间：20:45:00" itemprop="dateCreated datePublished" datetime="2023-08-15T20:02:37+08:00">2023-08-15</time>
+    </span>
+
+  
+    <span id="/2023/08/15/kl%E6%95%A3%E5%BA%A6%E7%90%86%E8%A7%A3/" class="post-meta-item leancloud_visitors" data-flag-title="kl散度理解" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言">前言</h1>
+<p>一直只知道klloss的作用是让两个分布尽可能像，但是实际怎么做到的，不太理解，这里记录一下 <span id="more"></span></p>
+<h1 id="概述">概述</h1>
+<p>KL散度是用来衡量两个概率分布之间的相似性，两个概率分布越接近，散度就越小 <span class="math display">\[
+D_{KL}(P||Q) = \sum _{i=1}^{N}[p(x_{i})log(p(x_{i}))- p(x_{i})log(q(x_{i}))]
+\]</span></p>
+<p>通常P为真实事件的概率分布，Q为理论拟合出来的该事件的概率分布。因为<span class="math inline">\(D_{KL}(P||Q)\)</span>(P拟合Q)和$ D_{KL}(Q||P)$(Q拟合P)是不一样的。</p>
+<h1 id="举例">举例</h1>
+<p>班里男生人数占40%，女生占60%，则班里随机抽取一个人的性别的概率分布是Q = [0.4, 0.6]。作为真实事件的概率分布。</p>
+<p>小明猜测班里男生占30%，女生占70%，则小明拟合的概率分布P1 = [0.3, 0.7]。</p>
+<p>小红猜测班里男生占20%，女生占80%，则小红拟合的概率分布P2 = [0.2, 0.8]。</p>
+<p>那么现在，小明和小红谁预测的概率分布离真实分布比较近？这时候就可以用KL散度来衡量P1与Q的相似性、P2与Q的相似性，然后对比可得谁更相似。</p>
+<p><span class="math display">\[KL_{1} = [0.3\times log(0.3)-0.3\times log(0.4)]+[0.7\times log(0.7)-0.7\times log(0.7)]=0.0226\]</span></p>
+<p><span class="math display">\[KL_{2} = [0.2\times log(0.2)-0.2\times log(0.4)]+[0.8\times log(0.8)-0.8\times log(0.8)]=0.1046\]</span></p>
+<h1 id="好处">好处</h1>
+<p>当分布复杂的情况下，用KL散度就比较好度量。如一个数据集分布未知，想用数学公式来表达，比如高斯分布、泊松分布、韦伯分布等，这些分布哪个更适合用来表示数据集的分布。则可以计算拟合曲线与数据集真实分布的KL散度，选择KL散度最小的作为数据集的概率分布表达式。</p>
+<p>如：用高斯分布拟合数据集分布时，统计均值μ，标准差σ，则可得到高斯分布表达式：</p>
+<p><span class="math display">\[f(x) = \frac{1}{\sigma \sqrt{2\pi}}e^{-\frac{(x-\mu)^2}{2\sigma ^{2}}}\]</span></p>
+<p>再用高斯分布表达式使用不同自变量x1,x2,...计算出不同类别的概率p1,p2...，即概率分布P=[p1, p2,...]，与真实的概率分布Q = [q1,q2,...]进而计算得到KL散度。</p>
+<p>同理，计算其他拟合分布与真实分布的KL散度，对比得到最优用来拟合真实数据的概率分布表达式。</p>
+<h1 id="pytorch的kl散度计算">PyTorch的KL散度计算</h1>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch.nn.functional <span class="keyword">as</span> F</span><br><span class="line">kl = F.kl_div(x.softmax(dim=-<span class="number">1</span>).log(), y.softmax(dim=-<span class="number">1</span>), reduction=<span class="string">&#x27;sum&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<p>其中kl_div接收三个参数，第一个为预测分布，第二个为真实分布，第三个为reduction。</p>
+<p>注意，这里kl_div的输入直接就是相当于概率了，没有进行上面的用其他分布去拟合的操作，简单理解就是第一个像素值的概率是多少</p>
+<ul>
+<li><p>第一个参数与第二个参数都要进行softmax(dim=-1)，目的是使两个概率分布的所有值之和都为1，若不进行此操作，如果x或y概率分布所有值的和大于1，则可能会使计算的KL为负数。</p></li>
+<li><p>softmax接收一个参数dim，dim=-1表示在最后一维进行softmax操作。</p></li>
+<li><p>第一个参数还要进行log()操作（至于为什么，大概是为了方便pytorch的代码组织，pytorch定义的损失函数都调用handle_torch_function函数，方便权重控制等），才能得到正确结果。</p></li>
+<li><p>第三个参数reduction有三种取值，为 none 时，各点的损失单独计算，输出损失与输入（x）形状相同；为 mean 时，输出为所有损失的平均值；为 sum 时，输出为所有损失的总和。</p></li>
+</ul>
+<h2 id="举例-1">举例</h2>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch</span><br><span class="line"><span class="keyword">import</span> torch.nn <span class="keyword">as</span> nn</span><br><span class="line"><span class="keyword">import</span> numpy <span class="keyword">as</span> np</span><br><span class="line"></span><br><span class="line">loss_f = nn.KLDivLoss()</span><br><span class="line"></span><br><span class="line"><span class="comment"># 生成网络输出 以及 目标输出</span></span><br><span class="line">model_student = torch.from_numpy(np.array([[<span class="number">0.1132</span>, <span class="number">0.5477</span>, <span class="number">0.3390</span>]])).<span class="built_in">float</span>() <span class="comment"># 假设学生模型输出</span></span><br><span class="line"></span><br><span class="line">model_teacher = torch.from_numpy(np.array([[<span class="number">0.8541</span>, <span class="number">0.0511</span>, <span class="number">0.0947</span>]])).<span class="built_in">float</span>() <span class="comment">#假设教师模型输出</span></span><br><span class="line">label=torch.tensor([<span class="number">0</span>])  <span class="comment"># 真实标签</span></span><br><span class="line">loss_KD = loss_f(model_student, model_teacher)</span><br><span class="line">L=nn.CrossEntropyLoss()</span><br><span class="line">loss_SL=L(model_student,label)</span><br><span class="line">lambda_ ,T=<span class="number">0.6</span>,<span class="number">3</span>  <span class="comment"># 分别为设置权重参数，T为温度系数</span></span><br><span class="line">loss = (<span class="number">1</span> - lambda_) * loss_SL + lambda_ * T * T * loss_KD  <span class="comment"># hint和jeff dean论文</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(<span class="string">&#x27;\nloss: &#x27;</span>, loss)</span><br></pre></td></tr></table></figure>
+<h1 id="和交叉熵的对比">和交叉熵的对比</h1>
+<p>交叉熵作为深度学习常用的损失函数，可以理解为是KL散度的一个特例。当概率分布中的值只取1或0时，可以看作KL散度。但是两者又有区别，KL散度中概率分布所有值之和为1，而交叉熵则可以大于1，如[0,1,0,1,0,0,]。</p>
+<p>从概念上讲，KL 散度通常用来度量两个概率分布之间的差异。</p>
+<p>交叉熵用来求目标与预测值之间的差距，数据分布不一定是概率分布。</p>
+<h1 id="生成中的kl散度">生成中的KL散度</h1>
+<p>最原始的生成模型只有对抗loss，也就是判别器给的损失</p>
+<p>KL散度常常用来优化GAN模型，如图所示，假设q是真实图像的分布，p是生成器生成样本的分布</p>
+<figure>
+<img src="kl_curve.jpg" alt="kl_curve" /><figcaption aria-hidden="true">kl_curve</figcaption>
+</figure>
+<p>对于如图所示的两种KL散度的值来看，KL(Q||P)会更多地惩罚q(x) &gt;大于0而p(x) 接近0的情况（如x = 2附近），也就是惩罚“生成样本质量不佳”的错误；另一方面，当p(x) 大于0而q(x) 接近0时（如x = -3附近），KL(Q||P)给出的惩罚几乎是0，表示对“Q未能广泛覆盖P涉及的区域”不在乎。如此一来，为了“安全”起见，最终的Q将谨慎地覆盖P的一小部分区域，即Generator会生成大量高质量却缺乏多样性的样本，这就是mode collapse问题。</p>
+<ul>
+<li>简单来说只会先考虑生成的和真实图片差异大的样式（生成样本质量不佳的样本），而对没出现的真实图片（或是出现的很少的样式）不在乎，容易使得生成器都生成训练集内的某几类，就只学到了一个模式，造成<strong>多样性不足</strong>，（比如对于Minst我生成0的效果很好，那我只生成0就好了，相当于生成器找到了捷径）也就是<strong>"模式崩坍"或“模式坍塌”(mode collapse)</strong></li>
+</ul>
+<p>另外，通过类似的分析可以知道，KL(P||Q)则会导致Generator生成多样性强却低质量的样本。</p>
+<ul>
+<li>相当于都考虑预测出来的分布，而对于真实分布占比大的部分，而预测的不好的部分的梯度会很小，此时多样性很强，但质量不高</li>
+</ul>
+<p>也有的人使用logD，或者是sigmoidD，前者会存在梯度方差较大的缺陷，导致训练的不稳定，后者具有饱和区，一旦 D 进入了饱和区（梯度消失、且后面的数区分度不高），就很难传回梯度来更新 G 了。WGAN-GP优化了这个就加了<strong>Lipschitz</strong>约束，让真实图片和预测图片加权和的样本的梯度<span class="math inline">\(\leq\)</span>C，</p>
+<h1 id="参考">参考</h1>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/superjunenaruto/article/details/108358905">交叉商二分类和多分类形式为什么不一样</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/56638625">交叉商</a></p>
+<p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/58260684">WGAN的来龙去脉</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzIwMTc4ODE0Mw==&amp;mid=2247484880&amp;idx=1&amp;sn=4b2e976cc715c9fe2d022ff6923879a8&amp;chksm=96e9da50a19e5346307b54f5ce172e355ccaba890aa157ce50fda68eeaccba6ea05425f6ad76#rd">PaperWeekly 第41期 | 互怼的艺术：从零直达 WGAN-GP</a></p>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/cv/" rel="tag"># cv</a>
+              <a href="/tags/GAN/" rel="tag"># GAN</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/08/15/swin%E8%AF%A6%E8%A7%A3/" rel="prev" title="swin详解">
+                  <i class="fa fa-chevron-left"></i> swin详解
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
