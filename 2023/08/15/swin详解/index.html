@@ -32,7 +32,7 @@
 <meta property="og:image" content="http://example.com/2023/08/15/swin%E8%AF%A6%E8%A7%A3/mask3.jpg">
 <meta property="og:image" content="http://example.com/2023/08/15/swin%E8%AF%A6%E8%A7%A3/mask.jpg">
 <meta property="article:published_time" content="2023-08-15T11:58:00.000Z">
-<meta property="article:modified_time" content="2023-09-01T02:15:12.000Z">
+<meta property="article:modified_time" content="2023-09-01T02:17:04.000Z">
 <meta property="article:author" content="Carey">
 <meta property="article:tag" content="cv">
 <meta name="twitter:card" content="summary">
@@ -207,7 +207,7 @@
         <i class="far fa-calendar-check"></i>
       </span>
       <span class="post-meta-item-text">更新于</span>
-      <time title="修改时间：2023-09-01 10:15:12" itemprop="dateModified" datetime="2023-09-01T10:15:12+08:00">2023-09-01</time>
+      <time title="修改时间：2023-09-01 10:17:04" itemprop="dateModified" datetime="2023-09-01T10:17:04+08:00">2023-09-01</time>
     </span>
 
   
@@ -263,12 +263,12 @@
 <li>(192, 49, 3, 3, 32)---&gt;(3， 192， 3， 49， 32)</li>
 <li>(3，192，3，49，32)----&gt;(3192, 3, 49, 32)， 即：
 <ul>
-<li>(BxH/WINDOW[0]xW/WINDOW[1],WINDOW[0]xWINDOW[1],C)---&gt;(BxH/WINDOW[0]xW/WINDOW[1],WINDOW[0]xWINDOW[1],C)</li>
-<li>(BxH/WINDOW[0]xW/WINDOW[1],WINDOW[0]xWINDOW[1],C)----&gt;(qkv,BxH/WINDOW[0]xW/WINDOW[1],num_heads,emb_dim)</li>
+<li>(BxH/window[0]xW/window[1],window[0]window[1],C)---&gt;(BxH/window[0]xW/window[1],window[0]window[1],C)</li>
+<li>(BxH/window[0]xW/window[1],window[0]window[1],C)----&gt;(qkv,BxH/window[0]xW/window[1],num_heads,emb_dim)</li>
 </ul></li>
 </ul></li>
 </ul>
-<p>所以想得到qkv直接按第0维拆开即可，需要注意的是，q要除以<span class="math inline">\(\sqrt{head_dim}\)</span>，</p>
+<p>所以想得到qkv直接按第0维拆开即可，需要注意的是，q要除以<span class="math inline">\(\sqrt{head\_dim}\)</span>，</p>
 <p>接着就是算7x7窗口内部的attention，就是49个token，长度为emb_dim(这里是32)的注意力机制， 这里先不讲解mask</p>
 <ul>
 <li>注意这里是在attention的时候加入了位置编码，即q*self.scale@k.T + pos</li>
