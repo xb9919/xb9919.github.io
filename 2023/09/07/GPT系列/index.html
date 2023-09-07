@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言 这里简单介绍一下GPT系列的模型">
+<meta property="og:type" content="article">
+<meta property="og:title" content="GPT系列">
+<meta property="og:url" content="http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="前言 这里简单介绍一下GPT系列的模型">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/gpt1.png">
+<meta property="og:image" content="http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/gpt2.png">
+<meta property="og:image" content="http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/gpt2-exp.png">
+<meta property="article:published_time" content="2023-09-07T09:23:59.000Z">
+<meta property="article:modified_time" content="2023-09-07T09:29:04.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="nlp">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/gpt1.png">
+
+
+<link rel="canonical" href="http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/","path":"2023/09/07/GPT系列/","title":"GPT系列"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>GPT系列 | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gpt1"><span class="nav-number">2.</span> <span class="nav-text">GPT1</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#motivation"><span class="nav-number">2.0.1.</span> <span class="nav-text">Motivation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95"><span class="nav-number">2.0.2.</span> <span class="nav-text">方法</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#unsupervised-pre-training"><span class="nav-number">2.0.2.1.</span> <span class="nav-text">Unsupervised pre-training</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C"><span class="nav-number">2.0.3.</span> <span class="nav-text">实验</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gpt2"><span class="nav-number">3.</span> <span class="nav-text">GPT2</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#motivation-1"><span class="nav-number">3.0.1.</span> <span class="nav-text">Motivation</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-1"><span class="nav-number">3.0.2.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B"><span class="nav-number">3.0.3.</span> <span class="nav-text">模型</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%AE%9E%E9%AA%8C-1"><span class="nav-number">3.0.4.</span> <span class="nav-text">实验</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gpt3"><span class="nav-number">4.</span> <span class="nav-text">GPT3</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#motivation-2"><span class="nav-number">4.0.1.</span> <span class="nav-text">Motivation:</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%96%B9%E6%B3%95-2"><span class="nav-number">4.0.2.</span> <span class="nav-text">方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%A8%A1%E5%9E%8B%E5%8F%98%E4%BD%93"><span class="nav-number">4.0.3.</span> <span class="nav-text">模型变体</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%AF%84%E4%BC%B0"><span class="nav-number">4.0.4.</span> <span class="nav-text">评估</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BB%93%E6%9E%9C"><span class="nav-number">4.0.5.</span> <span class="nav-text">结果</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%B1%80%E9%99%90%E6%80%A7"><span class="nav-number">4.0.6.</span> <span class="nav-text">局限性</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#gpt4"><span class="nav-number">5.</span> <span class="nav-text">GPT4</span></a></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">42</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/07/GPT%E7%B3%BB%E5%88%97/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="GPT系列 | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          GPT系列
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-09-07 17:23:59 / 修改时间：17:29:04" itemprop="dateCreated datePublished" datetime="2023-09-07T17:23:59+08:00">2023-09-07</time>
+    </span>
+
+  
+    <span id="/2023/09/07/GPT%E7%B3%BB%E5%88%97/" class="post-meta-item leancloud_visitors" data-flag-title="GPT系列" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言">前言</h1>
+<p>这里简单介绍一下GPT系列的模型</p>
+<span id="more"></span>
+<h1 id="gpt1">GPT1</h1>
+<p>2018年06月</p>
+<p><a target="_blank" rel="noopener" href="https://www.mikecaptain.com/resources/pdf/GPT-1.pdf">Improving Language Understanding by Generative Pre-Training</a></p>
+<h3 id="motivation">Motivation</h3>
+<p>视觉里有 ImageNet 这种大规模标好的数据，nlp之前标好的数据量还是比较少，机器翻译有100w的数据，但图片含有的信息比句子多，可能是1：10的信息量，所以要大概1000w级别的数据量</p>
+<p>本文提出了无标注预训练</p>
+<p>之前的工作在finetune的时候构造任务相关的输入，并改一下模型，现在不需要，改下输入就可以了</p>
+<p>困难：</p>
+<p>1、优化函数的怎么选，语言模型、机器翻译、文本一致性用的损失函数都不一样，怎么选？</p>
+<p>2、怎么把学到的文本知识迁移到子任务</p>
+<h3 id="方法">方法</h3>
+<p>提出了半监督方法（后续叫自监督）</p>
+<p>1、Transformer or RNN: Transformer 学习到的特征更好，可能是因为Transformer 里有更结构化的记忆来处理更长的文本信息，从而更好地抽取句子层面和段落层面的语义信息</p>
+<p>2、迁移的时候使用的是任务相关的输入表达形式</p>
+<h4 id="unsupervised-pre-training">Unsupervised pre-training</h4>
+<p><strong>对于无监督的序列 <span class="math inline">\(U = \{u_{1}, u_{2}, ..., u_{n}\}\)</span>，GPT使用语言模型来处理</strong>:</p>
+<p>语言模型就是预测下一个词出现的概率</p>
+<p><span class="math display">\[L_{1}(U) = \sum_{i}logP(u_{i}|u_{i-k},...,u_{i-1};\theta)\]</span> 其中k是窗口大小</p>
+<p><span class="math inline">\(\theta\)</span>用的是 Transformer 的解码器，即加了 Masked 的 Multi head self attention,如，对U的第i个做预测，先取i前面的 tokens： <span class="math display">\[
+h_{0} = UW_{e}+W_{p}\\
+h_{l} = transformer\_block(h_{l-1}), \forall i\in[1,n]\\
+P(u) = softmax(h_{n}W_{e}^{T})
+\]</span> 其中<span class="math inline">\(W_{e}\)</span>是word embedding， <span class="math inline">\(W_{p}\)</span>是位置编码</p>
+<p>Bert用的是带掩码的语言模型，用的是 encoder 结构，预测的时候既能看见之前的词，也能看到之后的词，Bert的任务比GPT要简单（预测未来和中间插值的区别）</p>
+<p><strong>对于fine-tuning:</strong></p>
+<p>对于给定的序列 <span class="math inline">\(X = \{x_{1}, x_{2}, ..., x_{m}\}\)</span>，给定标签 y： <span class="math display">\[
+P(y|x_{1}, x_{2}, ..., x_{m}) = softmax(h_{l}^{m}W_{y})\\
+L_{2}(C) = \sum_{(X,y)}logP(y|x_{1}, x_{2}, ..., x_{m})
+\]</span> 实际上微调的时候结合上面的任务一起用效果也好，bert 微调的时候只有下游任务的目标函数，没有自监督 loss</p>
+<p><strong>任务转换成统一格式：:</strong></p>
+<figure>
+<img src="./gpt1.png" alt="gpt1" /><figcaption aria-hidden="true">gpt1</figcaption>
+</figure>
+<p>对于分类：</p>
+<ul>
+<li>将文本 Text 变成 &lt;start&gt; &lt;text&gt; &lt;Extract&gt;输入到 Transformer 中，并拿 &lt;Extract&gt; 作为提取到的文本语义信息，输入到线性分类层</li>
+</ul>
+<p>对于蕴含（Entailment，给一段话和一个假设，判断这句话有没蕴含假设提出的东西）: - 蕴含的例子：a送了b一个礼物，有三种：a喜欢b，a讨厌b，a和b是邻居，那么结果应该是 True、False、不相关，即做三分类 - 将文本 Text 变成 &lt;start&gt; &lt;premise&gt; &lt;delim&gt; &lt;Hypothesis&gt; &lt;Extract&gt; 输入到 Transformer 中</p>
+<p>对于相似： - 判断两个句子是否相似，相似是对称的，如图所示把f(a,b)+f(b,a)的结果相加进行二分类</p>
+<p>对于多选题： - 多选题是一对多，一个问题，多个答案里选择 - 这里把问题和答案放一起，构造n个序列（n个答案），Transformer 的结果经过线形层计算置信度（0-1），最后使用 softmax</p>
+<h3 id="实验">实验</h3>
+<p>GPT:</p>
+<p>BooksCorpus: 7000篇没被发表的书</p>
+<p>模型：12层 Transformer Decoder，ndim=768</p>
+<p>BERT:</p>
+<p>BooksCorpus(800M words),Wikipedia(2500M words)</p>
+<p>BERT_base:12层 Transformer Encoder，ndim=768，encoder 比 decoder 简单一点（少掩码层），110M</p>
+<p>BERT_large:24层 Transformer Encoder，ndim=1024，encoder 比 decoder 简单一点（少掩码层），340M</p>
+<h1 id="gpt2">GPT2</h1>
+<p>2019年2月</p>
+<p><a target="_blank" rel="noopener" href="https://insightcivic.s3.us-east-1.amazonaws.com/language-models.pdf">Language Models are Unsupervised Multitask Learners</a></p>
+<ul>
+<li>WebText(百万级别的文本)</li>
+<li>1B参数</li>
+<li>Zero shot</li>
+</ul>
+<h3 id="motivation-1">Motivation</h3>
+<p>1、目前主流的是在一个任务上收集数据、训练然后做预测（现在模型的泛化性不够好，一个数据集上训练难用到别的数据上）</p>
+<p>2、多任务学习：训练的时候看多个数据集，用多个损失函数，NLP用的不多</p>
+<p>目前 NLP 主流的是大数据集做 pretrain，下游做微调，问题还是有两个：</p>
+<p>1、微调还是得重新训练</p>
+<p>2、需要标记数据</p>
+<p>所以 GPT2 提出了Zero shot，微调的时候不需要标记数据</p>
+<h3 id="方法-1">方法</h3>
+<p>和 GPT-1 模型基本一致，但引入的分隔符、开始符、提取符这些在微调的时候是可以被模型知道具体用来干嘛的，做 ZeroShot 的话由于缺少标注引导，所以不能引入这些标志符号，所以要重构一下输入如把英语翻译成法语时，应该：</p>
+<p>输入：translate to french, english text, french text</p>
+<p>这里 <code>translate to french</code> 起到的就是分割符号的作用，也就是 Prompt</p>
+<p>同理做阅读理解的时候输入为：</p>
+<p>answer the question, document, question, answer</p>
+<p>这样做的原因： - 模型足够强大，能够理解 prompt - 这个结构比较常见，文本数据里面可能已经包含了类似的数据</p>
+<figure>
+<img src="./gpt2.png" alt="gpt2" /><figcaption aria-hidden="true">gpt2</figcaption>
+</figure>
+<p><strong>数据集</strong></p>
+<p>Common Crawl: 爬虫爬取的各网页数据，TB级别，但是噪声多，清理数据要花很多时间，作者用了其中的 reddit，</p>
+<p>数据集大概800w个文本（40gb）</p>
+<h3 id="模型">模型</h3>
+<p>4个变体：</p>
+<table>
+<thead>
+<tr class="header">
+<th>参数量</th>
+<th>layers</th>
+<th>ndim</th>
+</tr>
+</thead>
+<tbody>
+<tr class="odd">
+<td>117M</td>
+<td>12</td>
+<td>768</td>
+</tr>
+<tr class="even">
+<td>345M</td>
+<td>24</td>
+<td>1024</td>
+</tr>
+<tr class="odd">
+<td>762M</td>
+<td>36</td>
+<td>1280</td>
+</tr>
+<tr class="even">
+<td>1542M</td>
+<td>48</td>
+<td>1600</td>
+</tr>
+</tbody>
+</table>
+<h3 id="实验-1">实验</h3>
+<p>但是目前和有监督的方法还是差距比较大,但目前没有饱和的趋势 <img src="gpt2-exp.png" alt="exp" /></p>
+<h1 id="gpt3">GPT3</h1>
+<p>2020年5月，大力出奇迹</p>
+<p><a target="_blank" rel="noopener" href="https://proceedings.neurips.cc/paper_files/paper/2020/file/1457c0d6bfcb4967418bfb8ac142f64a-Paper.pdf">Language Models are Few-Shot Learners</a></p>
+<p>GPT1指出，预训练好的模型在使用少数目标样本（few shot）的时候，语言模型能极大的提升性能，GPT2 zero shot 很新但是效果不好，GPT3就是解决效果不好的问题</p>
+<p>GPT3参数量为175 billion，是之前模型的10x倍，所以微调的时候 GPT3 不进行梯度更新</p>
+<h3 id="motivation-2">Motivation:</h3>
+<p>基于 GPT2 提出的目前 NLP 主流的是大数据集做 pretrain，下游做微调，问题还是有两个：</p>
+<p>1、微调还是得重新训练</p>
+<p>2、需要子任务相关的标记数据</p>
+<p>3、样本不在数据分布里时，泛化性不见得比小模型好，即微调效果好不一定就是泛化性好，也有可能是过拟合（假设训练集包含了下游任务的一些相关数据，然后对训练集过拟合了，所以在下游效果好，但是在其他的难一点、专业一点的数据效果就不好了），所以设置不允许进行微调的 setting</p>
+<p>4、人类学习不需要大数据集，语言功底好的（提取信息能力强的）给几个例子（few shot）就可以了</p>
+<h3 id="方法-2">方法</h3>
+<p><code>meta-learning</code>:</p>
+<p>训练一个大模型，存在很多不同任务的样本，训练的时候能够自动学习挖掘很宽广的技巧以及模式识别的能力，推理的时候能很好的应用到想要的任务中</p>
+<p><code>in-context learning</code>：</p>
+<p>上下文学习，特定上下文环境中学习的机器学习方法。它考虑到文本、语音、图像、视频等数据的上下文环境，以及数据之间的关系和上下文信息的影响。</p>
+<pre><code>如：1. Few shot（示例出现多个，10-100）：6+7=13,6+6=12,5+5=10,8+9=？
+
+    2. One shot（示例出现一个）: 5+5=10,8+9=？
+
+    3. Zero shot（示例没有出现）: 8+9=？</code></pre>
+<p>即在模型预测的时候，分别给出了不同数目的示例来进行预测。我们需要注意的是，这一步骤是没有任何学习的，并没有梯度回传，你可以把它理解成为一个非常详细的prompt，让模型学习到内在的逻辑，进而进行预测。</p>
+<p>所以这里其实是通过few shot，让问题通过让模型处理长序列信息，从而通过注意力机制去自动提取中间的语义信息帮助做下面的事，学习只限于上下文，所以叫上下文学习</p>
+<ul>
+<li>优点是不需要新数据了，只需要将问题给模型，让他返回值就行</li>
+<li>缺点是假如真的有很多训练数据时不好放进去，另假如有个优质的训练样本，不加训练样本的时候表现不佳，但每次做预测的时候都给这个训练样本做上下文学习，这个重复的过程也不好复用（结果无法保存下来）</li>
+</ul>
+<p><img  src =gpt3.png height=70% width=70%> </img></p>
+<h3 id="模型变体">模型变体</h3>
+<p><img  src =gpt3-exp.png height=70% width=70%> </img></p>
+<p>大batch原因：大bs计算性能会好，并行度高，通信成本变低，对分布式好，小模型更容易过拟合，所以bs要变小，导致采样的时候噪音变多</p>
+<p>数据： - Common Crawl，gpt2用的是Reddit里回复大于3的，先训练一个模型，gpt2的数据认为是正样本，common crawl里的是负样本，预测的时候把所有高质量样本保留 - lsh 算法去重（TODO），判断一个集合（文章认为是词的集合）和另一个很大的集合的相似度 - 加入已知的高质量数据（GPT2、GPT、BERT用的数据）</p>
+<p><img  src =gpt3-dataset.png height=70% width=70%> </img></p>
+<h3 id="评估">评估</h3>
+<p>采样K个样本，prompt with string "Answer:"或者"A:"</p>
+<p>对于二分类，答案是 True False 而不是0，1，因为训练数据中01出现的概率比较低</p>
+<p>对于QA，和机器翻译一样生成一个序列，采用 Beam Search 去搜索答案</p>
+<h3 id="结果">结果</h3>
+<p>计算量和验证集loss的关系，计算量指数增加，但训练loss线性往下降：</p>
+<p><img  src =flops.png height=70% width=70%> </img></p>
+<p>不同模型参数量和精度的关系：</p>
+<p><img  src =exp.png height=70% width=70%> </img></p>
+<h3 id="局限性">局限性</h3>
+<ul>
+<li>长文本生成不太好</li>
+<li>结构和算法的局限性，只能往前看，看不到后面</li>
+<li>均匀的预测下一个词语，没有说明哪些是重要词语和不重要词（虚词、语气词之类的）</li>
+<li>没见过真实物理交互的样子，只见过文本</li>
+<li>样本有效性不够（数据太多了）</li>
+<li>ICL的时候真的是上下文学习么？还是记住了这个样子去记忆里找？</li>
+<li>训练耗费大</li>
+<li>不可解释</li>
+</ul>
+<h1 id="gpt4">GPT4</h1>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/nlp/" rel="tag"># nlp</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/09/01/YOLO%E6%80%BB%E7%BB%93/" rel="prev" title="YOLO总结">
+                  <i class="fa fa-chevron-left"></i> YOLO总结
+                </a>
+            </div>
+            <div class="post-nav-item">
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
