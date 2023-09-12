@@ -1,0 +1,357 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width">
+<meta name="theme-color" content="#222"><meta name="generator" content="Hexo 6.3.0">
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" integrity="sha256-HtsXJanqjKTc8vVQjO4YMhiqFoXkfBsjBWcX91T1jr8=" crossorigin="anonymous">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/3.1.1/animate.min.css" integrity="sha256-PR7ttpcvz8qrF57fur/yAx1qXMFJeJFiA6pSzWi0OIE=" crossorigin="anonymous">
+
+<script class="next-config" data-name="main" type="application/json">{"hostname":"example.com","root":"/","images":"/images","scheme":"Gemini","darkmode":false,"version":"8.15.1","exturl":false,"sidebar":{"position":"left","display":"post","padding":18,"offset":12},"copycode":{"enable":false,"style":null},"bookmark":{"enable":false,"color":"#222","save":"auto"},"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"stickytabs":false,"motion":{"enable":true,"async":false,"transition":{"menu_item":"fadeInDown","post_block":"fadeIn","post_header":"fadeInDown","post_body":"fadeInDown","coll_header":"fadeInLeft","sidebar":"fadeInUp"}},"prism":false,"i18n":{"placeholder":"搜索...","empty":"没有找到任何搜索结果：${query}","hits_time":"找到 ${hits} 个搜索结果（用时 ${time} 毫秒）","hits":"找到 ${hits} 个搜索结果"}}</script><script src="/js/config.js"></script>
+
+    <meta name="description" content="前言 记录一下 TorchScript">
+<meta property="og:type" content="article">
+<meta property="og:title" content="TorchScript">
+<meta property="og:url" content="http://example.com/2023/09/12/TorchScript/index.html">
+<meta property="og:site_name" content="XBlog">
+<meta property="og:description" content="前言 记录一下 TorchScript">
+<meta property="og:locale" content="zh_CN">
+<meta property="article:published_time" content="2023-09-12T08:40:40.000Z">
+<meta property="article:modified_time" content="2023-09-12T09:24:56.000Z">
+<meta property="article:author" content="Carey">
+<meta property="article:tag" content="部署">
+<meta property="article:tag" content="cv">
+<meta name="twitter:card" content="summary">
+
+
+<link rel="canonical" href="http://example.com/2023/09/12/TorchScript/">
+
+
+
+<script class="next-config" data-name="page" type="application/json">{"sidebar":"","isHome":false,"isPost":true,"lang":"zh-CN","comments":true,"permalink":"http://example.com/2023/09/12/TorchScript/","path":"2023/09/12/TorchScript/","title":"TorchScript"}</script>
+
+<script class="next-config" data-name="calendar" type="application/json">""</script>
+<title>TorchScript | XBlog</title>
+  
+
+
+
+
+
+
+
+
+  <noscript>
+    <link rel="stylesheet" href="/css/noscript.css">
+  </noscript>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" class="use-motion">
+  <div class="headband"></div>
+
+  <main class="main">
+    <div class="column">
+      <header class="header" itemscope itemtype="http://schema.org/WPHeader"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="切换导航栏" role="button">
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+        <span class="toggle-line"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <i class="logo-line"></i>
+      <p class="site-title">XBlog</p>
+      <i class="logo-line"></i>
+    </a>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger" aria-label="搜索" role="button">
+    </div>
+  </div>
+</div>
+
+
+
+<nav class="site-nav">
+  <ul class="main-menu menu"><li class="menu-item menu-item-home"><a href="/" rel="section"><i class="fa fa-home fa-fw"></i>首页</a></li><li class="menu-item menu-item-tags"><a href="/tags/" rel="section"><i class="fa fa-tags fa-fw"></i>标签</a></li><li class="menu-item menu-item-categories"><a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>分类</a></li>
+  </ul>
+</nav>
+
+
+
+
+</header>
+        
+  
+  <aside class="sidebar">
+
+    <div class="sidebar-inner sidebar-nav-active sidebar-toc-active">
+      <ul class="sidebar-nav">
+        <li class="sidebar-nav-toc">
+          文章目录
+        </li>
+        <li class="sidebar-nav-overview">
+          站点概览
+        </li>
+      </ul>
+
+      <div class="sidebar-panel-container">
+        <!--noindex-->
+        <div class="post-toc-wrap sidebar-panel">
+            <div class="post-toc animated"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%89%8D%E8%A8%80"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AF-torchscript"><span class="nav-number">2.</span> <span class="nav-text">什么是 TorchScript</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#torch.fx-%E5%92%8C-torchdynamo"><span class="nav-number">2.1.</span> <span class="nav-text">torch.FX 和 TorchDynamo</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%80%8E%E4%B9%88%E8%BD%AC-torchscript"><span class="nav-number">3.</span> <span class="nav-text">怎么转 TorchScript</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9C%89%E4%BB%80%E4%B9%88%E7%94%A8"><span class="nav-number">4.</span> <span class="nav-text">有什么用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96"><span class="nav-number">4.1.</span> <span class="nav-text">序列化</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BD%AC-onnx"><span class="nav-number">4.2.</span> <span class="nav-text">转 ONNX</span></a></li></ol></li></ol></div>
+        </div>
+        <!--/noindex-->
+
+        <div class="site-overview-wrap sidebar-panel">
+          <div class="site-author animated" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="Carey"
+      src="/images/xb9919.jpg">
+  <p class="site-author-name" itemprop="name">Carey</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap animated">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+        <a href="/archives/">
+          <span class="site-state-item-count">44</span>
+          <span class="site-state-item-name">日志</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+          <a href="/categories/">
+        <span class="site-state-item-count">7</span>
+        <span class="site-state-item-name">分类</span></a>
+      </div>
+      <div class="site-state-item site-state-tags">
+          <a href="/tags/">
+        <span class="site-state-item-count">14</span>
+        <span class="site-state-item-name">标签</span></a>
+      </div>
+  </nav>
+</div>
+
+        </div>
+      </div>
+    </div>
+
+    
+  </aside>
+
+
+    </div>
+
+    <div class="main-inner post posts-expand">
+
+
+  
+
+
+<div class="post-block">
+  
+  
+
+  <article itemscope itemtype="http://schema.org/Article" class="post-content" lang="zh-CN">
+    <link itemprop="mainEntityOfPage" href="http://example.com/2023/09/12/TorchScript/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/xb9919.jpg">
+      <meta itemprop="name" content="Carey">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="XBlog">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="post" itemscope itemtype="http://schema.org/CreativeWork">
+      <meta itemprop="name" content="TorchScript | XBlog">
+      <meta itemprop="description" content="">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          TorchScript
+        </h1>
+
+        <div class="post-meta-container">
+          <div class="post-meta">
+    <span class="post-meta-item">
+      <span class="post-meta-item-icon">
+        <i class="far fa-calendar"></i>
+      </span>
+      <span class="post-meta-item-text">发表于</span>
+      
+
+      <time title="创建时间：2023-09-12 16:40:40 / 修改时间：17:24:56" itemprop="dateCreated datePublished" datetime="2023-09-12T16:40:40+08:00">2023-09-12</time>
+    </span>
+
+  
+    <span id="/2023/09/12/TorchScript/" class="post-meta-item leancloud_visitors" data-flag-title="TorchScript" title="阅读次数">
+      <span class="post-meta-item-icon">
+        <i class="far fa-eye"></i>
+      </span>
+      <span class="post-meta-item-text">阅读次数：</span>
+      <span class="leancloud-visitors-count"></span>
+    </span>
+</div>
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+        <h1 id="前言">前言</h1>
+<p>记录一下 TorchScript <span id="more"></span></p>
+<h1 id="什么是-torchscript">什么是 TorchScript</h1>
+<p>首先要了解两个概念：动态图和静态图</p>
+<p>实际上 torch 的代码在运行的时候是按照计算图保存的（有算子节点、操作数等，数据结构是protobuf）</p>
+<ul>
+<li>动态图：pytorch使用的，运算与搭建同时进行；灵活，易调节。</li>
+<li>静态图：老tensorflow使用的，先搭建图，后运算；高效，不灵活</li>
+</ul>
+<p>静态图我们是需要先定义好运算规则流程的。比方说，我们先给出 <span class="math inline">\(a = x+w, b = w+1, y = a\times b\)</span>，会先把运算过程给存储下来，然后把w=1，x=2放到上面运算框架的入口位置进行运算。而动态图是直接对着已经赋值的w和x进行运算，然后变运算变构建运算图。</p>
+<p>pytorch 最开始是基于动态图做的，好处是比其他需要构建静态网络的框架拥有更低的学习成本，同时也方便 DeBug</p>
+<p>但同时动态建图带来的优势对于性能要求更高的应用场景而言更像是缺点，非固定的网络结构给网络结构分析并进行优化带来了困难，多数参数都能以 Tensor 形式传输也让资源分配变成一件闹心的事。另外由于图是由 python 代码构建的，一方面部署要依赖 python 环境，另一方面模型也毫无保密性可言。</p>
+<p>而 TorchScript 就是为了解决这个问题而诞生的工具。包括代码的追踪及解析、中间表示的生成、模型优化、序列化等各种功能，可以说是覆盖了模型部署的方方面面。</p>
+<h2 id="torch.fx-和-torchdynamo">torch.FX 和 TorchDynamo</h2>
+<p>fx 是 PyTorch 推出的一个用于捕获和转换 PyTorch 程序（可以理解为神经网络结构）的纯 Python 系统。Pytorch 这样的采用动态计算图执行模式的训练框架，给用户带来了极高的易用性，但是在某些情况下，用户也需要捕获和变换神经网络结构来做优化和分析（例如算子融合）</p>
+<p>简单来说，动态计算图适用于模型开发调试（训练阶段），静态计算图适用于模型部署调优，这两者之间就产生了一个很大的 gap，因此 fx 为了修补这个 gap 就应运而生了。</p>
+<p>PyTorch1.9 开始添加了torch.fx工具，根据官方的介绍，它由符号追踪器（symbolic tracer），中间表示（IR）， Python 代码生成（Python code generation）等组件组成，实现了python-&gt;python的翻译。</p>
+<p>其实他们之间联系不大，可以算是互相垂直的两个工具，为解决两个不同的任务而诞生。</p>
+<ul>
+<li>TorchScript 的主要用途是进行模型部署，需要记录生成一个便于推理优化的 IR，对计算图的编辑通常都是面向性能提升等等，不会给模型本身添加新的功能。</li>
+<li>FX 的主要用途是进行python-&gt;python的翻译，它的 IR 中节点类型更简单，比如函数调用、属性提取等等，这样的 IR 学习成本更低更容易编辑。使用 FX 来编辑图通常是为了实现某种特定功能，比如给模型插入量化节点等，避免手动编辑网络造成的重复劳动。</li>
+</ul>
+<p>使用 FX 工具编辑模型来让训练更便利、功能更强大；然后用 TorchScript 将模型加速部署到特定平台。</p>
+<p>TorchDynamo 是torch2.0新增的，它的作用是从 PyTorch 应用中抓取计算图，相比于 TorchScript 和 TorchFX，TorchDynamo 更加灵活、可靠性更高。用过 TorchScript 的朋友知道，通过 jit.trace 或者 jit.script 把模型转化为 TorchScript 的过程困难重重，往往需要修改大量源代码。而 TorchFX 在捕获计算图时，遇到不支持的算子会直接报错，最常见的就是 if 语句。TorchDynamo 克服了 TorchScript 和 TorchFX 的缺点，使用起来极为方便，用户体验相比于 TorchScript 和 TorchFX 大幅提升。配合 TorchInductor 等后端编译器，经 TorchDynamo 捕获的计算图只需要几行代码的改动就可以观测到不错的性能提升。</p>
+<h1 id="怎么转-torchscript">怎么转 TorchScript</h1>
+<p>有两种方法，一种是 trace， 一种是 script</p>
+<p>对于 trace： <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> torch </span><br><span class="line"><span class="keyword">from</span> torchvision.models <span class="keyword">import</span> resnet18 </span><br><span class="line"> </span><br><span class="line"><span class="comment"># 使用PyTorch model zoo中的resnet18作为例子 </span></span><br><span class="line">model = resnet18() </span><br><span class="line">model.<span class="built_in">eval</span>() </span><br><span class="line"> </span><br><span class="line"><span class="comment"># 通过trace的方法生成IR需要一个输入样例 </span></span><br><span class="line">dummy_input = torch.rand(<span class="number">1</span>, <span class="number">3</span>, <span class="number">224</span>, <span class="number">224</span>) </span><br><span class="line"> </span><br><span class="line"><span class="comment"># IR生成 </span></span><br><span class="line"><span class="keyword">with</span> torch.no_grad(): </span><br><span class="line">    jit_model = torch.jit.trace(model, dummy_input)</span><br></pre></td></tr></table></figure> trace 指的是进行一次模型推理，在推理的过程中记录所有经过的计算，将这些记录整合成计算图。</p>
+<p>对于 script：</p>
+<p>script 这种方式会直接解析网络定义的 python 代码，生成抽象语法树 AST，因此这种方法可以解决一些 trace 无法解决的问题，比如对 branch/loop 等数据流控制语句的建图。script方式的建图有很多有趣的特性。</p>
+<p>可以直接输出 torch_script 的图和 code，其中 code 是还原的 python 代码 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">jit_layer1 = jit_model.layer1 </span><br><span class="line"><span class="built_in">print</span>(jit_layer1.graph) </span><br><span class="line"> </span><br><span class="line"><span class="comment"># graph(%self.6 : __torch__.torch.nn.modules.container.Sequential, </span></span><br><span class="line"><span class="comment">#       %4 : Float(1, 64, 56, 56, strides=[200704, 3136, 56, 1], requires_grad=0, device=cpu)): </span></span><br><span class="line"><span class="comment">#   %1 : __torch__.torchvision.models.resnet.___torch_mangle_10.BasicBlock = prim::GetAttr[name=&quot;1&quot;](%self.6) </span></span><br><span class="line"><span class="comment">#   %2 : __torch__.torchvision.models.resnet.BasicBlock = prim::GetAttr[name=&quot;0&quot;](%self.6) </span></span><br><span class="line"><span class="comment">#   %6 : Tensor = prim::CallMethod[name=&quot;forward&quot;](%2, %4) </span></span><br><span class="line"><span class="comment">#   %7 : Tensor = prim::CallMethod[name=&quot;forward&quot;](%1, %6) </span></span><br><span class="line"><span class="comment">#   return (%7) </span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span>(jit_layer1.code) </span><br><span class="line"> </span><br><span class="line"><span class="comment"># def forward(self, </span></span><br><span class="line"><span class="comment">#     argument_1: Tensor) -&gt; Tensor: </span></span><br><span class="line"><span class="comment">#   _0 = getattr(self, &quot;1&quot;) </span></span><br><span class="line"><span class="comment">#   _1 = (getattr(self, &quot;0&quot;)).forward(argument_1, ) </span></span><br><span class="line"><span class="comment">#   return (_0).forward(_1, ) </span></span><br></pre></td></tr></table></figure> 这里的可视化中只有模型的 forward 的部分，想继续往下看里边具体的算子要调用 pass的inline 对所有子模块进行内联</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 调用inline pass，对graph做变换 </span></span><br><span class="line">torch._C._jit_pass_inline(jit_layer1.graph) </span><br><span class="line"><span class="built_in">print</span>(jit_layer1.code) </span><br><span class="line"> </span><br><span class="line"><span class="comment"># def forward(self, </span></span><br><span class="line"><span class="comment">#     argument_1: Tensor) -&gt; Tensor: </span></span><br><span class="line"><span class="comment">#   _0 = getattr(self, &quot;1&quot;) </span></span><br><span class="line"><span class="comment">#   _1 = getattr(self, &quot;0&quot;) </span></span><br><span class="line"><span class="comment">#   _2 = _1.bn2 </span></span><br><span class="line"><span class="comment">#   _3 = _1.conv2 </span></span><br><span class="line"><span class="comment">#   _4 = _1.bn1 </span></span><br><span class="line"><span class="comment">#   input = torch._convolution(argument_1, _1.conv1.weight, None, [1, 1], [1, 1], [1, 1], False, [0, 0], 1, False, False, True, True) </span></span><br><span class="line"><span class="comment">#   _5 = _4.running_var </span></span><br><span class="line"><span class="comment">#   _6 = _4.running_mean </span></span><br><span class="line"><span class="comment">#   _7 = _4.bias </span></span><br><span class="line"><span class="comment">#   input0 = torch.batch_norm(input, _4.weight, _7, _6, _5, False, 0.10000000000000001, 1.0000000000000001e-05, True) </span></span><br><span class="line"><span class="comment">#   input1 = torch.relu_(input0) </span></span><br><span class="line"><span class="comment">#   input2 = torch._convolution(input1, _3.weight, None, [1, 1], [1, 1], [1, 1], False, [0, 0], 1, False, False, True, True) </span></span><br><span class="line"><span class="comment">#   _8 = _2.running_var </span></span><br><span class="line"><span class="comment">#   _9 = _2.running_mean </span></span><br><span class="line"><span class="comment">#   _10 = _2.bias </span></span><br><span class="line"><span class="comment">#   out = torch.batch_norm(input2, _2.weight, _10, _9, _8, False, 0.10000000000000001, 1.0000000000000001e-05, True) </span></span><br><span class="line"><span class="comment">#   input3 = torch.add_(out, argument_1, alpha=1) </span></span><br><span class="line"><span class="comment">#   input4 = torch.relu_(input3) </span></span><br><span class="line"><span class="comment">#   _11 = _0.bn2 </span></span><br><span class="line"><span class="comment">#   _12 = _0.conv2 </span></span><br><span class="line"><span class="comment">#   _13 = _0.bn1 </span></span><br><span class="line"><span class="comment">#   input5 = torch._convolution(input4, _0.conv1.weight, None, [1, 1], [1, 1], [1, 1], False, [0, 0], 1, False, False, True, True) </span></span><br><span class="line"><span class="comment">#   _14 = _13.running_var </span></span><br><span class="line"><span class="comment">#   _15 = _13.running_mean </span></span><br><span class="line"><span class="comment">#   _16 = _13.bias </span></span><br><span class="line"><span class="comment">#   input6 = torch.batch_norm(input5, _13.weight, _16, _15, _14, False, 0.10000000000000001, 1.0000000000000001e-05, True) </span></span><br><span class="line"><span class="comment">#   input7 = torch.relu_(input6) </span></span><br><span class="line"><span class="comment">#   input8 = torch._convolution(input7, _12.weight, None, [1, 1], [1, 1], [1, 1], False, [0, 0], 1, False, False, True, True) </span></span><br><span class="line"><span class="comment">#   _17 = _11.running_var </span></span><br><span class="line"><span class="comment">#   _18 = _11.running_mean </span></span><br><span class="line"><span class="comment">#   _19 = _11.bias </span></span><br><span class="line"><span class="comment">#   out0 = torch.batch_norm(input8, _11.weight, _19, _18, _17, False, 0.10000000000000001, 1.0000000000000001e-05, True) </span></span><br><span class="line"><span class="comment">#   input9 = torch.add_(out0, input4, alpha=1) </span></span><br><span class="line"><span class="comment">#   return torch.relu_(input9) </span></span><br></pre></td></tr></table></figure>
+<p>上面代码中我们使用了一个名为 inline 的 pass，将所有子模块进行内联，这样我们就能看见更完整的推理代码。pass 是一个来源于编译原理的概念，一个 TorchScript 的 pass 会接收一个图，遍历图中所有元素进行某种变换，生成一个新的图。我们这里用到的 inline 起到的作用就是将模块调用展开，尽管这样做并不能直接影响执行效率，但是它其实是很多其他 pass 的基础。PyTorch 中定义了非常多的 pass 来解决各种优化任务，未来我们会做一些更详细的介绍。</p>
+<ul>
+<li>pass 可以理解为是对各图节点的操作，如 inline 就是对各子节点进行内联，其他还有一些算子融合之类的优化 pass</li>
+</ul>
+<h1 id="有什么用">有什么用</h1>
+<h2 id="序列化">序列化</h2>
+<p>不管是哪种方法创建的 TorchScript 都可以进行序列化，比如：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 将模型序列化 </span></span><br><span class="line">jit_model.save(<span class="string">&#x27;jit_model.pth&#x27;</span>) </span><br><span class="line"><span class="comment"># 加载序列化后的模型 </span></span><br><span class="line">jit_model = torch.jit.load(<span class="string">&#x27;jit_model.pth&#x27;</span>) </span><br></pre></td></tr></table></figure>
+<p>序列化后的模型不再与 python 相关，可以被部署到各种平台上。</p>
+<p>PyTorch 提供了可以用于 TorchScript 模型推理的 c++ API，序列化后的模型可以不依赖 python 进行推理了： <figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 加载生成的torchscript模型 </span></span><br><span class="line"><span class="keyword">auto</span> <span class="keyword">module</span> = torch::jit::<span class="built_in">load</span>(<span class="string">&#x27;jit_model.pth&#x27;</span>); </span><br><span class="line"><span class="comment">// 根据任务需求读取数据 </span></span><br><span class="line">std::vector&lt;torch::jit::IValue&gt; inputs = ...; </span><br><span class="line"><span class="comment">// 计算推理结果 </span></span><br><span class="line"><span class="keyword">auto</span> output = <span class="keyword">module</span>.forward(inputs).<span class="built_in">toTensor</span>(); </span><br></pre></td></tr></table></figure></p>
+<h2 id="转-onnx">转 ONNX</h2>
+<p>torch.onnx.export 函数可以帮助我们把 PyTorch 模型转换成 ONNX 模型，这个函数会使用 trace 的方式记录 PyTorch 的推理过程。</p>
+<pre><code>1、使用 trace 的方式先生成一个 TorchScipt 模型，如果你转换的本身就是 TorchScript 模型，则可以跳过这一步。
+2、使用许多 pass 对 1 中生成的模型进行变换，其中对 ONNX 导出最重要的一个 pass 就是 ToONNX，这个 pass 会进行一个映射，将 TorchScript 中 prim、aten 空间下的算子映射到 onnx 空间下的算子。
+3、使用 ONNX 的 proto 格式对模型进行序列化，完成 ONNX 的导出。</code></pre>
+
+    </div>
+
+    
+    
+    
+
+    <footer class="post-footer">
+          <div class="post-tags">
+              <a href="/tags/%E9%83%A8%E7%BD%B2/" rel="tag"># 部署</a>
+              <a href="/tags/cv/" rel="tag"># cv</a>
+          </div>
+
+        
+
+          <div class="post-nav">
+            <div class="post-nav-item">
+                <a href="/2023/09/07/GPT%E7%B3%BB%E5%88%97/" rel="prev" title="GPT系列">
+                  <i class="fa fa-chevron-left"></i> GPT系列
+                </a>
+            </div>
+            <div class="post-nav-item">
+                <a href="/2023/09/12/BERT/" rel="next" title="BERT">
+                  BERT <i class="fa fa-chevron-right"></i>
+                </a>
+            </div>
+          </div>
+    </footer>
+  </article>
+</div>
+
+
+
+
+
+
+</div>
+  </main>
+
+  <footer class="footer">
+    <div class="footer-inner">
+
+
+<div class="copyright">
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Carey</span>
+</div>
+  <div class="powered-by">由 <a href="https://hexo.io/" rel="noopener" target="_blank">Hexo</a> & <a href="https://theme-next.js.org/" rel="noopener" target="_blank">NexT.Gemini</a> 强力驱动
+  </div>
+
+    </div>
+  </footer>
+
+  
+  <div class="back-to-top" role="button" aria-label="返回顶部">
+    <i class="fa fa-arrow-up fa-lg"></i>
+    <span>0%</span>
+  </div>
+
+<noscript>
+  <div class="noscript-warning">Theme NexT works best with JavaScript enabled</div>
+</noscript>
+
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/animejs/3.2.1/anime.min.js" integrity="sha256-XL2inqUJaslATFnHdJOi9GfQ60on8Wx1C2H8DYiN1xY=" crossorigin="anonymous"></script>
+<script src="/js/comments.js"></script><script src="/js/utils.js"></script><script src="/js/motion.js"></script><script src="/js/next-boot.js"></script>
+
+  
+
+
+
+
+  
+
+
+  <script class="next-config" data-name="leancloud_visitors" type="application/json">{"enable":true,"app_id":"jQYmuHNxiTiELvFQ61jSnJiJ-gzGzoHsz","app_key":"KKRkMLi4jYYuy2ApenFt3gI8","server_url":null,"security":true}</script>
+  <script src="/js/third-party/statistics/lean-analytics.js"></script>
+
+
+  
+
+  <script class="next-config" data-name="enableMath" type="application/json">true</script><script class="next-config" data-name="mathjax" type="application/json">{"enable":true,"per_page":true,"tags":"none","js":{"url":"https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.js","integrity":"sha256-MASABpB4tYktI2Oitl4t+78w/lyA+D7b/s9GEP0JOGI="}}</script>
+<script src="/js/third-party/math/mathjax.js"></script>
+
+
+
+</body>
+</html>
